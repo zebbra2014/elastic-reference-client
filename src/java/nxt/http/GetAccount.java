@@ -72,42 +72,6 @@ public final class GetAccount extends APIServlet.APIRequestHandler {
             }
         }
 
-        if (includeAssets) {
-            try (DbIterator<Account.AccountAsset> accountAssets = account.getAssets(0, -1)) {
-                JSONArray assetBalances = new JSONArray();
-                JSONArray unconfirmedAssetBalances = new JSONArray();
-                while (accountAssets.hasNext()) {
-                    Account.AccountAsset accountAsset = accountAssets.next();
-                    JSONObject assetBalance = new JSONObject();
-                    assetBalance.put("asset", Convert.toUnsignedLong(accountAsset.getAssetId()));
-                    assetBalance.put("balanceQNT", String.valueOf(accountAsset.getQuantityQNT()));
-                    assetBalances.add(assetBalance);
-                    JSONObject unconfirmedAssetBalance = new JSONObject();
-                    unconfirmedAssetBalance.put("asset", Convert.toUnsignedLong(accountAsset.getAssetId()));
-                    unconfirmedAssetBalance.put("unconfirmedBalanceQNT", String.valueOf(accountAsset.getUnconfirmedQuantityQNT()));
-                    unconfirmedAssetBalances.add(unconfirmedAssetBalance);
-                }
-                if (assetBalances.size() > 0) {
-                    response.put("assetBalances", assetBalances);
-                }
-                if (unconfirmedAssetBalances.size() > 0) {
-                    response.put("unconfirmedAssetBalances", unconfirmedAssetBalances);
-                }
-            }
-        }
-
-        if (includeCurrencies) {
-            try (DbIterator<Account.AccountCurrency> accountCurrencies = account.getCurrencies(0, -1)) {
-                JSONArray currencyJSON = new JSONArray();
-                while (accountCurrencies.hasNext()) {
-                    currencyJSON.add(JSONData.accountCurrency(accountCurrencies.next(), false, true));
-                }
-                if (currencyJSON.size() > 0) {
-                    response.put("accountCurrencies", currencyJSON);
-                }
-            }
-        }
-
         return response;
 
     }
