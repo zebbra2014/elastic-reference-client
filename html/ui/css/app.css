@@ -215,7 +215,7 @@ img {
   background-color: #f39c12 !important;
 }
 .bg-aqua {
-  background-color: #00c0ef !important;
+  background-color: #307095 !important;
 }
 .bg-blue {
   background-color: #0073b7 !important;
@@ -250,16 +250,7 @@ img {
 .bg-maroon {
   background-color: #85144b !important;
 }
-.small-box {
-  background: #217ba5; /* Old browsers */
-  background: -moz-linear-gradient(left,  #217ba5 0%, #56b3d8 100%); /* FF3.6+ */
-  background: -webkit-gradient(linear, left top, right top, color-stop(0%,#217ba5), color-stop(100%,#56b3d8)); /* Chrome,Safari4+ */
-  background: -webkit-linear-gradient(left,  #217ba5 0%,#56b3d8 100%); /* Chrome10+,Safari5.1+ */
-  background: -o-linear-gradient(left,  #217ba5 0%,#56b3d8 100%); /* Opera 11.10+ */
-  background: -ms-linear-gradient(left,  #217ba5 0%,#56b3d8 100%); /* IE10+ */
-  background: linear-gradient(to right,  #217ba5 0%,#56b3d8 100%); /* W3C */
-  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#217ba5', endColorstr='#56b3d8',GradientType=1 ); /* IE6-9 */
-}
+
 
 /* Text colors */
 .text-red {
@@ -600,6 +591,7 @@ body > .header .logo .icon {
 }
 .user-panel {
   padding: 10px;
+  background-color: #fff;
 }
 .user-panel:before,
 .user-panel:after {
@@ -613,6 +605,13 @@ body > .header .logo .icon {
   width: 45px;
   height: 45px;
 }
+
+.fullwidth {
+  width: 100%;
+  text-align: center;
+  padding-top: 15px;
+}
+
 .user-panel > .info {
   padding: 5px 5px 5px 15px;
   font-size: 14px;
@@ -2000,14 +1999,7 @@ body > .header .logo .icon {
 */
 /* skin-blue navbar */
 .navbar {
-  background: #005f82; /* Old browsers */
-  background: -moz-linear-gradient(top, #005f82 0%, #004a66 100%); /* FF3.6+ */
-  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#005f82), color-stop(100%,#004a66)); /* Chrome,Safari4+ */
-  background: -webkit-linear-gradient(top, #005f82 0%,#004a66 100%); /* Chrome10+,Safari5.1+ */
-  background: -o-linear-gradient(top, #005f82 0%,#004a66 100%); /* Opera 11.10+ */
-  background: -ms-linear-gradient(top, #005f82 0%,#004a66 100%); /* IE10+ */
-  background: linear-gradient(to bottom, #005f82 0%,#004a66 100%); /* W3C */
-  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#005f82', endColorstr='#004a66',GradientType=0 ); /* IE6-9 */
+  background: #333333; /* Old browsers */
 }
 .navbar .nav a {
   color: #fff;
@@ -2030,20 +2022,14 @@ body > .header .logo .icon {
 /* skin-blue logo */
 .logo {
   color: #f9f9f9;
-  background: #005f82; /* Old browsers */
-  background: -moz-linear-gradient(top, #005f82 0%, #004a66 100%); /* FF3.6+ */
-  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#005f82), color-stop(100%,#004a66)); /* Chrome,Safari4+ */
-  background: -webkit-linear-gradient(top, #005f82 0%,#004a66 100%); /* Chrome10+,Safari5.1+ */
-  background: -o-linear-gradient(top, #005f82 0%,#004a66 100%); /* Opera 11.10+ */
-  background: -ms-linear-gradient(top, #005f82 0%,#004a66 100%); /* IE10+ */
-  background: linear-gradient(to bottom, #005f82 0%,#004a66 100%); /* W3C */
-  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#005f82', endColorstr='#004a66',GradientType=0 ); /* IE6-9 */
-}
+  background: #333333; /* Old browsers */
+  }
 .logo > a {
   color: #f9f9f9;
 }
 .logo:hover {
-  background: #357ca5;
+  background: #307095;
+  color: #f6f6f6;
 }
 /* Skin-blue user panel */
 .user-panel > .image > img {
@@ -3272,4 +3258,83 @@ input.masked {
 #sideBalance {
   display: block;
   margin-bottom: 5px;
+}
+
+
+.indicator_container {
+    width:100%;
+    border-top: 1px solid #fff;
+    height: 44px;
+    border-bottom: 1px solid #dbdbdb;
+}
+
+.indicator_column {
+    width: 33.33333333%;
+    height: 40px;
+    float: left;
+    text-align: center;
+    font-size: 12px;
+    padding-top: 3px;
+}
+.midcolumn {
+      border-right: 1px solid #fff;
+}
+.on{
+    background: #dff0d8;
+}
+
+.off{
+    background: #ffe6e6;
+
+}
+
+.work-image-type {
+  float: left;
+  padding-right: 15px;
+  height:68px;
+}
+
+.larger-sidebar-element {
+  height: 90px;
+}
+
+.betterh4 {
+  font-family: sans-serif;
+  font-size: 14px;
+
+}
+
+.agopullright {
+  float: right !important;
+  padding-top: 0px;
+  line-height: 1.1;
+  box-sizing: border-box;
+}
+
+.middletext_list {
+  display: block;
+  color: #999;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  height: 100%;
+  padding-top: 20px;
+}
+
+.label12px{
+  font-size: 12px;
+}
+
+.smsm {
+    width: 150px;
+    margin-left: 201px;
+    margin-top: -8px;
+}
+
+.margin5px {
+  margin-right: 5px;
+}
+
+.padding10 {
+  padding-left: 10px;
 }

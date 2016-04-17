@@ -85,15 +85,15 @@ public final class Convert {
             return 0;
         }
         account = account.toUpperCase();
-        if (account.startsWith("NXT-")) {
-            return Crypto.rsDecode(account.substring(4));
+        if (account.startsWith("XEL")) {
+            return Crypto.rsDecode(account.substring(3));
         } else {
             return parseUnsignedLong(account);
         }
     }
 
     public static String rsAccount(long accountId) {
-        return "NXT-" + Crypto.rsEncode(accountId);
+        return "XEL" + Crypto.rsEncode(accountId);
     }
 
     public static long fullHashToId(byte[] hash) {

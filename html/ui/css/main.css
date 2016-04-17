@@ -1015,6 +1015,13 @@ a.list-group-item:hover {
 	bottom: 0;
 	right: 0;
 }
+.content-splitter-wide-right {
+  position: absolute;
+  top: 0;
+  left: 450px;
+  bottom: 0;
+  right: 0;
+}
 .content-splitter-right.empty:before{
 	position: absolute;
 	content: "No preview";
@@ -1040,6 +1047,7 @@ a.list-group-item:hover {
 	overflow-x:hidden;
 	/*padding-bottom:120px;*/
 }
+
 
 #messages_page .content-splitter-right-inner {
 	bottom:185px;

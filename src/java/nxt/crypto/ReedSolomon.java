@@ -68,10 +68,6 @@ final class ReedSolomon {
             final int codework_index = ReedSolomon.codeword_map[i];
             final int alphabet_index = codeword[codework_index];
             cypher_string_builder.append(ReedSolomon.alphabet.charAt(alphabet_index));
-
-            if ((i & 3) == 3 && i < 13) {
-                cypher_string_builder.append('-');
-            }
         }
         return cypher_string_builder.toString();
     }
