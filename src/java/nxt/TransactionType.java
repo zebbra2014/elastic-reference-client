@@ -342,7 +342,52 @@ public abstract class TransactionType {
                 return false;
             }
         };
-        	
+        
+        public final static TransactionType REFUEL_TASK = new WorkControl() {
+
+            @Override
+            public final byte getSubtype() {
+                return TransactionType.SUBTYPE_WORK_CONTROL_REFUEL_TASK;
+            }
+
+            @Override
+            Attachment.WorkIdentifier parseAttachment(ByteBuffer buffer, byte transactionVersion) throws NxtException.NotValidException {
+            	return new Attachment.WorkIdentifier(buffer, transactionVersion);
+            }
+
+            @Override
+            Attachment.WorkIdentifier parseAttachment(JSONObject attachmentData) throws NxtException.NotValidException {
+            	return new Attachment.WorkIdentifier(attachmentData);
+            }
+
+            @Override
+            void applyAttachment(Transaction transaction, Account senderAccount, Account recipientAccount) {
+            	Attachment.WorkIdentifier attachment = (Attachment.WorkIdentifier) transaction.getAttachment();
+            	// APPLY IT NOW, i.e., CANCEL TRANSACTION AND REFUND REMAINING STUFF
+            }
+
+            @Override
+            void validateAttachment(Transaction transaction) throws NxtException.ValidationException {
+                /*Attachment attachment = transaction.getAttachment();
+                if (transaction.getAmountNQT() != 0) {
+                    throw new NxtException.NotValidException("Invalid arbitrary message: " + attachment.getJSONObject());
+                }
+                if (transaction.getRecipientId() == Genesis.CREATOR_ID && Nxt.getBlockchain().getHeight() > Constants.MONETARY_SYSTEM_BLOCK) {
+                    throw new NxtException.NotCurrentlyValidException("Sending messages to Genesis not allowed.");
+                }*/
+            	// TODO, perform some checks here
+            }
+
+            @Override
+            public boolean canHaveRecipient() {
+                return false;
+            }
+
+            @Override
+            public boolean mustHaveRecipient() {
+                return false;
+            }
+        };
     };
         
         
