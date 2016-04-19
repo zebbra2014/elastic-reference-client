@@ -13,8 +13,8 @@ public abstract class TransactionType {
 
     private static final byte TYPE_PAYMENT = 0;
     private static final byte TYPE_MESSAGING = 1;
-    private static final byte TYPE_ACCOUNT_CONTROL = 4;
-    static final byte TYPE_MONETARY_SYSTEM = 5;
+    private static final byte TYPE_ACCOUNT_CONTROL = 2;
+    private static final byte TYPE_WORK_CONTROL = 2;
 
     private static final byte SUBTYPE_PAYMENT_ORDINARY_PAYMENT = 0;
 
@@ -24,8 +24,14 @@ public abstract class TransactionType {
     private static final byte SUBTYPE_MESSAGING_HUB_ANNOUNCEMENT = 4;
     private static final byte SUBTYPE_MESSAGING_ACCOUNT_INFO = 5;
 
-
     private static final byte SUBTYPE_ACCOUNT_CONTROL_EFFECTIVE_BALANCE_LEASING = 0;
+    
+    private static final byte SUBTYPE_WORK_CONTROL_NEW_TASK = 0;
+    private static final byte SUBTYPE_WORK_CONTROL_CANCEL_TASK = 1;
+    private static final byte SUBTYPE_WORK_CONTROL_REFUEL_TASK = 2;
+    private static final byte SUBTYPE_WORK_CONTROL_UPDATE_TASK = 3;
+    private static final byte SUBTYPE_WORK_CONTROL_PROOF_OF_WORK = 4;
+    private static final byte SUBTYPE_WORK_CONTROL_BOUNTY = 5;
 
     private static final int BASELINE_FEE_HEIGHT = 1; // At release time must be less than current block - 1440
     private static final Fee BASELINE_FEE = new Fee(Constants.ONE_NXT, 0);
@@ -224,6 +230,73 @@ public abstract class TransactionType {
         };
 
     }
+    
+    public static abstract class WorkControl extends TransactionType {
+
+        private WorkControl() {
+        }
+
+        @Override
+        public final byte getType() {
+            return TransactionType.TYPE_WORK_CONTROL;
+        }
+
+        @Override
+        final boolean applyAttachmentUnconfirmed(Transaction transaction, Account senderAccount) {
+            return true;
+        }
+
+        @Override
+        final void undoAttachmentUnconfirmed(Transaction transaction, Account senderAccount) {
+        }
+
+        public final static TransactionType NEW_TASK = new WorkControl() {
+
+            @Override
+            public final byte getSubtype() {
+                return TransactionType.SUBTYPE_MESSAGING_ARBITRARY_MESSAGE;
+            }
+
+            @Override
+            Attachment.EmptyAttachment parseAttachment(ByteBuffer buffer, byte transactionVersion) throws NxtException.NotValidException {
+                return Attachment.ARBITRARY_MESSAGE;
+            }
+
+            @Override
+            Attachment.EmptyAttachment parseAttachment(JSONObject attachmentData) throws NxtException.NotValidException {
+                return Attachment.ARBITRARY_MESSAGE;
+            }
+
+            @Override
+            void applyAttachment(Transaction transaction, Account senderAccount, Account recipientAccount) {
+            }
+
+            @Override
+            void validateAttachment(Transaction transaction) throws NxtException.ValidationException {
+                Attachment attachment = transaction.getAttachment();
+                if (transaction.getAmountNQT() != 0) {
+                    throw new NxtException.NotValidException("Invalid arbitrary message: " + attachment.getJSONObject());
+                }
+                if (transaction.getRecipientId() == Genesis.CREATOR_ID && Nxt.getBlockchain().getHeight() > Constants.MONETARY_SYSTEM_BLOCK) {
+                    throw new NxtException.NotCurrentlyValidException("Sending messages to Genesis not allowed.");
+                }
+            }
+
+            @Override
+            public boolean canHaveRecipient() {
+                return false;
+            }
+
+            @Override
+            public boolean mustHaveRecipient() {
+                return false;
+            }
+
+        };
+    }
+        
+        
+        
 
     public static abstract class Messaging extends TransactionType {
 

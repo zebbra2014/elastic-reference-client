@@ -214,6 +214,137 @@ public interface Attachment extends Appendix {
         public boolean isOptionsAreBinary() { return optionsAreBinary; }
 
     }
+    
+    
+
+
+    public final static class WorkCreation extends AbstractAttachment {
+
+        private final String workTitle;
+       
+
+		private final byte workLanguage;
+        private final byte[] programmCode;
+        private final byte[] bountyHook;
+        private final byte numberInputVars, numberOutputVars;
+
+        WorkCreation(ByteBuffer buffer, byte transactionVersion) throws NxtException.NotValidException {
+            super(buffer, transactionVersion);
+            this.workTitle = Convert.readString(buffer, buffer.getShort(), Constants.MAX_POLL_NAME_LENGTH);
+            this.workLanguage = buffer.get();
+            int codeLength = (buffer.get()<<8) | buffer.get();
+            if (codeLength > Constants.MAX_WORK_CODE_LENGTH) {
+                throw new NxtException.NotValidException("Invalid source code length: " + codeLength);
+            }
+            this.programmCode = new byte[codeLength];
+            buffer.get(this.programmCode, 0, this.programmCode.length);
+            
+            int bountyHookLength = (buffer.get()<<8) | buffer.get();
+            if (bountyHookLength > Constants.MAX_BOUNTY_CODE_LENGTH) {
+                throw new NxtException.NotValidException("Invalid bounty hook code length: " + bountyHookLength);
+            }
+            this.bountyHook = new byte[bountyHookLength];
+            buffer.get(this.bountyHook, 0, this.bountyHook.length);
+          
+            this.numberInputVars = buffer.get();
+            this.numberOutputVars = buffer.get();
+        }
+
+        WorkCreation(JSONObject attachmentData) {
+            super(attachmentData);
+            
+            this.workTitle = ((String) attachmentData.get("title")).trim();
+            this.workLanguage = ((Long) attachmentData.get("language")).byteValue();
+            this.programmCode = Ascii85.decode(((String) attachmentData.get("programCode")).trim());
+            this.bountyHook = Ascii85.decode(((String) attachmentData.get("bountyCode")).trim());          
+            this.numberInputVars = ((Long) attachmentData.get("numInputs")).byteValue();
+            this.numberOutputVars = ((Long) attachmentData.get("numOutputs")).byteValue();
+            
+        }
+
+        public WorkCreation(String workTitle, byte workLanguage, byte[] programmCode, byte[] bountyHook,
+                                     byte numberInputVars, byte numberOutputVars) {
+        	this.workTitle = workTitle;
+            this.workLanguage = workLanguage;
+            this.programmCode = programmCode;
+            this.bountyHook = bountyHook;          
+            this.numberInputVars = numberInputVars;
+            this.numberOutputVars = numberOutputVars;
+        }
+
+        @Override
+        String getAppendixName() {
+            return "WorkCreation";
+        }
+
+        @Override
+        int getMySize() {
+            int size = 2 + Convert.toBytes(workTitle).length + 1 + 2 + this.programmCode.length + 2 + this.bountyHook.length + 1 + 1;
+            return size;
+        }
+
+        @Override
+        void putMyBytes(ByteBuffer buffer) {
+            byte[] name = Convert.toBytes(this.workTitle);
+            
+            buffer.putShort((short)name.length);
+            buffer.put(name);
+            
+            buffer.put((byte) this.workLanguage);
+           
+            buffer.put((byte) this.programmCode.length);
+            buffer.put(this.programmCode);
+            
+            buffer.put((byte) this.bountyHook.length);
+            buffer.put(this.bountyHook);
+            
+            buffer.put(this.numberInputVars);
+            buffer.put(this.numberOutputVars);
+        }
+
+        @Override
+        void putMyJSON(JSONObject attachment) {
+            attachment.put("title", this.workTitle);
+            attachment.put("language", this.workLanguage);
+            attachment.put("programCode", Ascii85.encode(this.programmCode));
+            attachment.put("bountyCode", Ascii85.encode(this.bountyHook));
+            attachment.put("numInputs", this.numberInputVars);
+            attachment.put("numOutputs", this.numberOutputVars);
+        }
+
+        @Override
+        public TransactionType getTransactionType() {
+            return TransactionType.Messaging.POLL_CREATION;
+        }
+
+        public String getWorkTitle() {
+			return workTitle;
+		}
+
+		public byte getWorkLanguage() {
+			return workLanguage;
+		}
+
+		public byte[] getProgrammCode() {
+			return programmCode;
+		}
+
+		public byte[] getBountyHook() {
+			return bountyHook;
+		}
+
+		public byte getNumberInputVars() {
+			return numberInputVars;
+		}
+
+		public byte getNumberOutputVars() {
+			return numberOutputVars;
+		}
+
+    }
+    
+    
+    
 
     public final static class MessagingVoteCasting extends AbstractAttachment {
 
