@@ -229,7 +229,7 @@ public abstract class TransactionType {
 
         };
 
-    }
+    };
     
     public static abstract class WorkControl extends TransactionType {
 
@@ -254,32 +254,35 @@ public abstract class TransactionType {
 
             @Override
             public final byte getSubtype() {
-                return TransactionType.SUBTYPE_MESSAGING_ARBITRARY_MESSAGE;
+                return TransactionType.SUBTYPE_WORK_CONTROL_NEW_TASK;
             }
 
             @Override
-            Attachment.EmptyAttachment parseAttachment(ByteBuffer buffer, byte transactionVersion) throws NxtException.NotValidException {
-                return Attachment.ARBITRARY_MESSAGE;
+            Attachment.WorkCreation parseAttachment(ByteBuffer buffer, byte transactionVersion) throws NxtException.NotValidException {
+            	return new Attachment.WorkCreation(buffer, transactionVersion);
             }
 
             @Override
-            Attachment.EmptyAttachment parseAttachment(JSONObject attachmentData) throws NxtException.NotValidException {
-                return Attachment.ARBITRARY_MESSAGE;
+            Attachment.WorkCreation parseAttachment(JSONObject attachmentData) throws NxtException.NotValidException {
+            	return new Attachment.WorkCreation(attachmentData);
             }
 
             @Override
             void applyAttachment(Transaction transaction, Account senderAccount, Account recipientAccount) {
+            	Attachment.WorkCreation attachment = (Attachment.WorkCreation) transaction.getAttachment();
+            	// APPLY IT NOW
             }
 
             @Override
             void validateAttachment(Transaction transaction) throws NxtException.ValidationException {
-                Attachment attachment = transaction.getAttachment();
+                /*Attachment attachment = transaction.getAttachment();
                 if (transaction.getAmountNQT() != 0) {
                     throw new NxtException.NotValidException("Invalid arbitrary message: " + attachment.getJSONObject());
                 }
                 if (transaction.getRecipientId() == Genesis.CREATOR_ID && Nxt.getBlockchain().getHeight() > Constants.MONETARY_SYSTEM_BLOCK) {
                     throw new NxtException.NotCurrentlyValidException("Sending messages to Genesis not allowed.");
-                }
+                }*/
+            	// TODO, perform some checks here
             }
 
             @Override
@@ -293,7 +296,54 @@ public abstract class TransactionType {
             }
 
         };
-    }
+        
+        public final static TransactionType CANCEL_TASK = new WorkControl() {
+
+            @Override
+            public final byte getSubtype() {
+                return TransactionType.SUBTYPE_WORK_CONTROL_CANCEL_TASK;
+            }
+
+            @Override
+            Attachment.WorkIdentifier parseAttachment(ByteBuffer buffer, byte transactionVersion) throws NxtException.NotValidException {
+            	return new Attachment.WorkIdentifier(buffer, transactionVersion);
+            }
+
+            @Override
+            Attachment.WorkIdentifier parseAttachment(JSONObject attachmentData) throws NxtException.NotValidException {
+            	return new Attachment.WorkIdentifier(attachmentData);
+            }
+
+            @Override
+            void applyAttachment(Transaction transaction, Account senderAccount, Account recipientAccount) {
+            	Attachment.WorkIdentifier attachment = (Attachment.WorkIdentifier) transaction.getAttachment();
+            	// APPLY IT NOW, i.e., CANCEL TRANSACTION AND REFUND REMAINING STUFF
+            }
+
+            @Override
+            void validateAttachment(Transaction transaction) throws NxtException.ValidationException {
+                /*Attachment attachment = transaction.getAttachment();
+                if (transaction.getAmountNQT() != 0) {
+                    throw new NxtException.NotValidException("Invalid arbitrary message: " + attachment.getJSONObject());
+                }
+                if (transaction.getRecipientId() == Genesis.CREATOR_ID && Nxt.getBlockchain().getHeight() > Constants.MONETARY_SYSTEM_BLOCK) {
+                    throw new NxtException.NotCurrentlyValidException("Sending messages to Genesis not allowed.");
+                }*/
+            	// TODO, perform some checks here
+            }
+
+            @Override
+            public boolean canHaveRecipient() {
+                return false;
+            }
+
+            @Override
+            public boolean mustHaveRecipient() {
+                return false;
+            }
+        };
+        	
+    };
         
         
         

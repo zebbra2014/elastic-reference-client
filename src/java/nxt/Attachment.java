@@ -217,12 +217,60 @@ public interface Attachment extends Appendix {
     
     
 
+    public final static class WorkIdentifier extends AbstractAttachment {
+
+        public long getWorkId() {
+			return workId;
+		}
+
+		private final long workId;
+
+        WorkIdentifier(ByteBuffer buffer, byte transactionVersion) throws NxtException.NotValidException {
+            super(buffer, transactionVersion);
+            this.workId = buffer.getLong();
+        }
+
+        WorkIdentifier(JSONObject attachmentData) {
+            super(attachmentData);
+            this.workId = Convert.parseUnsignedLong((String)attachmentData.get("workId"));
+        }
+
+        public WorkIdentifier(long workId) {
+            this.workId = workId;
+        }
+
+        @Override
+        String getAppendixName() {
+            return "WorkIdentifier";
+        }
+
+        @Override
+        int getMySize() {
+            return 8;
+        }
+
+        @Override
+        void putMyBytes(ByteBuffer buffer) {
+            buffer.putLong(this.workId);
+        }
+
+        @Override
+        void putMyJSON(JSONObject attachment) {
+            attachment.put("workId", Convert.toUnsignedLong(this.workId));
+        }
+
+        @Override
+        public TransactionType getTransactionType() {
+        	return TransactionType.WorkControl.CANCEL_TASK;
+        }
+
+
+
+    }
 
     public final static class WorkCreation extends AbstractAttachment {
 
         private final String workTitle;
-       
-
 		private final byte workLanguage;
         private final byte[] programmCode;
         private final byte[] bountyHook;
@@ -314,7 +362,7 @@ public interface Attachment extends Appendix {
 
         @Override
         public TransactionType getTransactionType() {
-            return TransactionType.Messaging.POLL_CREATION;
+            return TransactionType.WorkControl.NEW_TASK;
         }
 
         public String getWorkTitle() {
