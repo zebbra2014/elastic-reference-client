@@ -365,6 +365,61 @@ public interface Attachment extends Appendix {
         	return TransactionType.WorkControl.PROOF_OF_WORK;
         }
     }
+    
+    public final static class PiggybackedProofOfBounty extends AbstractAttachment {
+
+        public long getWorkId() {
+			return workId;
+		}
+
+		private final long workId;
+		private final short index_10ms_block;
+		
+
+		PiggybackedProofOfBounty(ByteBuffer buffer, byte transactionVersion) throws NxtException.NotValidException {
+            super(buffer, transactionVersion);
+            this.workId = buffer.getLong();
+            this.index_10ms_block = buffer.getShort();
+        }
+
+		PiggybackedProofOfBounty(JSONObject attachmentData) {
+            super(attachmentData);
+            this.workId = Convert.parseUnsignedLong((String)attachmentData.get("id"));
+            this.index_10ms_block = (short)attachmentData.get("msblock");
+        }
+
+        public PiggybackedProofOfBounty(long workId, short index_10ms_block) {
+            this.workId = workId;
+            this.index_10ms_block = index_10ms_block;
+        }
+
+        @Override
+        String getAppendixName() {
+            return "PiggybackedProofOfWork";
+        }
+
+        @Override
+        int getMySize() {
+            return 8 + 4;
+        }
+
+        @Override
+        void putMyBytes(ByteBuffer buffer) {
+            buffer.putLong(this.workId);
+            buffer.putShort(this.index_10ms_block);
+        }
+
+        @Override
+        void putMyJSON(JSONObject attachment) {
+            attachment.put("id", Convert.toUnsignedLong(this.workId));
+            attachment.put("msblock", Convert.toUnsignedLong(this.index_10ms_block));
+        }
+
+        @Override
+        public TransactionType getTransactionType() {
+        	return TransactionType.WorkControl.BOUNTY;
+        }
+    }
 
     public final static class WorkCreation extends AbstractAttachment {
 
