@@ -230,7 +230,7 @@ public interface Attachment extends Appendix {
 
 		WorkIdentifierRefueling(JSONObject attachmentData) {
             super(attachmentData);
-            this.workId = Convert.parseUnsignedLong((String)attachmentData.get("workId"));
+            this.workId = Convert.parseUnsignedLong((String)attachmentData.get("id"));
         }
 
         public WorkIdentifierRefueling(long workId) {
@@ -239,7 +239,7 @@ public interface Attachment extends Appendix {
 
         @Override
         String getAppendixName() {
-            return "WorkIdentifier";
+            return "WorkIdentifierRefueling";
         }
 
         @Override
@@ -254,7 +254,7 @@ public interface Attachment extends Appendix {
 
         @Override
         void putMyJSON(JSONObject attachment) {
-            attachment.put("workId", Convert.toUnsignedLong(this.workId));
+            attachment.put("id", Convert.toUnsignedLong(this.workId));
         }
 
         @Override
@@ -262,6 +262,7 @@ public interface Attachment extends Appendix {
         	return TransactionType.WorkControl.REFUEL_TASK;
         }
     }
+    
     public final static class WorkIdentifierCancellation extends AbstractAttachment {
 
         public long getWorkId() {
@@ -277,7 +278,7 @@ public interface Attachment extends Appendix {
 
 		WorkIdentifierCancellation(JSONObject attachmentData) {
             super(attachmentData);
-            this.workId = Convert.parseUnsignedLong((String)attachmentData.get("workId"));
+            this.workId = Convert.parseUnsignedLong((String)attachmentData.get("id"));
         }
 
         public WorkIdentifierCancellation(long workId) {
@@ -286,7 +287,7 @@ public interface Attachment extends Appendix {
 
         @Override
         String getAppendixName() {
-            return "WorkIdentifier";
+            return "WorkIdentifierCancellation";
         }
 
         @Override
@@ -301,12 +302,67 @@ public interface Attachment extends Appendix {
 
         @Override
         void putMyJSON(JSONObject attachment) {
-            attachment.put("workId", Convert.toUnsignedLong(this.workId));
+            attachment.put("id", Convert.toUnsignedLong(this.workId));
         }
 
         @Override
         public TransactionType getTransactionType() {
         	return TransactionType.WorkControl.CANCEL_TASK;
+        }
+    }
+    
+    public final static class PiggybackedProofOfWork extends AbstractAttachment {
+
+        public long getWorkId() {
+			return workId;
+		}
+
+		private final long workId;
+		private final short index_10ms_block;
+		
+
+		PiggybackedProofOfWork(ByteBuffer buffer, byte transactionVersion) throws NxtException.NotValidException {
+            super(buffer, transactionVersion);
+            this.workId = buffer.getLong();
+            this.index_10ms_block = buffer.getShort();
+        }
+
+		PiggybackedProofOfWork(JSONObject attachmentData) {
+            super(attachmentData);
+            this.workId = Convert.parseUnsignedLong((String)attachmentData.get("id"));
+            this.index_10ms_block = (short)attachmentData.get("msblock");
+        }
+
+        public PiggybackedProofOfWork(long workId, short index_10ms_block) {
+            this.workId = workId;
+            this.index_10ms_block = index_10ms_block;
+        }
+
+        @Override
+        String getAppendixName() {
+            return "PiggybackedProofOfWork";
+        }
+
+        @Override
+        int getMySize() {
+            return 8 + 4;
+        }
+
+        @Override
+        void putMyBytes(ByteBuffer buffer) {
+            buffer.putLong(this.workId);
+            buffer.putShort(this.index_10ms_block);
+        }
+
+        @Override
+        void putMyJSON(JSONObject attachment) {
+            attachment.put("id", Convert.toUnsignedLong(this.workId));
+            attachment.put("msblock", Convert.toUnsignedLong(this.index_10ms_block));
+        }
+
+        @Override
+        public TransactionType getTransactionType() {
+        	return TransactionType.WorkControl.PROOF_OF_WORK;
         }
     }
 
