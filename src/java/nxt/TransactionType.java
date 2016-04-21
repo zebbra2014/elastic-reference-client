@@ -305,18 +305,18 @@ public abstract class TransactionType {
             }
 
             @Override
-            Attachment.WorkIdentifier parseAttachment(ByteBuffer buffer, byte transactionVersion) throws NxtException.NotValidException {
-            	return new Attachment.WorkIdentifier(buffer, transactionVersion);
+            Attachment.WorkIdentifierCancellation parseAttachment(ByteBuffer buffer, byte transactionVersion) throws NxtException.NotValidException {
+            	return new Attachment.WorkIdentifierCancellation(buffer, transactionVersion);
             }
 
             @Override
-            Attachment.WorkIdentifier parseAttachment(JSONObject attachmentData) throws NxtException.NotValidException {
-            	return new Attachment.WorkIdentifier(attachmentData);
+            Attachment.WorkIdentifierCancellation parseAttachment(JSONObject attachmentData) throws NxtException.NotValidException {
+            	return new Attachment.WorkIdentifierCancellation(attachmentData);
             }
 
             @Override
             void applyAttachment(Transaction transaction, Account senderAccount, Account recipientAccount) {
-            	Attachment.WorkIdentifier attachment = (Attachment.WorkIdentifier) transaction.getAttachment();
+            	Attachment.WorkIdentifierCancellation attachment = (Attachment.WorkIdentifierCancellation) transaction.getAttachment();
             	// APPLY IT NOW, i.e., CANCEL TRANSACTION AND REFUND REMAINING STUFF
             }
 
@@ -351,18 +351,63 @@ public abstract class TransactionType {
             }
 
             @Override
-            Attachment.WorkIdentifier parseAttachment(ByteBuffer buffer, byte transactionVersion) throws NxtException.NotValidException {
-            	return new Attachment.WorkIdentifier(buffer, transactionVersion);
+            Attachment.WorkIdentifierRefueling parseAttachment(ByteBuffer buffer, byte transactionVersion) throws NxtException.NotValidException {
+            	return new Attachment.WorkIdentifierRefueling(buffer, transactionVersion);
             }
 
             @Override
-            Attachment.WorkIdentifier parseAttachment(JSONObject attachmentData) throws NxtException.NotValidException {
-            	return new Attachment.WorkIdentifier(attachmentData);
+            Attachment.WorkIdentifierRefueling parseAttachment(JSONObject attachmentData) throws NxtException.NotValidException {
+            	return new Attachment.WorkIdentifierRefueling(attachmentData);
             }
 
             @Override
             void applyAttachment(Transaction transaction, Account senderAccount, Account recipientAccount) {
-            	Attachment.WorkIdentifier attachment = (Attachment.WorkIdentifier) transaction.getAttachment();
+            	Attachment.WorkIdentifierRefueling attachment = (Attachment.WorkIdentifierRefueling) transaction.getAttachment();
+            	// APPLY IT NOW, i.e., CANCEL TRANSACTION AND REFUND REMAINING STUFF
+            }
+
+            @Override
+            void validateAttachment(Transaction transaction) throws NxtException.ValidationException {
+                /*Attachment attachment = transaction.getAttachment();
+                if (transaction.getAmountNQT() != 0) {
+                    throw new NxtException.NotValidException("Invalid arbitrary message: " + attachment.getJSONObject());
+                }
+                if (transaction.getRecipientId() == Genesis.CREATOR_ID && Nxt.getBlockchain().getHeight() > Constants.MONETARY_SYSTEM_BLOCK) {
+                    throw new NxtException.NotCurrentlyValidException("Sending messages to Genesis not allowed.");
+                }*/
+            	// TODO, perform some checks here
+            }
+
+            @Override
+            public boolean canHaveRecipient() {
+                return false;
+            }
+
+            @Override
+            public boolean mustHaveRecipient() {
+                return false;
+            }
+        };
+        public final static TransactionType UPDATE_TASK = new WorkControl() {
+
+            @Override
+            public final byte getSubtype() {
+                return TransactionType.SUBTYPE_WORK_CONTROL_UPDATE_TASK;
+            }
+
+            @Override
+            Attachment.WorkUpdate parseAttachment(ByteBuffer buffer, byte transactionVersion) throws NxtException.NotValidException {
+            	return new Attachment.WorkUpdate(buffer, transactionVersion);
+            }
+
+            @Override
+            Attachment.WorkUpdate parseAttachment(JSONObject attachmentData) throws NxtException.NotValidException {
+            	return new Attachment.WorkUpdate(attachmentData);
+            }
+
+            @Override
+            void applyAttachment(Transaction transaction, Account senderAccount, Account recipientAccount) {
+            	Attachment.WorkUpdate attachment = (Attachment.WorkUpdate) transaction.getAttachment();
             	// APPLY IT NOW, i.e., CANCEL TRANSACTION AND REFUND REMAINING STUFF
             }
 
