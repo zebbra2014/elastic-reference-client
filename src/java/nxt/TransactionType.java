@@ -311,7 +311,7 @@ public abstract class TransactionType {
             @Override
             void applyAttachment(Transaction transaction, Account senderAccount, Account recipientAccount) {
             	Attachment.WorkIdentifierCancellation attachment = (Attachment.WorkIdentifierCancellation) transaction.getAttachment();
-            	WorkLogicManager.cancelWork(transaction.getSenderId(), attachment);
+            	WorkLogicManager.cancelWork(attachment);
             }
 
             @Override
@@ -431,7 +431,7 @@ public abstract class TransactionType {
             @Override
             void applyAttachment(Transaction transaction, Account senderAccount, Account recipientAccount) {
             	Attachment.PiggybackedProofOfWork attachment = (Attachment.PiggybackedProofOfWork) transaction.getAttachment();
-            	WorkLogicManager.submitProofOfWork(transaction.getSenderId(), attachment);
+            	WorkLogicManager.createNewProofOfWork(attachment.getWorkId(), transaction.getId(), transaction.getSenderId(), transaction.getBlockId(), transaction.getAmountNQT(), attachment);
             }
 
             @Override

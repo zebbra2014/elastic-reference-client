@@ -26,8 +26,31 @@ public class WorkLogicManager {
     + "deadline INT NOT NULL, amount INT NOT NULL, referenced_transaction_id BIGINT, block_id BIGINT NOT NULL, FOREIGN KEY (block_id) REFERENCES block (id) ON DELETE CASCADE "
     + "sender_account_id BIGINT NOT NULL, code OTHER, hook OTHER, payback_transaction_id INT NOT NULL, last_payment_transaction_id INT NOT NULL)"); */
 
-	public static void cancelWork(long senderId, WorkIdentifierCancellation attachment) {
-		
+	public static void cancelWork(WorkIdentifierCancellation attachment) {
+		if (!Db.db.isInTransaction()) {
+            try {
+                Db.db.beginTransaction();
+                cancelWork(attachment);
+                Db.db.commitTransaction();
+            } catch (Exception e) {
+                Logger.logErrorMessage(e.toString(), e);
+                Db.db.rollbackTransaction();
+                throw e;
+            } finally {
+                Db.db.endTransaction();
+            }
+            return;
+        }
+        try {
+            try (Connection con = Db.db.getConnection(); PreparedStatement pstmt = con.prepareStatement("UPDATE work SET payback_transaction_id = ? WHERE id = ?")) {
+                int i = 0;
+                pstmt.setLong(++i, attachment.getWorkId());
+                pstmt.executeUpdate();
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e.toString(), e);
+        }
 	}
 
 	public static void refuelWork(WorkIdentifierRefueling attachment,
@@ -107,7 +130,7 @@ public class WorkLogicManager {
         }
 	}
 	
-	public static void createNewProofOfWork(long workId, long txId, long senderId, long blockId, long PayOutAmountNQT, WorkCreation attachment) {
+	public static void createNewProofOfWork(long workId, long txId, long senderId, long blockId, long PayOutAmountNQT, PiggybackedProofOfWork attachment) {
 		if (!Db.db.isInTransaction()) {
             try {
                 Db.db.beginTransaction();
@@ -165,10 +188,6 @@ public class WorkLogicManager {
 
 	public static void updateWork(WorkUpdate attachment) {
 		
-	}
-
-	public static void submitProofOfWork(long senderId,
-			PiggybackedProofOfWork attachment) {		
 	}
 
 	public static void submitBounty(long senderId,
