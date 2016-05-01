@@ -101,7 +101,6 @@ public class WorkLogicManager {
                 pstmt.setBytes(++i, attachment.getProgrammCode());
                 pstmt.setBytes(++i, attachment.getBountyHook());
                 pstmt.executeUpdate();
-                
             }
         } catch (SQLException e) {
             throw new RuntimeException(e.toString(), e);
