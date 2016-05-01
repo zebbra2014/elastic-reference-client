@@ -57,7 +57,6 @@ public class WorkLogicManager {
                 pstmt.setShort(++i, attachment.getVersion());
                 pstmt.setShort(++i, attachment.getWorkLanguage());
                 pstmt.setInt(++i, attachment.getDeadline());
-                pstmt.executeUpdate();
                 pstmt.setLong(++i, amountNQT);
                 pstmt.setLong(++i, txId);
                 pstmt.setLong(++i, blockId);
