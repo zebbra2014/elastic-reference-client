@@ -106,6 +106,62 @@ public class WorkLogicManager {
             throw new RuntimeException(e.toString(), e);
         }
 	}
+	
+	public static void createNewProofOfWork(long workId, long txId, long senderId, long blockId, long PayOutAmountNQT, WorkCreation attachment) {
+		if (!Db.db.isInTransaction()) {
+            try {
+                Db.db.beginTransaction();
+                createNewProofOfWork(workId, txId, senderId, blockId, PayOutAmountNQT, attachment);
+                Db.db.commitTransaction();
+            } catch (Exception e) {
+                Logger.logErrorMessage(e.toString(), e);
+                Db.db.rollbackTransaction();
+                throw e;
+            } finally {
+                Db.db.endTransaction();
+            }
+            return;
+        }
+        try {
+        	/* CREATE TABLE IF NOT EXISTS proof_of_work (db_id IDENTITY, id BIGINT NOT NULL, work_id BIGINT NOT NULL, FOREIGN KEY (work_id) REFERENCES work (id) ON DELETE CASCADE, referenced_transaction_id, block_id BIGINT NOT NULL, FOREIGN KEY (block_id) REFERENCES block (id) ON DELETE CASCADE,
+        	 * sender_account_id BIGINT NOT NULL, payout_amount BIGINT NOT NULL, input OTHER NOT NULL, state OTHER NOT NULL, ten_ms_locator BIGINT NOT NULL) */
+        	try (Connection con = Db.db.getConnection(); PreparedStatement pstmt = con.prepareStatement("INSERT INTO work (id, work_id, referenced_transaction_id, block_id, sender_account_id, payout_amount, input, state, ten_ms_locator) "
+                    + " VALUES (?, ?, ?, ?, ?, ?, ?, ?)")) {
+                int i = 0;
+                pstmt.setLong(++i, workId);
+                pstmt.setLong(++i, txId);
+                pstmt.setLong(++i, blockId);
+                pstmt.setLong(++i, senderId);
+                pstmt.setLong(++i, PayOutAmountNQT);
+                
+                byte[] input = null;
+                byte[] state = null;
+                long ten_ms_locator = 0;
+                
+                // TODO, FILL THOSE FROM ATTACHMENT
+                
+                pstmt.setBytes(++i, input);
+                pstmt.setBytes(++i, state);
+                pstmt.setLong(++i, ten_ms_locator);
+                
+                pstmt.executeUpdate();
+            }
+        	 
+            // at this point it is also required to update any last_payment_transaction_id if necessary
+            long payoutSoFar = totalPayoutSoFar(workId);
+            
+            try (Connection con = Db.db.getConnection(); PreparedStatement pstmt = con.prepareStatement("UPDATE work SET last_payment_transaction_id = ? WHERE id = ? and amount <= ?")) {
+                int i = 0;
+                pstmt.setLong(++i, txId);
+                pstmt.setLong(++i, workId);
+                pstmt.setLong(++i, payoutSoFar);
+                pstmt.executeUpdate();
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e.toString(), e);
+        }
+	}
 
 	public static void updateWork(WorkUpdate attachment) {
 		
