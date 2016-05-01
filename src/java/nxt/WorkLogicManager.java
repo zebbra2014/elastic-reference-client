@@ -22,10 +22,6 @@ import nxt.util.Logger;
 
 public class WorkLogicManager {
 
-	/* apply("CREATE TABLE IF NOT EXISTS work (db_id IDENTITY, id BIGINT NOT NULL, work_title VARCHAR NOT NULL, variables_input INT NOT NULL, variables_output INT NOT NULL, language_id INT NOT NULL"
-    + "deadline INT NOT NULL, amount INT NOT NULL, referenced_transaction_id BIGINT, block_id BIGINT NOT NULL, FOREIGN KEY (block_id) REFERENCES block (id) ON DELETE CASCADE "
-    + "sender_account_id BIGINT NOT NULL, code OTHER, hook OTHER, payback_transaction_id INT NOT NULL, last_payment_transaction_id INT NOT NULL)"); */
-
 	public static void cancelWork(WorkIdentifierCancellation attachment) {
 		if (!Db.db.isInTransaction()) {
             try {
@@ -51,11 +47,6 @@ public class WorkLogicManager {
         } catch (SQLException e) {
             throw new RuntimeException(e.toString(), e);
         }
-	}
-
-	public static void refuelWork(WorkIdentifierRefueling attachment,
-			long amountNQT) {
-		
 	}
 	
 	public static boolean isStillPending(long workId, long senderId) {	
@@ -146,8 +137,7 @@ public class WorkLogicManager {
             return;
         }
         try {
-        	/* CREATE TABLE IF NOT EXISTS proof_of_work (db_id IDENTITY, id BIGINT NOT NULL, work_id BIGINT NOT NULL, FOREIGN KEY (work_id) REFERENCES work (id) ON DELETE CASCADE, referenced_transaction_id, block_id BIGINT NOT NULL, FOREIGN KEY (block_id) REFERENCES block (id) ON DELETE CASCADE,
-        	 * sender_account_id BIGINT NOT NULL, payout_amount BIGINT NOT NULL, input OTHER NOT NULL, state OTHER NOT NULL, ten_ms_locator BIGINT NOT NULL) */
+        
         	try (Connection con = Db.db.getConnection(); PreparedStatement pstmt = con.prepareStatement("INSERT INTO work (id, work_id, referenced_transaction_id, block_id, sender_account_id, payout_amount, input, state, ten_ms_locator) "
                     + " VALUES (?, ?, ?, ?, ?, ?, ?, ?)")) {
                 int i = 0;
@@ -192,6 +182,11 @@ public class WorkLogicManager {
 
 	public static void submitBounty(long senderId,
 			PiggybackedProofOfBounty attachment) {
+		
+	}
+
+	public static void refuelWork(WorkIdentifierRefueling attachment,
+			long amountNQT) {
 		
 	}
 
