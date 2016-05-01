@@ -270,7 +270,7 @@ public abstract class TransactionType {
             @Override
             void applyAttachment(Transaction transaction, Account senderAccount, Account recipientAccount) {
             	Attachment.WorkCreation attachment = (Attachment.WorkCreation) transaction.getAttachment();
-            	// APPLY IT NOW
+            	WorkLogicManager.createNewWork(transaction.getAmountNQT(), attachment);
             }
 
             @Override
@@ -317,7 +317,7 @@ public abstract class TransactionType {
             @Override
             void applyAttachment(Transaction transaction, Account senderAccount, Account recipientAccount) {
             	Attachment.WorkIdentifierCancellation attachment = (Attachment.WorkIdentifierCancellation) transaction.getAttachment();
-            	// APPLY IT NOW, i.e., CANCEL TRANSACTION AND REFUND REMAINING STUFF
+            	WorkLogicManager.cancelWork(transaction.getSenderId(), attachment);
             }
 
             @Override
@@ -363,7 +363,7 @@ public abstract class TransactionType {
             @Override
             void applyAttachment(Transaction transaction, Account senderAccount, Account recipientAccount) {
             	Attachment.WorkIdentifierRefueling attachment = (Attachment.WorkIdentifierRefueling) transaction.getAttachment();
-            	// APPLY IT NOW, i.e., CANCEL TRANSACTION AND REFUND REMAINING STUFF
+            	WorkLogicManager.refuelWork(attachment, transaction.getAmountNQT());
             }
 
             @Override
@@ -408,7 +408,7 @@ public abstract class TransactionType {
             @Override
             void applyAttachment(Transaction transaction, Account senderAccount, Account recipientAccount) {
             	Attachment.WorkUpdate attachment = (Attachment.WorkUpdate) transaction.getAttachment();
-            	// APPLY IT NOW, i.e., CANCEL TRANSACTION AND REFUND REMAINING STUFF
+            	WorkLogicManager.updateWork(attachment);
             }
 
             @Override
@@ -453,7 +453,7 @@ public abstract class TransactionType {
             @Override
             void applyAttachment(Transaction transaction, Account senderAccount, Account recipientAccount) {
             	Attachment.PiggybackedProofOfWork attachment = (Attachment.PiggybackedProofOfWork) transaction.getAttachment();
-            	// APPLY IT NOW, i.e., CANCEL TRANSACTION AND REFUND REMAINING STUFF
+            	WorkLogicManager.submitProofOfWork(transaction.getSenderId(), attachment);
             }
 
             @Override
@@ -498,7 +498,7 @@ public abstract class TransactionType {
             @Override
             void applyAttachment(Transaction transaction, Account senderAccount, Account recipientAccount) {
             	Attachment.PiggybackedProofOfBounty attachment = (Attachment.PiggybackedProofOfBounty) transaction.getAttachment();
-            	// APPLY IT NOW, i.e., CANCEL TRANSACTION AND REFUND REMAINING STUFF
+            	WorkLogicManager.submitBounty(transaction.getSenderId(), attachment);
             }
 
             @Override
