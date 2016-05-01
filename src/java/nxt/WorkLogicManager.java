@@ -57,7 +57,7 @@ public class WorkLogicManager {
 	public static long totalPayoutSoFar(long workId) {	
         try (Connection con = Db.db.getConnection();
              PreparedStatement pstmt = con.prepareStatement(
-                     "SELECT SUM(payout_amount) FROM work WHERE id = ? and payback_transaction_id = NULL and last_payment_transaction_id = NULL")) {
+                     "SELECT SUM(payout_amount) FROM proof_of_work WHERE work_id = ?")) {
         	int i = 0;
             pstmt.setLong(++i, workId);
             ResultSet check = pstmt.executeQuery();
