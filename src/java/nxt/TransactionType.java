@@ -270,19 +270,13 @@ public abstract class TransactionType {
             @Override
             void applyAttachment(Transaction transaction, Account senderAccount, Account recipientAccount) {
             	Attachment.WorkCreation attachment = (Attachment.WorkCreation) transaction.getAttachment();
-            	WorkLogicManager.createNewWork(transaction.getAmountNQT(), attachment);
+            	// To calculate the WorkID i just take the TxID and calculate + 1
+            	WorkLogicManager.createNewWork(transaction.getId() + 1, transaction.getId(), transaction.getSenderId(), transaction.getBlockId(), transaction.getBlock().getHeight(), transaction.getAmountNQT(), attachment);
             }
 
             @Override
             void validateAttachment(Transaction transaction) throws NxtException.ValidationException {
-                /*Attachment attachment = transaction.getAttachment();
-                if (transaction.getAmountNQT() != 0) {
-                    throw new NxtException.NotValidException("Invalid arbitrary message: " + attachment.getJSONObject());
-                }
-                if (transaction.getRecipientId() == Genesis.CREATOR_ID && Nxt.getBlockchain().getHeight() > Constants.MONETARY_SYSTEM_BLOCK) {
-                    throw new NxtException.NotCurrentlyValidException("Sending messages to Genesis not allowed.");
-                }*/
-            	// TODO, perform some checks here
+       
             }
 
             @Override
@@ -322,14 +316,7 @@ public abstract class TransactionType {
 
             @Override
             void validateAttachment(Transaction transaction) throws NxtException.ValidationException {
-                /*Attachment attachment = transaction.getAttachment();
-                if (transaction.getAmountNQT() != 0) {
-                    throw new NxtException.NotValidException("Invalid arbitrary message: " + attachment.getJSONObject());
-                }
-                if (transaction.getRecipientId() == Genesis.CREATOR_ID && Nxt.getBlockchain().getHeight() > Constants.MONETARY_SYSTEM_BLOCK) {
-                    throw new NxtException.NotCurrentlyValidException("Sending messages to Genesis not allowed.");
-                }*/
-            	// TODO, perform some checks here
+             
             }
 
             @Override
@@ -368,14 +355,7 @@ public abstract class TransactionType {
 
             @Override
             void validateAttachment(Transaction transaction) throws NxtException.ValidationException {
-                /*Attachment attachment = transaction.getAttachment();
-                if (transaction.getAmountNQT() != 0) {
-                    throw new NxtException.NotValidException("Invalid arbitrary message: " + attachment.getJSONObject());
-                }
-                if (transaction.getRecipientId() == Genesis.CREATOR_ID && Nxt.getBlockchain().getHeight() > Constants.MONETARY_SYSTEM_BLOCK) {
-                    throw new NxtException.NotCurrentlyValidException("Sending messages to Genesis not allowed.");
-                }*/
-            	// TODO, perform some checks here
+                
             }
 
             @Override
@@ -413,14 +393,7 @@ public abstract class TransactionType {
 
             @Override
             void validateAttachment(Transaction transaction) throws NxtException.ValidationException {
-                /*Attachment attachment = transaction.getAttachment();
-                if (transaction.getAmountNQT() != 0) {
-                    throw new NxtException.NotValidException("Invalid arbitrary message: " + attachment.getJSONObject());
-                }
-                if (transaction.getRecipientId() == Genesis.CREATOR_ID && Nxt.getBlockchain().getHeight() > Constants.MONETARY_SYSTEM_BLOCK) {
-                    throw new NxtException.NotCurrentlyValidException("Sending messages to Genesis not allowed.");
-                }*/
-            	// TODO, perform some checks here
+                
             }
 
             @Override
@@ -458,14 +431,7 @@ public abstract class TransactionType {
 
             @Override
             void validateAttachment(Transaction transaction) throws NxtException.ValidationException {
-                /*Attachment attachment = transaction.getAttachment();
-                if (transaction.getAmountNQT() != 0) {
-                    throw new NxtException.NotValidException("Invalid arbitrary message: " + attachment.getJSONObject());
-                }
-                if (transaction.getRecipientId() == Genesis.CREATOR_ID && Nxt.getBlockchain().getHeight() > Constants.MONETARY_SYSTEM_BLOCK) {
-                    throw new NxtException.NotCurrentlyValidException("Sending messages to Genesis not allowed.");
-                }*/
-            	// TODO, perform some checks here
+           
             }
 
             @Override
@@ -503,14 +469,7 @@ public abstract class TransactionType {
 
             @Override
             void validateAttachment(Transaction transaction) throws NxtException.ValidationException {
-                /*Attachment attachment = transaction.getAttachment();
-                if (transaction.getAmountNQT() != 0) {
-                    throw new NxtException.NotValidException("Invalid arbitrary message: " + attachment.getJSONObject());
-                }
-                if (transaction.getRecipientId() == Genesis.CREATOR_ID && Nxt.getBlockchain().getHeight() > Constants.MONETARY_SYSTEM_BLOCK) {
-                    throw new NxtException.NotCurrentlyValidException("Sending messages to Genesis not allowed.");
-                }*/
-            	// TODO, perform some checks here
+                
             }
 
             @Override

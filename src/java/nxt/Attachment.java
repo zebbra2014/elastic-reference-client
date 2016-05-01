@@ -428,6 +428,7 @@ public interface Attachment extends Appendix {
         private final byte[] programmCode;
         private final byte[] bountyHook;
         private final byte numberInputVars, numberOutputVars;
+        private final int deadline;
 
         WorkCreation(ByteBuffer buffer, byte transactionVersion) throws NxtException.NotValidException {
             super(buffer, transactionVersion);
@@ -449,6 +450,8 @@ public interface Attachment extends Appendix {
           
             this.numberInputVars = buffer.get();
             this.numberOutputVars = buffer.get();
+            
+            this.deadline = buffer.getInt();
         }
 
         WorkCreation(JSONObject attachmentData) {
@@ -460,17 +463,19 @@ public interface Attachment extends Appendix {
             this.bountyHook = Ascii85.decode(((String) attachmentData.get("bountyCode")).trim());          
             this.numberInputVars = ((Long) attachmentData.get("numInputs")).byteValue();
             this.numberOutputVars = ((Long) attachmentData.get("numOutputs")).byteValue();
+            this.deadline = ((Long) attachmentData.get("deadline")).byteValue();
             
         }
 
         public WorkCreation(String workTitle, byte workLanguage, byte[] programmCode, byte[] bountyHook,
-                                     byte numberInputVars, byte numberOutputVars) {
+                                     byte numberInputVars, byte numberOutputVars, int deadline) {
         	this.workTitle = workTitle;
             this.workLanguage = workLanguage;
             this.programmCode = programmCode;
             this.bountyHook = bountyHook;          
             this.numberInputVars = numberInputVars;
             this.numberOutputVars = numberOutputVars;
+            this.deadline = deadline;
         }
 
         @Override
@@ -480,7 +485,7 @@ public interface Attachment extends Appendix {
 
         @Override
         int getMySize() {
-            int size = 2 + Convert.toBytes(workTitle).length + 1 + 2 + this.programmCode.length + 2 + this.bountyHook.length + 1 + 1;
+            int size = 2 + Convert.toBytes(workTitle).length + 1 + 2 + this.programmCode.length + 2 + this.bountyHook.length + 1 + 1 + 4;
             return size;
         }
 
@@ -501,6 +506,8 @@ public interface Attachment extends Appendix {
             
             buffer.put(this.numberInputVars);
             buffer.put(this.numberOutputVars);
+            
+            buffer.putInt(this.deadline);
         }
 
         @Override
@@ -511,6 +518,7 @@ public interface Attachment extends Appendix {
             attachment.put("bountyCode", Ascii85.encode(this.bountyHook));
             attachment.put("numInputs", this.numberInputVars);
             attachment.put("numOutputs", this.numberOutputVars);
+            attachment.put("deadline", this.deadline);
         }
 
         @Override
@@ -540,6 +548,10 @@ public interface Attachment extends Appendix {
 
 		public byte getNumberOutputVars() {
 			return numberOutputVars;
+		}
+
+		public int getDeadline() {
+			return deadline;
 		}
 
     }
