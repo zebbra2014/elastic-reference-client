@@ -436,7 +436,8 @@ public abstract class TransactionType {
 
             @Override
             void validateAttachment(Transaction transaction) throws NxtException.ValidationException {
-           
+            	// TODO: Check the payback transaction does not "reward" more or less than allowed
+
             }
 
             @Override
