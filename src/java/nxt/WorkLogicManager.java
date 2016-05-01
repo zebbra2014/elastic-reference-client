@@ -36,15 +36,32 @@ public class WorkLogicManager {
 	}
 	
 	public static boolean isStillPending(long workId, long senderId) {	
+		
+		long payoutSoFar = totalPayoutSoFar(workId);
+		
         try (Connection con = Db.db.getConnection();
              PreparedStatement pstmt = con.prepareStatement(
-                     "SELECT count(*) FROM work WHERE id = ? and sender_account_id = ? and payback_transaction_id = NULL and last_payment_transaction_id = NULL")) {
+                     "SELECT count(*) FROM work WHERE id = ? and sender_account_id = ? and payback_transaction_id = NULL and last_payment_transaction_id = NULL and amount > ?")) {
         	int i = 0;
             pstmt.setLong(++i, workId);
             pstmt.setLong(++i, senderId);
+            pstmt.setLong(++i, payoutSoFar);
             ResultSet check = pstmt.executeQuery();
             if(check.getInt(0) == 0) return false;
             return true;
+        } catch (SQLException e) {
+            throw new RuntimeException(e.toString(), e);
+        }
+    }
+	
+	public static long totalPayoutSoFar(long workId) {	
+        try (Connection con = Db.db.getConnection();
+             PreparedStatement pstmt = con.prepareStatement(
+                     "SELECT SUM(payout_amount) FROM work WHERE id = ? and payback_transaction_id = NULL and last_payment_transaction_id = NULL")) {
+        	int i = 0;
+            pstmt.setLong(++i, workId);
+            ResultSet check = pstmt.executeQuery();
+            return check.getLong(0); // TODO: Strange case to avoid overflows
         } catch (SQLException e) {
             throw new RuntimeException(e.toString(), e);
         }
