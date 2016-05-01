@@ -26,9 +26,7 @@ class NxtDbVersion extends DbVersion {
                         + "height INT NOT NULL, block_id BIGINT NOT NULL, FOREIGN KEY (block_id) REFERENCES block (id) ON DELETE CASCADE, "
                         + "signature BINARY(64) NOT NULL, timestamp INT NOT NULL, type TINYINT NOT NULL, subtype TINYINT NOT NULL, "
                         + "sender_account_id BIGINT NOT NULL, attachment OTHER)");
-                apply("CREATE TABLE IF NOT EXISTS work (db_id IDENTITY, id BIGINT NOT NULL, work_title VARCHAR NOT NULL, variables_input SMALLINT NOT NULL, variables_output SMALLINT NOT NULL, version_id SMALLINT NOT NULL, language_id SMALLINT NOT NULL"
-                        + "deadline INT NOT NULL, amount INT NOT NULL, referenced_transaction_id BIGINT, block_id BIGINT NOT NULL, FOREIGN KEY (block_id) REFERENCES block (id) ON DELETE CASCADE, block_height INT NOT NULL, "
-                        + "sender_account_id BIGINT NOT NULL, code OTHER, hook OTHER, cancelled_at_height INT NOT NULL, payback_transaction_id INT NOT NULL, last_payment_transaction_id INT NOT NULL)");
+                
             case 4:
                 apply("CREATE UNIQUE INDEX IF NOT EXISTS transaction_id_idx ON transaction (id)");
             case 5:
@@ -56,7 +54,9 @@ class NxtDbVersion extends DbVersion {
             case 16:
                 apply("ALTER TABLE transaction ADD COLUMN IF NOT EXISTS block_timestamp INT");
             case 17:
-                apply(null);
+            	apply("CREATE TABLE IF NOT EXISTS work (db_id IDENTITY, id BIGINT NOT NULL, work_title VARCHAR NOT NULL, variables_input SMALLINT NOT NULL, variables_output SMALLINT NOT NULL, version_id SMALLINT NOT NULL, language_id SMALLINT NOT NULL"
+                        + "deadline INT NOT NULL, amount INT NOT NULL, referenced_transaction_id BIGINT, FOREIGN KEY (referenced_transaction_id) REFERENCES transaction (id) ON DELETE CASCADE, block_id BIGINT NOT NULL, FOREIGN KEY (block_id) REFERENCES block (id) ON DELETE CASCADE, "
+                        + "sender_account_id BIGINT NOT NULL, code OTHER NOT NULL, hook OTHER NOT NULL, payback_transaction_id BIGINT, FOREIGN KEY (payback_transaction_id) REFERENCES transaction (id) ON DELETE CASCADE, last_payment_transaction_id BIGINT, FOREIGN KEY (last_payment_transaction_id) REFERENCES transaction (id) ON DELETE CASCADE)");
             case 18:
                 apply("ALTER TABLE transaction ALTER COLUMN block_timestamp SET NOT NULL");
             case 19:

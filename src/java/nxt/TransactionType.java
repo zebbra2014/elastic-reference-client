@@ -271,7 +271,7 @@ public abstract class TransactionType {
             void applyAttachment(Transaction transaction, Account senderAccount, Account recipientAccount) {
             	Attachment.WorkCreation attachment = (Attachment.WorkCreation) transaction.getAttachment();
             	// To calculate the WorkID i just take the TxID and calculate + 1
-            	WorkLogicManager.createNewWork(transaction.getId() + 1, transaction.getId(), transaction.getSenderId(), transaction.getBlockId(), transaction.getBlock().getHeight(), transaction.getAmountNQT(), attachment);
+            	WorkLogicManager.createNewWork(transaction.getId() + 1, transaction.getId(), transaction.getSenderId(), transaction.getBlockId(), transaction.getAmountNQT(), attachment);
             }
 
             @Override
@@ -316,7 +316,12 @@ public abstract class TransactionType {
 
             @Override
             void validateAttachment(Transaction transaction) throws NxtException.ValidationException {
-             
+            	if(WorkLogicManager.isStillPending(transaction.getId()+1, transaction.getSenderId()) == false){
+            		throw new NxtException.NotValidException("Cannot cancel already cancelled or finished work");
+            	}
+            	
+            	// TODO: Check the payback transaction does not "recharge" more or less than allowed
+            	
             }
 
             @Override
