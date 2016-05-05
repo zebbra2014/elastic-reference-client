@@ -139,7 +139,7 @@ public class WorkLogicManager {
         try {
         
         	try (Connection con = Db.db.getConnection(); PreparedStatement pstmt = con.prepareStatement("INSERT INTO work (id, work_id, referenced_transaction_id, block_id, sender_account_id, payout_amount, input, state, ten_ms_locator) "
-                    + " VALUES (?, ?, ?, ?, ?, ?, ?, ?)")) {
+                    + " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
                 int i = 0;
                 pstmt.setLong(++i, workId);
                 pstmt.setLong(++i, txId);
@@ -182,11 +182,36 @@ public class WorkLogicManager {
 
 	public static void submitBounty(long senderId,
 			PiggybackedProofOfBounty attachment) {
-		
+		// TODO, We still have to figure out how bounties are submitted
 	}
 
-	public static void refuelWork(WorkIdentifierRefueling attachment,
-			long amountNQT) {
+	public static void refuelWork(WorkIdentifierRefueling attachment, long amountNQT) {
+		if (!Db.db.isInTransaction()) {
+            try {
+                Db.db.beginTransaction();
+                refuelWork(attachment, amountNQT);
+                Db.db.commitTransaction();
+            } catch (Exception e) {
+                Logger.logErrorMessage(e.toString(), e);
+                Db.db.rollbackTransaction();
+                throw e;
+            } finally {
+                Db.db.endTransaction();
+            }
+            return;
+        }
+        try {
+            try (Connection con = Db.db.getConnection(); PreparedStatement pstmt = con.prepareStatement("UPDATE work SET amount = amount + ? WHERE id = ?")) {
+                int i = 0;
+                pstmt.setLong(++i, attachment.getWorkId());
+                pstmt.setLong(++i, amountNQT);
+               
+                pstmt.executeUpdate();
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e.toString(), e);
+        }
 		
 	}
 
