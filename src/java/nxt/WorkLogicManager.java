@@ -37,7 +37,7 @@ public class WorkLogicManager {
 	}
 	
 	public static byte[] compileCode(String code, boolean IsBountyHook) throws RuntimeException{
-		return null;
+		return new byte[]{0,1,2,3,4,5};
 	}
 	
 	public static void cancelWork(WorkIdentifierCancellation attachment) {
