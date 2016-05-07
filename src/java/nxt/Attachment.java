@@ -319,23 +319,55 @@ public interface Attachment extends Appendix {
 
 		private final long workId;
 		private final short index_10ms_block;
+        private final int[] state;
+        private final int[] input;
 		
 
 		PiggybackedProofOfWork(ByteBuffer buffer, byte transactionVersion) throws NxtException.NotValidException {
             super(buffer, transactionVersion);
             this.workId = buffer.getLong();
             this.index_10ms_block = buffer.getShort();
+            
+            int numberOfOptions = buffer.get();
+            if (numberOfOptions > WorkLogicManager.getMaxNumberStateInts() || numberOfOptions < WorkLogicManager.getMinNumberStateInts()) {
+                throw new NxtException.NotValidException("Invalid number of state variables: " + numberOfOptions);
+            }
+            this.state = new int[numberOfOptions];
+            for (int i = 0; i < numberOfOptions; i++) {
+            	state[i] = buffer.getInt();
+            }
+            
+            numberOfOptions = buffer.get();
+            if (numberOfOptions > WorkLogicManager.getMaxNumberInputInts() || numberOfOptions < WorkLogicManager.getMinNumberInputInts()) {
+                throw new NxtException.NotValidException("Invalid number of state variables: " + numberOfOptions);
+            }
+            this.input = new int[numberOfOptions];
+            for (int i = 0; i < numberOfOptions; i++) {
+            	input[i] = buffer.getInt();
+            }
         }
 
 		PiggybackedProofOfWork(JSONObject attachmentData) {
             super(attachmentData);
             this.workId = Convert.parseUnsignedLong((String)attachmentData.get("id"));
             this.index_10ms_block = (short)attachmentData.get("msblock");
+            JSONArray stateRaw = (JSONArray) attachmentData.get("state");
+            this.state = new int[stateRaw.size()];
+            for (int i = 0; i < stateRaw.size(); i++) {
+            	state[i] = (int) stateRaw.get(i);
+            }
+            JSONArray inputRaw = (JSONArray) attachmentData.get("input");
+            this.input = new int[inputRaw.size()];
+            for (int i = 0; i < inputRaw.size(); i++) {
+            	input[i] = (int) inputRaw.get(i);
+            }
         }
 
-        public PiggybackedProofOfWork(long workId, short index_10ms_block) {
+        public PiggybackedProofOfWork(long workId, short index_10ms_block, int[] state, int[] input) {
             this.workId = workId;
             this.index_10ms_block = index_10ms_block;
+            this.state = state;
+            this.input = input;
         }
 
         @Override
@@ -345,25 +377,49 @@ public interface Attachment extends Appendix {
 
         @Override
         int getMySize() {
-            return 8 + 4;
+            return 8 + 4 + 8 /*number of states*/ + 8*this.state.length+ 8 /*number of inputs*/ + 8*this.input.length;
         }
 
         @Override
         void putMyBytes(ByteBuffer buffer) {
             buffer.putLong(this.workId);
             buffer.putShort(this.index_10ms_block);
+            buffer.putInt(state.length);
+            for (int i = 0; i < state.length; i++) {
+            	buffer.putInt(state[i]);
+            }
+            buffer.putInt(input.length);
+            for (int i = 0; i < input.length; i++) {
+            	buffer.putInt(input[i]);
+            }
         }
 
         @Override
         void putMyJSON(JSONObject attachment) {
             attachment.put("id", Convert.toUnsignedLong(this.workId));
             attachment.put("msblock", Convert.toUnsignedLong(this.index_10ms_block));
+            
+            JSONArray state2 = new JSONArray();
+            if (this.state != null) {
+                Collections.addAll(state2, this.state);
+            }
+            attachment.put("state", state2);
+            
+            JSONArray input2 = new JSONArray();
+            if (this.input != null) {
+                Collections.addAll(input2, this.input);
+            }
+            attachment.put("input", input2);
         }
 
         @Override
         public TransactionType getTransactionType() {
         	return TransactionType.WorkControl.PROOF_OF_WORK;
         }
+
+		public int[] getState() {
+			return state;
+		}
     }
     
     public final static class PiggybackedProofOfBounty extends AbstractAttachment {
@@ -374,23 +430,55 @@ public interface Attachment extends Appendix {
 
 		private final long workId;
 		private final short index_10ms_block;
+        private final int[] state;
+        private final int[] input;
 		
 
-		PiggybackedProofOfBounty(ByteBuffer buffer, byte transactionVersion) throws NxtException.NotValidException {
+        PiggybackedProofOfBounty(ByteBuffer buffer, byte transactionVersion) throws NxtException.NotValidException {
             super(buffer, transactionVersion);
             this.workId = buffer.getLong();
             this.index_10ms_block = buffer.getShort();
+            
+            int numberOfOptions = buffer.get();
+            if (numberOfOptions > WorkLogicManager.getMaxNumberStateInts() || numberOfOptions < WorkLogicManager.getMinNumberStateInts()) {
+                throw new NxtException.NotValidException("Invalid number of state variables: " + numberOfOptions);
+            }
+            this.state = new int[numberOfOptions];
+            for (int i = 0; i < numberOfOptions; i++) {
+            	state[i] = buffer.getInt();
+            }
+            
+            numberOfOptions = buffer.get();
+            if (numberOfOptions > WorkLogicManager.getMaxNumberInputInts() || numberOfOptions < WorkLogicManager.getMinNumberInputInts()) {
+                throw new NxtException.NotValidException("Invalid number of state variables: " + numberOfOptions);
+            }
+            this.input = new int[numberOfOptions];
+            for (int i = 0; i < numberOfOptions; i++) {
+            	input[i] = buffer.getInt();
+            }
         }
 
-		PiggybackedProofOfBounty(JSONObject attachmentData) {
+        PiggybackedProofOfBounty(JSONObject attachmentData) {
             super(attachmentData);
             this.workId = Convert.parseUnsignedLong((String)attachmentData.get("id"));
             this.index_10ms_block = (short)attachmentData.get("msblock");
+            JSONArray stateRaw = (JSONArray) attachmentData.get("state");
+            this.state = new int[stateRaw.size()];
+            for (int i = 0; i < stateRaw.size(); i++) {
+            	state[i] = (int) stateRaw.get(i);
+            }
+            JSONArray inputRaw = (JSONArray) attachmentData.get("input");
+            this.input = new int[inputRaw.size()];
+            for (int i = 0; i < inputRaw.size(); i++) {
+            	input[i] = (int) inputRaw.get(i);
+            }
         }
 
-        public PiggybackedProofOfBounty(long workId, short index_10ms_block) {
+        public PiggybackedProofOfBounty(long workId, short index_10ms_block, int[] state, int[] input) {
             this.workId = workId;
             this.index_10ms_block = index_10ms_block;
+            this.state = state;
+            this.input = input;
         }
 
         @Override
@@ -400,25 +488,49 @@ public interface Attachment extends Appendix {
 
         @Override
         int getMySize() {
-            return 8 + 4;
+            return 8 + 4 + 8 /*number of states*/ + 8*this.state.length+ 8 /*number of inputs*/ + 8*this.input.length;
         }
 
         @Override
         void putMyBytes(ByteBuffer buffer) {
             buffer.putLong(this.workId);
             buffer.putShort(this.index_10ms_block);
+            buffer.putInt(state.length);
+            for (int i = 0; i < state.length; i++) {
+            	buffer.putInt(state[i]);
+            }
+            buffer.putInt(input.length);
+            for (int i = 0; i < input.length; i++) {
+            	buffer.putInt(input[i]);
+            }
         }
 
         @Override
         void putMyJSON(JSONObject attachment) {
             attachment.put("id", Convert.toUnsignedLong(this.workId));
             attachment.put("msblock", Convert.toUnsignedLong(this.index_10ms_block));
+            
+            JSONArray state2 = new JSONArray();
+            if (this.state != null) {
+                Collections.addAll(state2, this.state);
+            }
+            attachment.put("state", state2);
+            
+            JSONArray input2 = new JSONArray();
+            if (this.input != null) {
+                Collections.addAll(input2, this.input);
+            }
+            attachment.put("input", input2);
         }
 
         @Override
         public TransactionType getTransactionType() {
-        	return TransactionType.WorkControl.BOUNTY;
+        	return TransactionType.WorkControl.PROOF_OF_WORK;
         }
+
+		public int[] getState() {
+			return state;
+		}
     }
 
     public final static class WorkCreation extends AbstractAttachment {

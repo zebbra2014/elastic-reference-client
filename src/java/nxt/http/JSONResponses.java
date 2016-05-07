@@ -23,7 +23,18 @@ public final class JSONResponses {
     
     public static final JSONStreamAware INCORRECT_PROGRAM = incorrect("program code");
     public static final JSONStreamAware INCORRECT_BOUNTYHOOK = incorrect("bounty hook");
-
+    public static final JSONStreamAware INCORRECT_WORKID = incorrect("workId");
+    public static final JSONStreamAware INCORRECT_BOOLEAN = incorrect("boolean");
+    
+    // THESE ARE FOR Proof-of-X
+	public static final JSONStreamAware MISSING_WORKID = missing("workId");
+	public static final JSONStreamAware MISSING_MSLOCATOR = missing("10ms block locator");
+	public static final JSONStreamAware MISSING_INPUTS = missing("program inputs");
+	public static final JSONStreamAware MISSING_STATE = missing("program state");
+    public static final JSONStreamAware INCORRECT_STATE = incorrect("workId");
+    public static final JSONStreamAware INCORRECT_INPUTS = incorrect("workId");
+    public static final JSONStreamAware INCORRECT_MSLOCATOR = incorrect("workId");
+    
 	// generic ones
     public static final JSONStreamAware INCORRECT_URI_LENGTH = incorrect("uri", "(length must be not longer than " + Constants.MAX_ALIAS_URI_LENGTH + " characters)");
     public static final JSONStreamAware MISSING_SECRET_PHRASE = missing("secretPhrase");

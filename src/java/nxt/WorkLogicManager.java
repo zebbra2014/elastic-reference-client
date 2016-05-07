@@ -36,6 +36,23 @@ public class WorkLogicManager {
 		return true;
 	}
 	
+	public static int getMaxNumberStateInts(){
+		return 16;
+	}
+	public static int getMinNumberStateInts(){
+		return 8;
+	}
+	public static int getMaxNumberInputInts(){
+		return 16;
+	}
+	public static int getMinNumberInputInts(){
+		return 8;
+	}
+
+	public static boolean haveWork(int workId) {
+		//TODO FIXME: ADD REAL CHECKS HERE
+		return true;
+	}
 	public static byte[] compileCode(String code, boolean IsBountyHook, byte programLanguage) throws RuntimeException{
 		return new byte[]{0,1,2,3,4,5};
 	}
