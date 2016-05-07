@@ -36,7 +36,7 @@ public class WorkLogicManager {
 		return true;
 	}
 	
-	public static byte[] compileCode(String code, boolean IsBountyHook) throws RuntimeException{
+	public static byte[] compileCode(String code, boolean IsBountyHook, byte programLanguage) throws RuntimeException{
 		return new byte[]{0,1,2,3,4,5};
 	}
 	

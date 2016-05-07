@@ -116,12 +116,12 @@ public final class CreateWork extends CreateTransaction {
         byte[] compiledProgramCode;
         byte[] compiledBountyHook;
         try {
-        	compiledProgramCode = WorkLogicManager.compileCode(programCode, false);
+        	compiledProgramCode = WorkLogicManager.compileCode(programCode, false, workLanguageByte);
         } catch (NumberFormatException e) {
             return INCORRECT_PROGRAM;
         }
         try {
-        	compiledBountyHook = WorkLogicManager.compileCode(bountyHook, true);
+        	compiledBountyHook = WorkLogicManager.compileCode(bountyHook, true, workLanguageByte);
         } catch (NumberFormatException e) {
             return INCORRECT_BOUNTYHOOK;
         }
