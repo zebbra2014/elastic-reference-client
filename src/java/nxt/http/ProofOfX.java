@@ -39,9 +39,6 @@ public final class ProofOfX extends CreateTransaction {
         String state = req.getParameter("state");
         String ProofOfWork = req.getParameter("pow");
         
-        
-
-        
         if (workId == null) {
             return MISSING_WORKID;
         } else if (msLocator == null) {
@@ -81,6 +78,7 @@ public final class ProofOfX extends CreateTransaction {
              while(sc.hasNext()){
             	 stateRaw.add(sc.nextInt());
              }
+             sc.close();
         } catch (NumberFormatException e) {
             return INCORRECT_STATE;
         }
@@ -96,6 +94,7 @@ public final class ProofOfX extends CreateTransaction {
              while(sc.hasNext()){
             	 inputRaw.add(sc.nextInt());
              }
+             sc.close();
         } catch (NumberFormatException e) {
             return INCORRECT_INPUTS;
         }
