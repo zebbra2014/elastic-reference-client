@@ -50,7 +50,7 @@ public class WorkLogicManager {
 	}
 
 	public static boolean haveWork(int workId) {
-		//TODO FIXME: ADD REAL CHECKS HERE
+		//TODO FIXME: ADD REAL CHECKS HERE IF WORK WITH SPECIFIC WORKID EXISTS
 		return true;
 	}
 	public static byte[] compileCode(String code, boolean IsBountyHook, byte programLanguage) throws RuntimeException{
