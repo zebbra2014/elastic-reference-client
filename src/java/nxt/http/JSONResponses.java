@@ -9,6 +9,22 @@ import java.util.Arrays;
 
 public final class JSONResponses {
 
+	
+	// these are for work creation
+	public static final JSONStreamAware MISSING_LANGUAGE = missing("program language");
+	public static final JSONStreamAware MISSING_PROGAMCODE = missing("program code");
+	public static final JSONStreamAware MISSING_BOUNTYHOOK = missing("bounty hook");
+
+	public static final JSONStreamAware MISSING_NUMBER_INPUTVARS = missing("number of input variables");
+	public static final JSONStreamAware MISSING_NUMBER_OUTPUTVARS = missing("number of output variables");
+    public static final JSONStreamAware INCORRECT_WORK_NAME_LENGTH = incorrect("work title");
+    public static final JSONStreamAware INCORRECT_VARIABLES_NUM = incorrect("number of input or output variables");
+    public static final JSONStreamAware INCORRECT_WORK_LANGUAGE = incorrect("work language");
+    
+    public static final JSONStreamAware INCORRECT_PROGRAM = incorrect("program code");
+    public static final JSONStreamAware INCORRECT_BOUNTYHOOK = incorrect("bounty hook");
+
+	// generic ones
     public static final JSONStreamAware INCORRECT_URI_LENGTH = incorrect("uri", "(length must be not longer than " + Constants.MAX_ALIAS_URI_LENGTH + " characters)");
     public static final JSONStreamAware MISSING_SECRET_PHRASE = missing("secretPhrase");
     public static final JSONStreamAware INCORRECT_PUBLIC_KEY = incorrect("publicKey");

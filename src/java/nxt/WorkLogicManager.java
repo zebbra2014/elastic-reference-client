@@ -22,6 +22,24 @@ import nxt.util.Logger;
 
 public class WorkLogicManager {
 
+	public static boolean checkWorkLanguage(byte w){
+		return true;
+		//TODO FIXME: ADD REAL CHECKS HERE
+	}
+	public static boolean checkDeadline(int deadlineInt) {
+		//TODO FIXME: ADD REAL CHECKS HERE
+		return true;
+	}
+	public static boolean checkNumberVariables(byte numberInputVarsByte,
+			boolean IsInput) {
+		//TODO FIXME: ADD REAL CHECKS HERE
+		return true;
+	}
+	
+	public static byte[] compileCode(String code, boolean IsBountyHook) throws RuntimeException{
+		return null;
+	}
+	
 	public static void cancelWork(WorkIdentifierCancellation attachment) {
 		if (!Db.db.isInTransaction()) {
             try {
@@ -214,5 +232,7 @@ public class WorkLogicManager {
         }
 		
 	}
+	
+
 
 }
