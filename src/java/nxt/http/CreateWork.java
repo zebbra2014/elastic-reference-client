@@ -9,8 +9,7 @@ import nxt.WorkLogicManager;
 import org.json.simple.JSONStreamAware;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.List;
+
 
 
 import static nxt.http.JSONResponses.INCORRECT_WORK_NAME_LENGTH;
