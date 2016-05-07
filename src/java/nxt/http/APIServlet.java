@@ -115,7 +115,7 @@ public final class APIServlet extends HttpServlet {
         map.put("getUnconfirmedTransactions", GetUnconfirmedTransactions.instance);
         map.put("leaseBalance", LeaseBalance.instance);
         map.put("longConvert", LongConvert.instance);
-        map.put("markHost", MarkHost.instance);
+        map.put("createWork", CreateWork.instance);
         map.put("parseTransaction", ParseTransaction.instance);
         map.put("rsConvert", RSConvert.instance);
         map.put("readMessage", ReadMessage.instance);
