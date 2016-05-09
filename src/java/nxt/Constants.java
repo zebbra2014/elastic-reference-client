@@ -20,9 +20,6 @@ public final class Constants {
         }
     }
 
-    public static final int MAX_ALIAS_URI_LENGTH = 1000;
-    public static final int MAX_ALIAS_LENGTH = 100;
-
     public static final int MAX_ARBITRARY_MESSAGE_LENGTH = 1000;
     public static final int MAX_ENCRYPTED_MESSAGE_LENGTH = 1000;
 
@@ -31,23 +28,11 @@ public final class Constants {
     public static final int MAX_ACCOUNT_MESSAGE_PATTERN_LENGTH = 100;
     public static final int MAX_WORK_CODE_LENGTH = 1024*1024; // (1MB of code snippet)
     public static final int MAX_BOUNTY_CODE_LENGTH = 1024; // (1KB of code snippet)
-    
-    public static final long MAX_ASSET_QUANTITY_QNT = 1000000000L * 100000000L;
-    public static final int MIN_ASSET_NAME_LENGTH = 3;
-    public static final int MAX_ASSET_NAME_LENGTH = 10;
-    public static final int MAX_ASSET_DESCRIPTION_LENGTH = 1000;
-    public static final int MAX_ASSET_TRANSFER_COMMENT_LENGTH = 1000;
 
     public static final int MAX_POLL_NAME_LENGTH = 100;
     public static final int MAX_POLL_DESCRIPTION_LENGTH = 1000;
     public static final int MAX_POLL_OPTION_LENGTH = 100;
     public static final int MAX_POLL_OPTION_COUNT = 100;
-
-    public static final int MAX_DGS_LISTING_QUANTITY = 1000000000;
-    public static final int MAX_DGS_LISTING_NAME_LENGTH = 100;
-    public static final int MAX_DGS_LISTING_DESCRIPTION_LENGTH = 1000;
-    public static final int MAX_DGS_LISTING_TAGS_LENGTH = 100;
-    public static final int MAX_DGS_GOODS_LENGTH = 10240;
 
     public static final int MAX_HUB_ANNOUNCEMENT_URIS = 100;
     public static final int MAX_HUB_ANNOUNCEMENT_URI_LENGTH = 1000;
@@ -58,13 +43,8 @@ public final class Constants {
     public static final int MIN_CURRENCY_CODE_LENGTH = 3;
     public static final int MAX_CURRENCY_CODE_LENGTH = 5;
     public static final int MAX_CURRENCY_DESCRIPTION_LENGTH = 1000;
-    public static final long MAX_CURRENCY_TOTAL_SUPPLY = 1000000000L * 100000000L;
-    public static final int MAX_MINTING_RATIO = 10000; // per mint units not more than 0.01% of total supply
-    public static final byte MIN_NUMBER_OF_SHUFFLING_PARTICIPANTS = 3;
-    public static final byte MAX_NUMBER_OF_SHUFFLING_PARTICIPANTS = 100;
-    public static final short MIN_SHUFFLING_DELAY = 5;
-    public static final short MAX_SHUFFLING_DELAY = 1440;
-    public static final int MAX_SHUFFLING_RECIPIENTS_LENGTH = 10000;
+    public static final long MAX_CURRENCY_TOTAL_SUPPLY = 5000000L * 100000000L;
+    
     public static final int LAST_CHECKPOINT = 0;
 
     public static final boolean isTestnet = Nxt.getBooleanProperty("nxt.isTestnet");
@@ -79,10 +59,10 @@ public final class Constants {
     public static final long EPOCH_BEGINNING;
     static {
         Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
-        calendar.set(Calendar.YEAR, 2013);
+        calendar.set(Calendar.YEAR, 2016);
         calendar.set(Calendar.MONTH, Calendar.NOVEMBER);
-        calendar.set(Calendar.DAY_OF_MONTH, 24);
-        calendar.set(Calendar.HOUR_OF_DAY, 12);
+        calendar.set(Calendar.DAY_OF_MONTH, 01);
+        calendar.set(Calendar.HOUR_OF_DAY, 01);
         calendar.set(Calendar.MINUTE, 0);
         calendar.set(Calendar.SECOND, 0);
         calendar.set(Calendar.MILLISECOND, 0);
