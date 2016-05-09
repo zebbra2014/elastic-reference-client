@@ -65,29 +65,12 @@ public final class Constants {
     public static final short MIN_SHUFFLING_DELAY = 5;
     public static final short MAX_SHUFFLING_DELAY = 1440;
     public static final int MAX_SHUFFLING_RECIPIENTS_LENGTH = 10000;
+    public static final int LAST_CHECKPOINT = 0;
 
     public static final boolean isTestnet = Nxt.getBooleanProperty("nxt.isTestnet");
     public static final boolean isOffline = Nxt.getBooleanProperty("nxt.isOffline");
 
-    public static final int ALIAS_SYSTEM_BLOCK = 22000;
-    public static final int TRANSPARENT_FORGING_BLOCK = 30000;
-    public static final int ARBITRARY_MESSAGES_BLOCK = 40000;
-    public static final int TRANSPARENT_FORGING_BLOCK_2 = 47000;
-    public static final int TRANSPARENT_FORGING_BLOCK_3 = 51000;
-    public static final int TRANSPARENT_FORGING_BLOCK_4 = 64000;
-    public static final int TRANSPARENT_FORGING_BLOCK_5 = 67000;
-    public static final int TRANSPARENT_FORGING_BLOCK_6 = isTestnet ? 75000 : 130000;
-    public static final int TRANSPARENT_FORGING_BLOCK_7 = Integer.MAX_VALUE;
-    public static final int TRANSPARENT_FORGING_BLOCK_8 = isTestnet ? 78000 : 215000;
-    public static final int NQT_BLOCK = isTestnet ? 76500 : 132000;
-    public static final int FRACTIONAL_BLOCK = isTestnet ? NQT_BLOCK : 134000;
-    public static final int ASSET_EXCHANGE_BLOCK = isTestnet ? NQT_BLOCK : 135000;
-    public static final int REFERENCED_TRANSACTION_FULL_HASH_BLOCK = isTestnet ? NQT_BLOCK : 140000;
-    public static final int REFERENCED_TRANSACTION_FULL_HASH_BLOCK_TIMESTAMP = isTestnet ? 13031352 : 15134204;
-    public static final int VOTING_SYSTEM_BLOCK = Integer.MAX_VALUE;
-    public static final int DIGITAL_GOODS_STORE_BLOCK = isTestnet ? 77341 : 213000;
-    public static final int MONETARY_SYSTEM_BLOCK = isTestnet ? 150000 : 330000;
-    public static final int LAST_KNOWN_BLOCK = isTestnet ? 150000 : 335000;
+    //public static final int LAST_KNOWN_BLOCK = isTestnet ? 150000 : 335000;
 
     public static final int[] MIN_VERSION = new int[] {1, 4};
 

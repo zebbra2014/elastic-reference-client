@@ -61,9 +61,7 @@ public final class Account {
             @Override
             public void notify(Block block) {
                 int height = block.getHeight();
-                if (height < Constants.TRANSPARENT_FORGING_BLOCK_6) {
-                    return;
-                }
+               
                 List<Account> leaseChangingAccounts = new ArrayList<>();
                 try (DbIterator<Account> accounts = getLeaseChangingAccounts(height)) {
                     while (accounts.hasNext()) {
@@ -389,25 +387,8 @@ public final class Account {
     public long getEffectiveBalanceNXT() {
 
         Block lastBlock = Nxt.getBlockchain().getLastBlock();
-        if (lastBlock.getHeight() >= Constants.TRANSPARENT_FORGING_BLOCK_6
-                && (getPublicKey() == null || lastBlock.getHeight() - keyHeight <= 1440)) {
+        if ((getPublicKey() == null || lastBlock.getHeight() - keyHeight <= 1440)) {
             return 0; // cfb: Accounts with the public key revealed less than 1440 blocks ago are not allowed to generate blocks
-        }
-        if (lastBlock.getHeight() < Constants.TRANSPARENT_FORGING_BLOCK_3
-                && this.creationHeight < Constants.TRANSPARENT_FORGING_BLOCK_2) {
-            if (this.creationHeight == 0) {
-                return getBalanceNQT() / Constants.ONE_NXT;
-            }
-            if (lastBlock.getHeight() - this.creationHeight < 1440) {
-                return 0;
-            }
-            long receivedInlastBlock = 0;
-            for (Transaction transaction : lastBlock.getTransactions()) {
-                if (id == transaction.getRecipientId()) {
-                    receivedInlastBlock += transaction.getAmountNQT();
-                }
-            }
-            return (getBalanceNQT() - receivedInlastBlock) / Constants.ONE_NXT;
         }
         if (lastBlock.getHeight() < currentLeasingHeightFrom) {
             return (getGuaranteedBalanceNQT(1440) + getLessorsGuaranteedBalanceNQT()) / Constants.ONE_NXT;

@@ -89,8 +89,7 @@ public abstract class TransactionType {
     // return false iff double spending
     final boolean applyUnconfirmed(Transaction transaction, Account senderAccount) {
         long totalAmountNQT = Convert.safeAdd(transaction.getAmountNQT(), transaction.getFeeNQT());
-        if (transaction.getReferencedTransactionFullHash() != null
-                && transaction.getTimestamp() > Constants.REFERENCED_TRANSACTION_FULL_HASH_BLOCK_TIMESTAMP) {
+        if (transaction.getReferencedTransactionFullHash() != null) {
             totalAmountNQT = Convert.safeAdd(totalAmountNQT, Constants.UNCONFIRMED_POOL_DEPOSIT_NQT);
         }
         if (senderAccount.getUnconfirmedBalanceNQT() < totalAmountNQT
@@ -109,8 +108,7 @@ public abstract class TransactionType {
 
     final void apply(Transaction transaction, Account senderAccount, Account recipientAccount) {
         senderAccount.addToBalanceNQT(- (Convert.safeAdd(transaction.getAmountNQT(), transaction.getFeeNQT())));
-        if (transaction.getReferencedTransactionFullHash() != null
-                && transaction.getTimestamp() > Constants.REFERENCED_TRANSACTION_FULL_HASH_BLOCK_TIMESTAMP) {
+        if (transaction.getReferencedTransactionFullHash() != null) {
             senderAccount.addToUnconfirmedBalanceNQT(Constants.UNCONFIRMED_POOL_DEPOSIT_NQT);
         }
         if (recipientAccount != null) {
@@ -124,8 +122,7 @@ public abstract class TransactionType {
     final void undoUnconfirmed(Transaction transaction, Account senderAccount) {
         undoAttachmentUnconfirmed(transaction, senderAccount);
         senderAccount.addToUnconfirmedBalanceNQT(Convert.safeAdd(transaction.getAmountNQT(), transaction.getFeeNQT()));
-        if (transaction.getReferencedTransactionFullHash() != null
-                && transaction.getTimestamp() > Constants.REFERENCED_TRANSACTION_FULL_HASH_BLOCK_TIMESTAMP) {
+        if (transaction.getReferencedTransactionFullHash() != null) {
             senderAccount.addToUnconfirmedBalanceNQT(Constants.UNCONFIRMED_POOL_DEPOSIT_NQT);
         }
     }
@@ -540,7 +537,7 @@ public abstract class TransactionType {
                 if (transaction.getAmountNQT() != 0) {
                     throw new NxtException.NotValidException("Invalid arbitrary message: " + attachment.getJSONObject());
                 }
-                if (transaction.getRecipientId() == Genesis.CREATOR_ID && Nxt.getBlockchain().getHeight() > Constants.MONETARY_SYSTEM_BLOCK) {
+                if (transaction.getRecipientId() == Genesis.CREATOR_ID) {
                     throw new NxtException.NotCurrentlyValidException("Sending messages to Genesis not allowed.");
                 }
             }
@@ -580,9 +577,6 @@ public abstract class TransactionType {
 
             @Override
             void validateAttachment(Transaction transaction) throws NxtException.ValidationException {
-                if (Nxt.getBlockchain().getLastBlock().getHeight() < Constants.VOTING_SYSTEM_BLOCK) {
-                    throw new NxtException.NotYetEnabledException("Voting System not yet enabled at height " + Nxt.getBlockchain().getLastBlock().getHeight());
-                }
                 Attachment.MessagingPollCreation attachment = (Attachment.MessagingPollCreation) transaction.getAttachment();
                 for (int i = 0; i < attachment.getPollOptions().length; i++) {
                     if (attachment.getPollOptions()[i].length() > Constants.MAX_POLL_OPTION_LENGTH) {
@@ -631,9 +625,6 @@ public abstract class TransactionType {
 
             @Override
             void validateAttachment(Transaction transaction) throws NxtException.ValidationException {
-                if (Nxt.getBlockchain().getLastBlock().getHeight() < Constants.VOTING_SYSTEM_BLOCK) {
-                    throw new NxtException.NotYetEnabledException("Voting System not yet enabled at height " + Nxt.getBlockchain().getLastBlock().getHeight());
-                }
                 Attachment.MessagingVoteCasting attachment = (Attachment.MessagingVoteCasting) transaction.getAttachment();
                 if (attachment.getPollId() == 0 || attachment.getPollVote() == null
                         || attachment.getPollVote().length > Constants.MAX_POLL_OPTION_COUNT) {
@@ -676,9 +667,7 @@ public abstract class TransactionType {
 
             @Override
             void validateAttachment(Transaction transaction) throws NxtException.ValidationException {
-                if (Nxt.getBlockchain().getLastBlock().getHeight() < Constants.TRANSPARENT_FORGING_BLOCK_7) {
-                    throw new NxtException.NotYetEnabledException("Hub terminal announcement not yet enabled at height " + Nxt.getBlockchain().getLastBlock().getHeight());
-                }
+               
                 Attachment.MessagingHubAnnouncement attachment = (Attachment.MessagingHubAnnouncement) transaction.getAttachment();
                 if (attachment.getMinFeePerByteNQT() < 0 || attachment.getMinFeePerByteNQT() > Constants.MAX_BALANCE_NQT
                         || attachment.getUris().length > Constants.MAX_HUB_ANNOUNCEMENT_URIS) {

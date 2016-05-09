@@ -38,13 +38,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 final class BlockchainProcessorImpl implements BlockchainProcessor {
 
-    private static final byte[] CHECKSUM_TRANSPARENT_FORGING = new byte[]{27, -54, -59, -98, 49, -42, 48, -68, -112, 49, 41, 94, -41, 78, -84, 27, -87, -22, -28, 36, -34, -90, 112, -50, -9, 5, 89, -35, 80, -121, -128, 112};
-    private static final byte[] CHECKSUM_NQT_BLOCK = Constants.isTestnet ?
-            new byte[]{-126, -117, -94, -16, 125, -94, 38, 10, 11, 37, -33, 4, -70, -8, -40, -80, 18, -21, -54, -126, 109, -73, 63, -56, 67, 59, -30, 83, -6, -91, -24, 34}
-            : new byte[]{-125, 17, 63, -20, 90, -98, 52, 114, 7, -100, -20, -103, -50, 76, 46, -38, -29, -43, -43, 45, 81, 12, -30, 100, -67, -50, -112, -15, 22, -57, 84, -106};
-    private static final byte[] CHECKSUM_MONETARY_SYSTEM_BLOCK = Constants.isTestnet ?
-            new byte[]{107, 104, 79, -12, -101, 15, 114, -78, -44, 106, -62, 56, 102, 25, 49, -105, 21, 113, -50, 122, -5, 36, 126, 7, 63, 71, 19, -7, 93, -84, 67, -79}
-            : new byte[]{-54, -90, 113, -80, 17, -37, 44, -37, 80, 79, 107, -88, -60, -32, 93, 73, -60, 101, 102, -7, -5, -122, -93, -107, 63, 58, -125, -41, 26, -109, 51, -112};
+    // TODO, FIXME private static final byte[] CHECKSUM_TRANSPARENT_FORGING = new byte[]{27, -54, -59, -98, 49, -42, 48, -68, -112, 49, 41, 94, -41, 78, -84, 27, -87, -22, -28, 36, -34, -90, 112, -50, -9, 5, 89, -35, 80, -121, -128, 112};
 
     private static final BlockchainProcessorImpl instance = new BlockchainProcessorImpl();
 
@@ -443,15 +437,11 @@ final class BlockchainProcessorImpl implements BlockchainProcessor {
         blockListeners.addListener(new Listener<Block>() {
             @Override
             public void notify(Block block) {
-                if (block.getHeight() == Constants.TRANSPARENT_FORGING_BLOCK && ! verifyChecksum(CHECKSUM_TRANSPARENT_FORGING)) {
-                    popOffTo(0);
-                }
-                if (block.getHeight() == Constants.NQT_BLOCK && ! verifyChecksum(CHECKSUM_NQT_BLOCK)) {
-                    popOffTo(Constants.TRANSPARENT_FORGING_BLOCK);
-                }
-                if (block.getHeight() == Constants.MONETARY_SYSTEM_BLOCK && ! verifyChecksum(CHECKSUM_MONETARY_SYSTEM_BLOCK)) {
-                    popOffTo(Constants.NQT_BLOCK);
-                }
+            	
+            	// TODO, FIXME: Here, when we have soft fork checkpoints, we check which one we have passed
+            	// and pop Off to it if verifyChecksum() fails. (See it as checkpoints). With no checkpoint
+            	// we just do nothing as we have no checkksum to check
+            	
             }
         }, Event.BLOCK_PUSHED);
 
@@ -688,10 +678,7 @@ final class BlockchainProcessorImpl implements BlockchainProcessor {
                                 + " is already in the blockchain", transaction);
                     }
                     if (transaction.getReferencedTransactionFullHash() != null) {
-                        if ((previousLastBlock.getHeight() < Constants.REFERENCED_TRANSACTION_FULL_HASH_BLOCK
-                                && !TransactionDb.hasTransaction(Convert.fullHashToId(transaction.getReferencedTransactionFullHash())))
-                                || (previousLastBlock.getHeight() >= Constants.REFERENCED_TRANSACTION_FULL_HASH_BLOCK
-                                && !hasAllReferencedTransactions(transaction, transaction.getTimestamp(), 0))) {
+                        if ((!hasAllReferencedTransactions(transaction, transaction.getTimestamp(), 0))) {
                             throw new TransactionNotAcceptedException("Missing or invalid referenced transaction "
                                     + transaction.getReferencedTransactionFullHash()
                                     + " for transaction " + transaction.getStringId(), transaction);
@@ -842,9 +829,8 @@ final class BlockchainProcessorImpl implements BlockchainProcessor {
     }
 
     int getBlockVersion(int previousBlockHeight) {
-        return previousBlockHeight < Constants.TRANSPARENT_FORGING_BLOCK ? 1
-                : previousBlockHeight < Constants.NQT_BLOCK ? 2
-                : 3;
+    	// TODO, FIXME! Make version depend on actual block height
+        return 1;
     }
 
     private boolean verifyChecksum(byte[] validChecksum) {
@@ -1117,8 +1103,7 @@ final class BlockchainProcessorImpl implements BlockchainProcessor {
                                         throw new NxtException.NotValidException("Transaction is a duplicate: " + transaction.getStringId());
                                     }
                                     byte[] transactionBytes = transaction.getBytes();
-                                    if (currentBlock.getHeight() > Constants.NQT_BLOCK
-                                            && !Arrays.equals(transactionBytes, transactionProcessor.parseTransaction(transactionBytes).getBytes())) {
+                                    if (!Arrays.equals(transactionBytes, transactionProcessor.parseTransaction(transactionBytes).getBytes())) {
                                         throw new NxtException.NotValidException("Transaction bytes cannot be parsed back to the same transaction");
                                     }
                                     JSONObject transactionJSON = (JSONObject) JSONValue.parse(transaction.getJSONObject().toJSONString());

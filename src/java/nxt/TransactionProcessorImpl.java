@@ -384,7 +384,8 @@ final class TransactionProcessorImpl implements TransactionProcessor {
     }
 
     int getTransactionVersion(int previousBlockHeight) {
-        return previousBlockHeight < Constants.DIGITAL_GOODS_STORE_BLOCK ? 0 : 1;
+    	// TODO, FIXME: make version dependent on blockheight
+        return 1;
     }
 
     void processLater(Collection<TransactionImpl> transactions) {
@@ -425,9 +426,6 @@ final class TransactionProcessorImpl implements TransactionProcessor {
 
     private void processPeerTransactions(JSONArray transactionsData) throws NxtException.NotValidException {
         if (Nxt.getBlockchain().getLastBlock().getTimestamp() < Nxt.getEpochTime() - 60 * 1440 && ! testUnconfirmedTransactions) {
-            return;
-        }
-        if (Nxt.getBlockchain().getHeight() <= Constants.NQT_BLOCK) {
             return;
         }
         if (transactionsData == null || transactionsData.isEmpty()) {
@@ -489,10 +487,7 @@ final class TransactionProcessorImpl implements TransactionProcessor {
         synchronized (BlockchainImpl.getInstance()) {
             try {
                 Db.db.beginTransaction();
-                if (Nxt.getBlockchain().getHeight() < Constants.NQT_BLOCK) {
-                    throw new NxtException.NotCurrentlyValidException("Blockchain not ready to accept transactions");
-                }
-
+                
                 if (TransactionDb.hasTransaction(transaction.getId()) || unconfirmedTransactionTable.get(transaction.getDbKey()) != null) {
                     throw new NxtException.NotCurrentlyValidException("Transaction already processed");
                 }
