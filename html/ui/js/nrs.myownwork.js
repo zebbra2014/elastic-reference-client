@@ -33,8 +33,10 @@ var NRS = (function(NRS, $, undefined) {
 		$(".content.content-stretch:visible").width($(".page:visible").width());
 
 		// USE TEST DATA FOR NOW
-		var item1 = workEntry(1,0,0,"Example Program 1", "", "LUA", "", [], 0, 0, 1931, 1000,931,67,7,0);
-		var item2 = workEntry(3,9,2,"Hash Collision Test", "", "LUA", "", [], 0, 0, 2009, 500,1509,25,2,0);
+		var item1 = workEntry(1,0,0,"Example Program 1", "XEL-E8JD-FHKJ-CQ9H-5KGMQ", "LUA", "", [], 0, 0, 1931, 1000,931,67,7,0);
+
+
+		var item2 = workEntry(3,9,2,"Hash Collision Test", "XEL-E8JD-FHKJ-CQ9H-5KGMQ", "LUA", "", [], 0, 0, 2009, 500,1509,25,2,0);
 		_messages.push(item1);
 		_messages.push(item2);
 
@@ -77,7 +79,12 @@ var NRS = (function(NRS, $, undefined) {
 			}
 		});*/
 	}
-
+	function statusText(message){
+		return "<b>" + message.balance_remained + "+</b> XEL left, <b>7742</b> blocks left"; 
+	}
+	function status2Text(message){
+		return "<b>" + message.percent_done + "%</b> finished"; 
+	}
 	function displayWorkSidebar(callback) {
 		console.log("mywork callback fired!");
 		var activeAccount = false;
@@ -96,7 +103,7 @@ var NRS = (function(NRS, $, undefined) {
 			var message = _messages[i];
 
 
-			rows += "<a href='#' class='list-group-item larger-sidebar-element'><img class='work-image-type' src='/img/LUA.png'><span class='list-group-item-heading betterh4'>" + message.title + "</span><p class='list-group-item-text agopullright'>about 1 day ago</p><span class='middletext_list'><span class='label label-success label12px margin5px'>Work Active</span><span class='label label-warning label12px margin5px'>0 Bounties</span><span class='padding10'><b>" + message.percent_done + "%</b> done / <b>" + message.balance_remained + "+</b> XEL</span></span></a>";
+			rows += "<a href='#' class='list-group-item larger-sidebar-element'><p class='list-group-item-text agopullright'> <i class='fa fa-tasks fa-fw'></i> " + status2Text(message) + "</p><span class='list-group-item-heading betterh4'>" + message.title + "</span><br><small>created 1 day ago (block #13318) by <u>" + message.account + "</u></small><span class='middletext_list'><span class='label label-white label12px'><span class=''>" + statusText(message) + "</span></span><span class='label label-primary label12px margin5px'>" + message.language + "</span><span class='label label-success label12px margin5px'>Active</span><span class='label label-warning label12px margin5px'>" + message.bounties_connected + " Bounties</span></span></a>";
 		}
 
 		$("#myownwork_sidebar").empty().append(rows);

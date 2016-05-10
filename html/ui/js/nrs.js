@@ -615,7 +615,7 @@ var NRS = (function(NRS, $, undefined) {
 			} else {
 				$("#connected_indicator").removeClass("btn-danger");
 				$("#connected_indicator").removeClass("btn-success");
-				$("#connected_indicator").addClass("btn-success");
+				$("#connected_indicator").addClass("btn-danger");
 				$("#connected_indicator").html($.t("Not Connected")).attr("data-i18n", "not_connected");
 				$("#connected_indicator").show();
 			}
@@ -904,6 +904,7 @@ var NRS = (function(NRS, $, undefined) {
 		}
 
 		if (NRS.accountInfo.effectiveBalanceNXT == 0) {
+			// TODO, FIXME! Here, when Blocks < 1500 it may still be forging. Please account for this case!
 			$("#forging_indicator").removeClass("btn-danger");
 			$("#forging_indicator").removeClass("btn-success");
 			$("#forging_indicator").addClass("btn-danger");

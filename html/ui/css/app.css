@@ -2739,7 +2739,17 @@ tr.tentative-crossed td , tr.tentative-crossed td a {
 .list-group-item.context p.list-group-item-text, .list-group-item.context h4 {
 	color:black !important;
 }
-
+.label-white {
+  background-color: #ffffff;
+  border-color: #E0E0E0 !important;
+  border: 1px solid;
+  border-radius: 5px;
+  display: block;
+  float: right;
+  color: #616161;
+  font-weight: unset !important;
+  padding: 6px;
+}
 .unselectable {
 	-webkit-user-select: none; /* Chrome/Safari */        
 	-moz-user-select: none; /* Firefox */
@@ -3290,7 +3300,7 @@ input.masked {
 }
 
 .larger-sidebar-element {
-  height: 90px;
+  height: 100px;
 }
 
 .betterh4 {
@@ -3313,7 +3323,7 @@ input.masked {
   white-space: nowrap;
   text-overflow: ellipsis;
   height: 100%;
-  padding-top: 20px;
+  padding-top: 14px;
 }
 
 .label12px{
