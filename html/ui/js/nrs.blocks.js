@@ -35,10 +35,12 @@ var NRS = (function(NRS, $, undefined) {
 			NRS.checkBlockHeight(NRS.blocks[0].height);
 
 			if (NRS.state) {
+				var timeDiff = NRS.state.time - NRS.blocks[0].timestamp;
+				
 				//if no new blocks in 6 hours, show blockchain download progress..
 				// TODO, FIXME! DO NOT DO THIS, WE CAN NEVER BOOTSTRAP HERE!!!
 				/*
-				var timeDiff = NRS.state.time - NRS.blocks[0].timestamp;
+				
 				if (timeDiff > 60 * 60 * 18) {
 					if (timeDiff > 60 * 60 * 24 * 14) {
 						NRS.setStateInterval(30);
