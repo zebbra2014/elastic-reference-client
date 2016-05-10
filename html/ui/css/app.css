@@ -429,12 +429,12 @@ body > .header .navbar .nav > li > a > .label {
 body > .header .navbar .nav > li > a:hover > .label {
   top: 3px;
 }
+
 body > .header .logo {
   float: left;
   font-size: 20px;
-  line-height: 50px;
   text-align: center;
-  padding: 0 10px;
+  padding-top: 7px;
   width: 220px;
   font-family: sans-serif;
   height: 50px;
@@ -1993,7 +1993,7 @@ body > .header .logo .icon {
 */
 /* skin-blue navbar */
 .navbar {
-  background: #333333; /* Old browsers */
+  background: #2B6586; /* Old browsers */
 }
 .navbar .nav a {
   color: #fff;
@@ -2016,7 +2016,7 @@ body > .header .logo .icon {
 /* skin-blue logo */
 .logo {
   color: #f9f9f9;
-  background: #333333; /* Old browsers */
+  background: #2B6586; /* Old browsers */
   }
 .logo > a {
   color: #f9f9f9;
@@ -3331,4 +3331,16 @@ input.masked {
 
 .padding10 {
   padding-left: 10px;
+}
+.misalignedbutton {
+    margin-top: 9px;
+    line-height: 7px;
+    padding-top: 10px;
+    padding-bottom: 12px;
+    height: 31px;
+
+}
+.linkfloater{
+  float:left;
+  margin-right: 4px;
 }

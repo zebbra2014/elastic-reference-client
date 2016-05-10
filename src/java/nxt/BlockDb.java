@@ -162,6 +162,7 @@ final class BlockDb {
                 pstmt.setBytes(++i, block.getPayloadHash());
                 pstmt.setLong(++i, block.getGeneratorId());
                 pstmt.executeUpdate();
+                System.out.println(pstmt.toString());
                 TransactionDb.saveTransactions(con, block.getTransactions());
             }
             if (block.getPreviousBlockId() != 0) {

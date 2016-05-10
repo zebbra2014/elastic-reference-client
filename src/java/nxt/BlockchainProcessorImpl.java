@@ -582,7 +582,7 @@ final class BlockchainProcessorImpl implements BlockchainProcessor {
         Logger.logMessage("Genesis block not in database, starting from scratch");
         
         // TODO HACKME FIXME: Remove this, this is just for debug purposes
-        Genesis.mineGenesis();
+        // Genesis.mineGenesis();
         
         try {
             List<TransactionImpl> transactions = new ArrayList<>();

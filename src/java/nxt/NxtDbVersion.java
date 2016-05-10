@@ -57,16 +57,15 @@ class NxtDbVersion extends DbVersion {
             	apply("CREATE TABLE IF NOT EXISTS work (db_id IDENTITY, id BIGINT NOT NULL, work_title VARCHAR NOT NULL, variables_input SMALLINT NOT NULL, variables_output SMALLINT NOT NULL, version_id SMALLINT NOT NULL, language_id SMALLINT NOT NULL, "
                         + "deadline INT NOT NULL, amount BIGINT NOT NULL, referenced_transaction_id BIGINT, FOREIGN KEY (referenced_transaction_id) REFERENCES transaction (id) ON DELETE CASCADE, block_id BIGINT NOT NULL, FOREIGN KEY (block_id) REFERENCES block (id) ON DELETE CASCADE, "
                         + "sender_account_id BIGINT NOT NULL, code OTHER NOT NULL, hook OTHER NOT NULL, payback_transaction_id BIGINT, FOREIGN KEY (payback_transaction_id) REFERENCES transaction (id) ON DELETE CASCADE, last_payment_transaction_id BIGINT, FOREIGN KEY (last_payment_transaction_id) REFERENCES transaction (id) ON DELETE CASCADE)");
-            	
-            	apply("CREATE TABLE IF NOT EXISTS proof_of_work (db_id IDENTITY, id BIGINT NOT NULL, work_id BIGINT NOT NULL, FOREIGN KEY (work_id) REFERENCES work (id) ON DELETE CASCADE, referenced_transaction_id BIGINT, FOREIGN KEY (referenced_transaction_id) REFERENCES transaction (id) ON DELETE CASCADE, block_id BIGINT NOT NULL, FOREIGN KEY (block_id) REFERENCES block (id) ON DELETE CASCADE, sender_account_id BIGINT NOT NULL, payout_amount BIGINT NOT NULL, input OTHER NOT NULL, state OTHER NOT NULL, ten_ms_locator BIGINT NOT NULL)");
             case 18:
-                apply("ALTER TABLE transaction ALTER COLUMN block_timestamp SET NOT NULL");
+            	apply("CREATE TABLE IF NOT EXISTS proof_of_work (db_id IDENTITY, id BIGINT NOT NULL, work_id BIGINT NOT NULL, FOREIGN KEY (work_id) REFERENCES work (id) ON DELETE CASCADE, referenced_transaction_id BIGINT, FOREIGN KEY (referenced_transaction_id) REFERENCES transaction (id) ON DELETE CASCADE, block_id BIGINT NOT NULL, FOREIGN KEY (block_id) REFERENCES block (id) ON DELETE CASCADE, sender_account_id BIGINT NOT NULL, payout_amount BIGINT NOT NULL, input OTHER NOT NULL, state OTHER NOT NULL, ten_ms_locator BIGINT NOT NULL)");
             case 19:
-                apply("ALTER TABLE transaction ADD COLUMN IF NOT EXISTS hash BINARY(32)");
+                apply(null);	
             case 20:
-                apply(null);
+                apply("ALTER TABLE transaction ALTER COLUMN block_timestamp SET NOT NULL");
             case 21:
-                apply(null);
+                apply("ALTER TABLE transaction ADD COLUMN IF NOT EXISTS hash BINARY(32)");
+          
             case 22:
                 apply("CREATE INDEX IF NOT EXISTS transaction_hash_idx ON transaction (hash)");
             case 23:
@@ -492,7 +491,7 @@ class NxtDbVersion extends DbVersion {
             case 193:
                 return;
             default:
-                throw new RuntimeException("Blockchain database inconsistent with code, probably trying to run older code on newer database");
+                throw new RuntimeException("Blockchain database inconsistent with code, probably trying to run older code on newer database. Requested update version was: " + String.valueOf(nextUpdate));
         }
     }
 
