@@ -194,7 +194,7 @@ var NRS = (function(NRS, $, undefined) {
 					var canvas_title = CryptoJS.SHA1(String(NRS.account));
 					var cobj = document.getElementById("canvas_hash");
 					cobj.setAttribute("data-jdenticon-hash",canvas_title);
-					this.jidenticon();
+					this.jdenticon();
 
 					var passwordNotice = "";
 
