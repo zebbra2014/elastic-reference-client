@@ -13,7 +13,7 @@ import nxt.util.Logger;
 public final class Genesis {
 
 	public static final long GENESIS_BLOCK_ID = (new BigInteger(
-			"-8560601219353650019")).longValue();
+			"2523247414743417891")).longValue();
 
 	// The Account ID which distributes the Genesis coins.
 	public static final long CREATOR_ID = 5177795918244458805L;

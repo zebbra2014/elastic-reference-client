@@ -58,7 +58,7 @@ public final class Constants {
     static {
         Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
         calendar.set(Calendar.YEAR, 2016);
-        calendar.set(Calendar.MONTH, Calendar.NOVEMBER);
+        calendar.set(Calendar.MONTH, Calendar.JANUARY);
         calendar.set(Calendar.DAY_OF_MONTH, 01);
         calendar.set(Calendar.HOUR_OF_DAY, 01);
         calendar.set(Calendar.MINUTE, 0);
