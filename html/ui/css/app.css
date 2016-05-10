@@ -19,6 +19,7 @@
     Core: General style
 ----------------------------
 */
+
 html,
 body {
   overflow-x:hidden;
@@ -3343,4 +3344,15 @@ input.masked {
 .linkfloater{
   float:left;
   margin-right: 4px;
+}
+.padtop7{
+  padding-top: 7px !important;
+}
+.huge {
+    font-size: 28px;
+    font-weight: bold;
+}
+.navbarbglight{
+  background-color: #2B6586 !important;
+  color: #fff;
 }
