@@ -7,8 +7,11 @@ var NRS = (function(NRS, $, undefined) {
 
 	NRS.forms.startForgingComplete = function(response, data) {
 		if ("deadline" in response) {
-			$("#forging_indicator").addClass("forging");
-			$("#forging_indicator span").html($.t("forging")).attr("data-i18n", "forging");
+			$("#forging_indicator").removeClass("btn-danger");
+			$("#forging_indicator").removeClass("btn-success");
+			$("#forging_indicator").addClass("btn-success");
+			$("#forging_indicator").html($.t("forging")).attr("data-i18n", "forging");
+			$("#forging_indicator").show();
 			NRS.isForging = true;
 			$.growl($.t("success_start_forging"), {
 				type: "success"
@@ -27,8 +30,11 @@ var NRS = (function(NRS, $, undefined) {
 			return;
 		}
 
-		$("#forging_indicator").removeClass("forging");
-		$("#forging_indicator span").html($.t("not_forging")).attr("data-i18n", "not_forging");
+		$("#forging_indicator").removeClass("btn-danger");
+		$("#forging_indicator").removeClass("btn-success");
+		$("#forging_indicator").addClass("btn-danger");
+		$("#forging_indicator").html($.t("not_forging")).attr("data-i18n", "not_forging");
+		$("#forging_indicator").show();
 
 		NRS.isForging = false;
 
@@ -54,11 +60,7 @@ var NRS = (function(NRS, $, undefined) {
 			$.growl($.t("error_forging_blockchain_rescanning"), {
 				"type": "danger"
 			});
-		} else if (!NRS.accountInfo.publicKey) {
-			$.growl($.t("error_forging_no_public_key"), {
-				"type": "danger"
-			});
-		} else if (NRS.accountInfo.effectiveBalanceNXT == 0) {
+		/*} else if (NRS.accountInfo.effectiveBalanceNXT == 0) {
 			if (NRS.lastBlockHeight >= NRS.accountInfo.currentLeasingHeightFrom && NRS.lastBlockHeight <= NRS.accountInfo.currentLeasingHeightTo) {
 				$.growl($.t("error_forging_lease"), {
 					"type": "danger"
@@ -67,8 +69,8 @@ var NRS = (function(NRS, $, undefined) {
 				$.growl($.t("error_forging_effective_balance"), {
 					"type": "danger"
 				});
-			}
-		} else if ($(this).hasClass("forging")) {
+			}*/
+		} else if ($("#forging_indicator").hasClass("btn-success")) {
 			$("#stop_forging_modal").modal("show");
 		} else {
 			$("#start_forging_modal").modal("show");

@@ -61,7 +61,6 @@ public final class Crypto {
     }
 
     public static byte[] sign(byte[] message, String secretPhrase) {
-
         byte[] P = new byte[32];
         byte[] s = new byte[32];
         MessageDigest digest = Crypto.sha256();
@@ -84,24 +83,17 @@ public final class Crypto {
         byte[] signature = new byte[64];
         System.arraycopy(v, 0, signature, 0, 32);
         System.arraycopy(h, 0, signature, 32, 32);
-
-        /*
-            if (!Curve25519.isCanonicalSignature(signature)) {
-                throw new RuntimeException("Signature not canonical");
-            }
-            */
         return signature;
-
     }
 
-    public static boolean verify(byte[] signature, byte[] message, byte[] publicKey, boolean enforceCanonical) {
+    public static boolean verify(byte[] signature, byte[] message, byte[] publicKey) {
 
-        if (enforceCanonical && !Curve25519.isCanonicalSignature(signature)) {
+        if (!Curve25519.isCanonicalSignature(signature)) {
             Logger.logDebugMessage("Rejecting non-canonical signature");
             return false;
         }
 
-        if (enforceCanonical && !Curve25519.isCanonicalPublicKey(publicKey)) {
+        if (!Curve25519.isCanonicalPublicKey(publicKey)) {
             Logger.logDebugMessage("Rejecting non-canonical public key");
             return false;
         }

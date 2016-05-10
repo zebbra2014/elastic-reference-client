@@ -535,13 +535,6 @@ var NRS = (function(NRS, $, undefined) {
 			}
 		}
 
-		if (!key || key == "animate_forging") {
-			if (NRS.settings["animate_forging"]) {
-				$("#forging_indicator").addClass("animated");
-			} else {
-				$("#forging_indicator").removeClass("animated");
-			}
-		}
 
 		if (!key || key == "news") {
 			if (NRS.settings["news"] == 0) {

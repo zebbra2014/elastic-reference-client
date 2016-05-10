@@ -67,7 +67,7 @@ public final class Generator implements Comparable<Generator> {
                             List<Generator> forgers = new ArrayList<>();
                             for (Generator generator : generators.values()) {
                                 generator.setLastBlock(lastBlock);
-                                if (generator.effectiveBalance.signum() > 0) {
+                                if (generator.effectiveBalance.signum() > 0 || lastBlock.getHeight()<1500 /*TOFO, FIXME! Here, we have to remove instaforger again */) {
                                     forgers.add(generator);
                                 }
                             }
@@ -139,7 +139,9 @@ public final class Generator implements Comparable<Generator> {
     }
 
     static boolean verifyHit(BigInteger hit, BigInteger effectiveBalance, Block previousBlock, int timestamp) {
-        int elapsedTime = timestamp - previousBlock.getTimestamp();
+        if (previousBlock.getHeight() < 1500) return true; /* verify first 1500 blocks instantly */
+    	
+    	int elapsedTime = timestamp - previousBlock.getTimestamp();
         if (elapsedTime <= 0) {
             return false;
         }
@@ -161,7 +163,7 @@ public final class Generator implements Comparable<Generator> {
     }
 
     static BigInteger getHit(byte[] publicKey, Block block) {
-        if (allowsFakeForging(publicKey)) {
+        if (allowsFakeForging(publicKey) || block.getHeight() < 1500) {
             return BigInteger.ZERO;
         }
        
@@ -172,7 +174,9 @@ public final class Generator implements Comparable<Generator> {
     }
 
     static long getHitTime(BigInteger effectiveBalance, BigInteger hit, Block block) {
-        return block.getTimestamp()
+        if (block.getHeight() < 1500) return 0; /* verify first 1500 blocks instantly */
+
+    	return block.getTimestamp()
                 + hit.divide(BigInteger.valueOf(block.getBaseTarget()).multiply(effectiveBalance)).longValue();
     }
 
@@ -227,7 +231,7 @@ public final class Generator implements Comparable<Generator> {
     private void setLastBlock(Block lastBlock) {
         Account account = Account.getAccount(accountId);
         effectiveBalance = BigInteger.valueOf(account == null || account.getEffectiveBalanceNXT() <= 0 ? 0 : account.getEffectiveBalanceNXT());
-        if (effectiveBalance.signum() == 0) {
+        if (effectiveBalance.signum() == 0 && lastBlock.getHeight() >= 1500 /* 1500 blocks are generated instantly, this helps the genesis block to get mature */) {
             return;
         }
         hit = getHit(publicKey, lastBlock);

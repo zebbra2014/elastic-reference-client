@@ -52,7 +52,7 @@ public final class Constants {
 
     //public static final int LAST_KNOWN_BLOCK = isTestnet ? 150000 : 335000;
 
-    public static final int[] MIN_VERSION = new int[] {1, 4};
+    public static final int[] MIN_VERSION = new int[] {0, 1};
 
     public static final long EPOCH_BEGINNING;
     static {

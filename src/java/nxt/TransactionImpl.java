@@ -743,7 +743,7 @@ final class TransactionImpl implements Transaction {
             return false;
         }
         byte[] data = zeroSignature(getBytes());
-        return Crypto.verify(signature, data, senderPublicKey, useNQT()) && account.setOrVerify(senderPublicKey, this.getHeight());
+        return Crypto.verify(signature, data, senderPublicKey) && account.setOrVerify(senderPublicKey, this.getHeight());
     }
 
     int getSize() {

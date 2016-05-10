@@ -36,6 +36,8 @@ var NRS = (function(NRS, $, undefined) {
 
 			if (NRS.state) {
 				//if no new blocks in 6 hours, show blockchain download progress..
+				// TODO, FIXME! DO NOT DO THIS, WE CAN NEVER BOOTSTRAP HERE!!!
+				/*
 				var timeDiff = NRS.state.time - NRS.blocks[0].timestamp;
 				if (timeDiff > 60 * 60 * 18) {
 					if (timeDiff > 60 * 60 * 24 * 14) {
@@ -56,7 +58,7 @@ var NRS = (function(NRS, $, undefined) {
 					$("#downloading_blockchain, #nrs_update_explanation_blockchain_sync").show();
 					$("#show_console").hide();
 					NRS.updateBlockchainDownloadProgress();
-				} else {
+				} else {*/
 					//continue with faster state intervals if we still haven't reached current block from within 1 hour
 					if (timeDiff < 60 * 60) {
 						NRS.setStateInterval(30);
@@ -65,7 +67,7 @@ var NRS = (function(NRS, $, undefined) {
 						NRS.setStateInterval(10);
 						trackBlockchain = true;
 					}
-				}
+				/*}*/
 			}
 
 			var rows = "";

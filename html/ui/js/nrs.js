@@ -607,12 +607,16 @@ var NRS = (function(NRS, $, undefined) {
 			"state": "CONNECTED"
 		}, function(response) {
 			if (response.peers && response.peers.length) {
-				$("#connected_indicator").addClass("connected");
-				$("#connected_indicator span").html($.t("Connected")).attr("data-i18n", "connected");
+				$("#connected_indicator").removeClass("btn-danger");
+				$("#connected_indicator").removeClass("btn-success");
+				$("#connected_indicator").addClass("btn-success");
+				$("#connected_indicator").html($.t("Connected")).attr("data-i18n", "connected");
 				$("#connected_indicator").show();
 			} else {
-				$("#connected_indicator").removeClass("connected");
-				$("#connected_indicator span").html($.t("Not Connected")).attr("data-i18n", "not_connected");
+				$("#connected_indicator").removeClass("btn-danger");
+				$("#connected_indicator").removeClass("btn-success");
+				$("#connected_indicator").addClass("btn-success");
+				$("#connected_indicator").html($.t("Not Connected")).attr("data-i18n", "not_connected");
 				$("#connected_indicator").show();
 			}
 		});
@@ -900,8 +904,10 @@ var NRS = (function(NRS, $, undefined) {
 		}
 
 		if (NRS.accountInfo.effectiveBalanceNXT == 0) {
-			$("#forging_indicator").removeClass("forging");
-			$("#forging_indicator span").html($.t("not_forging")).attr("data-i18n", "not_forging");
+			$("#forging_indicator").removeClass("btn-danger");
+			$("#forging_indicator").removeClass("btn-success");
+			$("#forging_indicator").addClass("btn-danger");
+			$("#forging_indicator").html($.t("not_forging")).attr("data-i18n", "not_forging");
 			$("#forging_indicator").show();
 			NRS.isForging = false;
 		}

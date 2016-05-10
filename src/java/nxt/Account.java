@@ -387,9 +387,11 @@ public final class Account {
     public long getEffectiveBalanceNXT() {
 
         Block lastBlock = Nxt.getBlockchain().getLastBlock();
-        if ((getPublicKey() == null || lastBlock.getHeight() - keyHeight <= 1440)) {
+        /* TODO, FIXME: Do we really need this shit here? 
+         * if ((getPublicKey() == null || lastBlock.getHeight() - keyHeight <= 1440)) {
+         
             return 0; // cfb: Accounts with the public key revealed less than 1440 blocks ago are not allowed to generate blocks
-        }
+        }*/
         if (lastBlock.getHeight() < currentLeasingHeightFrom) {
             return (getGuaranteedBalanceNQT(1440) + getLessorsGuaranteedBalanceNQT()) / Constants.ONE_NXT;
         }

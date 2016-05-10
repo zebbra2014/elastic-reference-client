@@ -223,9 +223,8 @@ final class BlockImpl implements Block {
         json.put("payloadHash", Convert.toHexString(payloadHash));
         json.put("generatorPublicKey", Convert.toHexString(generatorPublicKey));
         json.put("generationSignature", Convert.toHexString(generationSignature));
-        if (version > 1) {
-            json.put("previousBlockHash", Convert.toHexString(previousBlockHash));
-        }
+        json.put("previousBlockHash", Convert.toHexString(previousBlockHash));
+        
         json.put("blockSignature", Convert.toHexString(blockSignature));
         JSONArray transactionsData = new JSONArray();
         for (Transaction transaction : getTransactions()) {
@@ -247,7 +246,7 @@ final class BlockImpl implements Block {
             byte[] generatorPublicKey = Convert.parseHexString((String) blockData.get("generatorPublicKey"));
             byte[] generationSignature = Convert.parseHexString((String) blockData.get("generationSignature"));
             byte[] blockSignature = Convert.parseHexString((String) blockData.get("blockSignature"));
-            byte[] previousBlockHash = version == 1 ? null : Convert.parseHexString((String) blockData.get("previousBlockHash"));
+            byte[] previousBlockHash = Convert.parseHexString((String) blockData.get("previousBlockHash"));
             List<TransactionImpl> blockTransactions = new ArrayList<>();
             for (Object transactionData : (JSONArray) blockData.get("transactions")) {
                 blockTransactions.add(TransactionImpl.parseTransaction((JSONObject) transactionData));
@@ -261,27 +260,24 @@ final class BlockImpl implements Block {
     }
 
     byte[] getBytes() {
-        ByteBuffer buffer = ByteBuffer.allocate(4 + 4 + 8 + 4 + (version < 3 ? (4 + 4) : (8 + 8)) + 4 + 32 + 32 + (32 + 32) + 64);
+        ByteBuffer buffer = ByteBuffer.allocate(4 + 4 + 8 + 4 + ((8 + 8)) + 4 + 32 + 32 + (32 + 32)  + (blockSignature != null ? 64 : 0));
         buffer.order(ByteOrder.LITTLE_ENDIAN);
         buffer.putInt(version);
         buffer.putInt(timestamp);
         buffer.putLong(previousBlockId);
         buffer.putInt(getTransactions().size());
-        if (version < 3) {
-            buffer.putInt((int)(totalAmountNQT / Constants.ONE_NXT));
-            buffer.putInt((int)(totalFeeNQT / Constants.ONE_NXT));
-        } else {
-            buffer.putLong(totalAmountNQT);
-            buffer.putLong(totalFeeNQT);
-        }
+        buffer.putLong(totalAmountNQT);
+        buffer.putLong(totalFeeNQT);
+        
         buffer.putInt(payloadLength);
         buffer.put(payloadHash);
         buffer.put(generatorPublicKey);
         buffer.put(generationSignature);
-        if (version > 1) {
-            buffer.put(previousBlockHash);
+        buffer.put(previousBlockHash);
+       
+        if (blockSignature != null) {
+            buffer.put(blockSignature);
         }
-        buffer.put(blockSignature);
         return buffer.array();
     }
 
@@ -289,15 +285,29 @@ final class BlockImpl implements Block {
         if (blockSignature != null) {
             throw new IllegalStateException("Block already signed");
         }
-        blockSignature = new byte[64];
         byte[] data = getBytes();
-        byte[] data2 = new byte[data.length - 64];
+        byte[] data2;
+        if (blockSignature != null) {
+        	data2 = new byte[data.length - 64];
+        }else{
+        	data2 = new byte[data.length];
+        }
+
         System.arraycopy(data, 0, data2, 0, data2.length);
         blockSignature = Crypto.sign(data2, secretPhrase);
     }
 
     boolean verifyBlockSignature() {
 
+    	// Do quick verification for genesis block
+    	if( generatorPublicKey.equals(Genesis.CREATOR_PUBLIC_KEY)){
+    		byte[] data = getBytes();
+            byte[] data2 = new byte[data.length - 64];
+            System.arraycopy(data, 0, data2, 0, data2.length);
+
+            return Crypto.verify(blockSignature, data2, Genesis.CREATOR_PUBLIC_KEY);
+    	}
+    	
         Account account = Account.getAccount(getGeneratorId());
         if (account == null) {
             return false;
@@ -307,7 +317,7 @@ final class BlockImpl implements Block {
         byte[] data2 = new byte[data.length - 64];
         System.arraycopy(data, 0, data2, 0, data2.length);
 
-        return Crypto.verify(blockSignature, data2, generatorPublicKey, version >= 3) && account.setOrVerify(generatorPublicKey, this.height);
+        return Crypto.verify(blockSignature, data2, generatorPublicKey) && account.setOrVerify(generatorPublicKey, this.height);
 
     }
 
@@ -320,27 +330,20 @@ final class BlockImpl implements Block {
                 throw new BlockchainProcessor.BlockOutOfOrderException("Can't verify signature because previous block is missing");
             }
 
-            if (version == 1 && !Crypto.verify(generationSignature, previousBlock.generationSignature, generatorPublicKey, version >= 3)) {
-                return false;
-            }
-
             Account account = Account.getAccount(getGeneratorId());
             long effectiveBalance = account == null ? 0 : account.getEffectiveBalanceNXT();
-            if (effectiveBalance <= 0) {
+            if (effectiveBalance <= 0 && this.getPreviousBlockHeight()>=1500) {
                 return false;
             }
 
             MessageDigest digest = Crypto.sha256();
             byte[] generationSignatureHash;
-            if (version == 1) {
-                generationSignatureHash = digest.digest(generationSignature);
-            } else {
-                digest.update(previousBlock.generationSignature);
-                generationSignatureHash = digest.digest(generatorPublicKey);
-                if (!Arrays.equals(generationSignature, generationSignatureHash)) {
-                    return false;
-                }
+            digest.update(previousBlock.generationSignature);
+            generationSignatureHash = digest.digest(generatorPublicKey);
+            if (!Arrays.equals(generationSignature, generationSignatureHash)) {
+               return false;
             }
+            
 
             BigInteger hit = new BigInteger(1, new byte[]{generationSignatureHash[7], generationSignatureHash[6], generationSignatureHash[5], generationSignatureHash[4], generationSignatureHash[3], generationSignatureHash[2], generationSignatureHash[1], generationSignatureHash[0]});
 
@@ -355,7 +358,11 @@ final class BlockImpl implements Block {
 
     }
 
-    private static final long[] badBlocks = new long[] {};
+    private int getPreviousBlockHeight() {
+    	return BlockDb.findBlock(this.getPreviousBlockId()).getHeight();
+	}
+
+	private static final long[] badBlocks = new long[] {};
     static {
         Arrays.sort(badBlocks);
     }

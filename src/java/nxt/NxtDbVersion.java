@@ -99,10 +99,10 @@ class NxtDbVersion extends DbVersion {
             case 37:
                 if (!Constants.isTestnet) {
                     apply("INSERT INTO peer (address) VALUES " +
-                            "('prometheus')");
+                            "('testclient1')");
                 } else {
                     apply("INSERT INTO peer (address) VALUES " +
-                            "('prometheus')");
+                            "('testclient1')");
                 }
             case 38:
                 apply("ALTER TABLE transaction ADD COLUMN IF NOT EXISTS full_hash BINARY(32)");
