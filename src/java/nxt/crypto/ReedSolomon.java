@@ -6,10 +6,6 @@
 */
 package nxt.crypto;
 
-import nxt.util.Convert;
-
-import java.math.BigInteger;
-
 final class ReedSolomon {
 
     private static final int[] initial_codeword = {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
@@ -23,7 +19,7 @@ final class ReedSolomon {
 
     static String encode(long plain) {
 
-        String plain_string = Convert.toUnsignedLong(plain);
+        String plain_string = Long.toUnsignedString(plain);
         int length = plain_string.length();
         int[] plain_string_10 = new int[ReedSolomon.base_10_length];
         for (int i = 0; i < length; i++) {
@@ -68,6 +64,10 @@ final class ReedSolomon {
             final int codework_index = ReedSolomon.codeword_map[i];
             final int alphabet_index = codeword[codework_index];
             cypher_string_builder.append(ReedSolomon.alphabet.charAt(alphabet_index));
+
+            if ((i & 3) == 3 && i < 13) {
+                cypher_string_builder.append('-');
+            }
         }
         return cypher_string_builder.toString();
     }
@@ -125,8 +125,7 @@ final class ReedSolomon {
             plain_string_builder.append((char)(digit_10 + (int)'0'));
         } while (length > 0);
 
-        BigInteger bigInt = new BigInteger(plain_string_builder.reverse().toString());
-        return bigInt.longValue();
+        return Long.parseUnsignedLong(plain_string_builder.reverse().toString());
     }
 
     private static int gmult(int a, int b) {

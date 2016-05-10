@@ -506,7 +506,7 @@ var NRS = (function(NRS, $, undefined) {
 		} else if (type == "account") {
 			$("#register_alias_uri_label").html($.t("account_id"));
 			$("#register_alias_uri").prop("placeholder", $.t("account_id"));
-			$("#register_alias_uri").val("").mask("NXT-****-****-****-*****");
+			$("#register_alias_uri").val("").mask("XEL-****-****-****-*****");
 
 			if (uri) {
 				var match = uri.match(/acct:(.*)@nxt/i);

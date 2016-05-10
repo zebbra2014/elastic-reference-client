@@ -171,14 +171,14 @@
 					if (settings.noMask) {
 						input.bind("keyup.remask", function(e) {
 							if (input.val().toLowerCase() == "nxt-") {
-								input.val("").mask("NXT-****-****-****-*****").unbind(".remask").trigger("focus");
+								input.val("").mask("XEL-****-****-****-*****").unbind(".remask").trigger("focus");
 							}
 						}).bind("paste.remask", function(e) {
 							setTimeout(function() {
 								var newInput = input.val();
 
 								if (/^NXT\-[A-Z0-9]{4}\-[A-Z0-9]{4}\-[A-Z0-9]{4}\-[A-Z0-9]{5}/i.test(newInput) || /^NXT[A-Z0-9]{17}/i.test(newInput)) {
-									input.mask("NXT-****-****-****-*****").trigger("checkRecipient").unbind(".remask");
+									input.mask("XEL-****-****-****-*****").trigger("checkRecipient").unbind(".remask");
 								}
 							}, 0);
 						});
@@ -197,14 +197,14 @@
 						if (!removeCompletely) {
 							input.bind("keyup.remask", function(e) {
 								if (input.val().toLowerCase() == "nxt-") {
-									input.val("").mask("NXT-****-****-****-*****").unbind(".remask").trigger("focus");
+									input.val("").mask("XEL-****-****-****-*****").unbind(".remask").trigger("focus");
 								}
 							}).bind("paste.remask", function(e) {
 								setTimeout(function() {
 									var newInput = input.val();
 
 									if (/^NXT\-[A-Z0-9]{4}\-[A-Z0-9]{4}\-[A-Z0-9]{4}\-[A-Z0-9]{5}/i.test(newInput) || /^NXT[A-Z0-9]{17}/i.test(newInput)) {
-										input.mask("NXT-****-****-****-*****").trigger("checkRecipient").unbind(".remask");
+										input.mask("XEL-****-****-****-*****").trigger("checkRecipient").unbind(".remask");
 									}
 								}, 0);
 							});

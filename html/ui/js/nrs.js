@@ -202,7 +202,7 @@ var NRS = (function(NRS, $, undefined) {
 
 		$(".sidebar .treeview").tree();
 
-		$("#dgs_search_account_top, #dgs_search_account_center").mask("NXT-****-****-****-*****", {
+		$("#dgs_search_account_top, #dgs_search_account_center").mask("XEL-****-****-****-*****", {
 			"unmask": false
 		});
 

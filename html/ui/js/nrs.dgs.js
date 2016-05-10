@@ -236,7 +236,7 @@ var NRS = (function(NRS, $, undefined) {
 			"page": "main",
 			"searchStr": ""
 		};
-		$(".dgs_search input[name=q]").val("").trigger("unmask").mask("NXT-****-****-****-*****", {
+		$(".dgs_search input[name=q]").val("").trigger("unmask").mask("XEL-****-****-****-*****", {
 			"unmask": false
 		});
 		$(".dgs_fulltext_search input[name=fs_q]").val("");

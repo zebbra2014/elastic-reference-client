@@ -81,20 +81,21 @@ public final class Convert {
     }
 
     public static long parseAccountId(String account) {
-        if (account == null) {
+        if (account == null || (account = account.trim()).isEmpty()) {
             return 0;
         }
         account = account.toUpperCase();
-        if (account.startsWith("XEL")) {
-            return Crypto.rsDecode(account.substring(3));
+        if (account.startsWith("XEL-")) {
+            return Crypto.rsDecode(account.substring(4));
         } else {
-            return parseUnsignedLong(account);
+            return Long.parseUnsignedLong(account);
         }
     }
 
     public static String rsAccount(long accountId) {
-        return "XEL" + Crypto.rsEncode(accountId);
+        return "XEL-" + Crypto.rsEncode(accountId);
     }
+
 
     public static long fullHashToId(byte[] hash) {
         if (hash == null || hash.length < 8) {

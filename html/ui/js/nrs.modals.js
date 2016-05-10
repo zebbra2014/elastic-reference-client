@@ -82,11 +82,11 @@ var NRS = (function(NRS, $, undefined) {
 
 		$.each($inputFields, function() {
 			if ($(this).hasClass("noMask")) {
-				$(this).mask("NXT-****-****-****-*****", {
+				$(this).mask("XEL-****-****-****-*****", {
 					"noMask": true
 				}).removeClass("noMask");
 			} else {
-				$(this).mask("NXT-****-****-****-*****");
+				$(this).mask("XEL-****-****-****-*****");
 			}
 		});
 
