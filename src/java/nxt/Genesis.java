@@ -32,7 +32,7 @@ public final class Genesis {
 			"4273301882745002507")).longValue() };
 
 	// And here the same amounts in the correct order
-	public static final int[] GENESIS_AMOUNTS = { 500000000 };
+	public static final int[] GENESIS_AMOUNTS = { 5000000 };
 
 	// All payment signatures from genesis must be signed correctly, namely here
 	public static final byte[][] GENESIS_SIGNATURES = { { -37, -71, 114, 16,
