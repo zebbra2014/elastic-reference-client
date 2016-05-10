@@ -13,7 +13,7 @@ var NRS = (function(NRS, $, undefined) {
 			var value = $(this).val();
 			var modal = $(this).closest(".modal");
 
-			if (value && value != "NXT-____-____-____-_____") {
+			if (value && value != "XEL-____-____-____-_____") {
 				NRS.checkRecipient(value, modal);
 			} else {
 				modal.find(".account_info").hide();
@@ -41,7 +41,7 @@ var NRS = (function(NRS, $, undefined) {
 		if (account) {
 			var $inputField = $(this).find("input[name=recipient], input[name=account_id]").not("[type=hidden]");
 
-			if (!/NXT\-/i.test(account)) {
+			if (!/XEL\-/i.test(account)) {
 				$inputField.addClass("noMask");
 			}
 
@@ -123,7 +123,7 @@ var NRS = (function(NRS, $, undefined) {
 					if (response.errorCode == 4) {
 						callback({
 							"type": "danger",
-							"message": $.t("recipient_malformed") + (!/^(NXT\-)/i.test(accountId) ? " " + $.t("recipient_alias_suggestion") : ""),
+							"message": $.t("recipient_malformed") + (!/^(XEL\-)/i.test(accountId) ? " " + $.t("recipient_alias_suggestion") : ""),
 							"account": null
 						});
 					} else if (response.errorCode == 5) {
@@ -172,7 +172,7 @@ var NRS = (function(NRS, $, undefined) {
 		account = $.trim(account);
 
 		//solomon reed. Btw, this regex can be shortened..
-		if (/^(NXT\-)?[A-Z0-9]+\-[A-Z0-9]+\-[A-Z0-9]+\-[A-Z0-9]+/i.test(account)) {
+		if (/^(XEL\-)?[A-Z0-9]+\-[A-Z0-9]+\-[A-Z0-9]+\-[A-Z0-9]+/i.test(account)) {
 			var address = new NxtAddress();
 
 			if (address.set(account)) {

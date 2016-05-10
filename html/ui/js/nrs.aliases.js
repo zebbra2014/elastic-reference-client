@@ -526,7 +526,7 @@ var NRS = (function(NRS, $, undefined) {
 					} else {
 						uri = "";
 					}
-				} else if (!/^NXT\-[A-Z0-9]{4}\-[A-Z0-9]{4}\-[A-Z0-9]{4}\-[A-Z0-9]{5}/i.test(uri)) {
+				} else if (!/^XEL\-[A-Z0-9]{4}\-[A-Z0-9]{4}\-[A-Z0-9]{4}\-[A-Z0-9]{5}/i.test(uri)) {
 					uri = NRS.accountRS;
 				}
 

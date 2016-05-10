@@ -271,7 +271,7 @@ var NRS = (function(NRS, $, undefined) {
 			}
 
 			if (typeof data == "object" && "recipient" in data) {
-				if (/^NXT\-/i.test(data.recipient)) {
+				if (/^XEL\-/i.test(data.recipient)) {
 					data.recipientRS = data.recipient;
 
 					var address = new NxtAddress();
@@ -438,8 +438,8 @@ var NRS = (function(NRS, $, undefined) {
 
 		if (!("recipient" in data)) {
 			//recipient == genesis
-			data.recipient = "1739068987193023818";
-			data.recipientRS = "NXT-MRCC-2YLS-8M54-3CMAJ";
+			data.recipient = "5177795918244458805";
+			data.recipientRS = "XEL-VEBP-YKF8-8KNT-6TTQH";
 		}
 
 		if (transaction.publicKey != NRS.accountInfo.publicKey) {
@@ -451,7 +451,7 @@ var NRS = (function(NRS, $, undefined) {
 		}
 
 		if (transaction.recipient !== data.recipient) {
-			if (data.recipient == "1739068987193023818" && transaction.recipient == "0") {
+			if (data.recipient == "5177795918244458805" && transaction.recipient == "0") {
 				//ok
 			} else {
 				return false;

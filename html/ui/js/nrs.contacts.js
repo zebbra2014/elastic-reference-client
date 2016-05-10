@@ -72,7 +72,7 @@ var NRS = (function(NRS, $, undefined) {
 			};
 		}
 
-		if (/^\d+$/.test(data.name) || /^NXT\-/i.test(data.name)) {
+		if (/^\d+$/.test(data.name) || /^XEL\-/i.test(data.name)) {
 			return {
 				"error": $.t("error_contact_name_alpha")
 			};
@@ -95,7 +95,7 @@ var NRS = (function(NRS, $, undefined) {
 			}
 		}
 
-		if (/^NXT\-/i.test(data.account_id)) {
+		if (/^XEL\-/i.test(data.account_id)) {
 			data.account_rs = data.account_id;
 
 			var address = new NxtAddress();
@@ -193,7 +193,7 @@ var NRS = (function(NRS, $, undefined) {
 		if (!contactId && NRS.selectedContext) {
 			var accountId = NRS.selectedContext.data("account");
 
-			var dbKey = (/^NXT\-/i.test(accountId) ? "accountRS" : "account");
+			var dbKey = (/^XEL\-/i.test(accountId) ? "accountRS" : "account");
 
 			var dbQuery = {};
 			dbQuery[dbKey] = accountId;
@@ -257,7 +257,7 @@ var NRS = (function(NRS, $, undefined) {
 			};
 		}
 
-		if (/^NXT\-/i.test(data.account_id)) {
+		if (/^XEL\-/i.test(data.account_id)) {
 			data.account_rs = data.account_id;
 
 			var address = new NxtAddress();
