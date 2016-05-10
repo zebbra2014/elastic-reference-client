@@ -191,10 +191,10 @@ var NRS = (function(NRS, $, undefined) {
 					}
 
 					$("#account_id").html(String(NRS.accountRS).escapeHTML()).css("font-size", "12px");
-					var canvas_title =  "identicon -" + String(NRS.account);
+					var canvas_title = CryptoJS.SHA1(String(NRS.account));
 					var cobj = document.getElementById("canvas_hash");
-					cobj.title = canvas_title;
-					render_identicon_canvases('identicon ');
+					cobj.setAttribute("data-jdenticon-hash",canvas_title);
+					this.jidenticon();
 
 					var passwordNotice = "";
 
