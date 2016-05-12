@@ -25,20 +25,52 @@
                  <div class="content-splitter-wide-right" id="message_content" >
                     <div class="content-splitter-right-inner" style="left:450px">
                         <div id="no_message_selected" style="padding-top: 150px;text-align:center;;display:none;" data-i18n="select_contact_in_sidebar">Please select a task in the left sidebar.</div>
-                        <div id="no_messages_available" style="padding-top: 150px;text-align:center" data-i18n="[html]no_messages_available">
-
+                        <div id="no_messages_available" style="" data-i18n="[html]no_messages_available">
+                        <h2 class="workh2" data-i18n="myownwork">
+                        <button style="float: right; margin-top: 0px;" id="cancel_btn" type="button" class="btn linkfloater misalignedbutton btn-danger">Cancel and Refund</button>
+                        Prime Number Example</h2>
                          <div class="row">
                                        
                                         <div class="col-lg-6">
                                             <div class="panel panel-default">
                                                 <div class="panel-heading">
-                                                    Pie Chart Example
+                                                    Job Overview
                                                 </div>
                                                 <!-- /.panel-heading -->
                                                 <div class="panel-body">
-                                                    <div class="flot-chart">
-                                                        <div class="flot-chart-content" id="flot-pie-chart"></div>
-                                                    </div>
+                                                    <form lpformnum="1" role="form">
+                                                        <div class="form-group">
+                                                            <label><i class="fa fa-money fa-fw"></i> Originally Available Balance</label>
+                                                            <p class="form-control-static"><b>5,000.00</b> XEL - 60% POW / 40% Bounties [<a href=#>?</a>]</p>
+                                                        </div>
+                                                         <div class="form-group">
+                                                            <label><i class="fa fa-pie-chart fa-fw"></i> Balance Left</label>
+                                                            <p class="form-control-static"><b>1,525.00</b> XEL [<a href=#>click for detailed listing</a>]</p>
+                                                        </div>
+                                                         <div class="form-group">
+                                                            <label><i class="fa fa-plane fa-fw"></i> Completion Status</label>
+                                                            <p class="form-control-static">
+                                                                   You have received <b>12</b> useful solutions so far:
+                                                                    <div class="progress">
+                                                                      <div class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 60%;">
+                                                                        60% finished
+                                                                      </div>
+                                                                    </div>
+                                                            </p>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label><i class="fa fa-hashtag fa-fw"></i> Programming Language</label>
+                                                            <p class="form-control-static">LUA (Version 1)</p>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label><i class="fa fa-sign-in fa-fw"></i> Input / Output Integers</label>
+                                                            <p class="form-control-static"><b>12</b> Inputs / <b>5</b> Outputs</p>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label><i class="fa fa-file fa-fw"></i>Total Size on Blockchain</label>
+                                                            <p class="form-control-static"><b>1.392 kB</b> - fee [<a href=#>?</a>] was <b>1.331</b> XEL</p>
+                                                        </div>
+                                                    </form>
                                                 </div>
                                                 <!-- /.panel-body -->
                                             </div>
@@ -48,13 +80,23 @@
                                         <div class="col-lg-6">
                                             <div class="panel panel-default">
                                                 <div class="panel-heading">
-                                                    Multiple Axes Line Chart Example
+                                                    How Efficient Is Your Job?
                                                 </div>
                                                 <!-- /.panel-heading -->
                                                 <div class="panel-body">
                                                     <div class="flot-chart">
                                                         <div class="flot-chart-content" id="flot-line-chart-multi"></div>
                                                     </div>
+                                                </div>
+                                                <!-- /.panel-body -->
+                                            </div>
+                                            <!-- /.panel -->
+                                        </div>
+                                        <!-- /.col-lg-6 -->
+                                        <div class="col-lg-6">
+                                            <div class="panel panel-default">
+                                                <div class="panel-body" style="height: 146px;padding-top: 25px;text-align:center;background-color: #F2F2F2;">
+                                                   <button id="download1" type="button" class="btn btn-default"><i class="fa fa-dashboard fa-fw fa-3x"></i><br>Download<br>Summary (PDF)</button> <button id="download1" type="button" class="btn btn-default"><i class="fa fa-cloud-download fa-fw fa-3x"></i><br>Download<br>Program Code</button> <button id="download1" type="button" class="btn btn-default"><i class="fa fa-check-circle-o fa-fw fa-3x"></i><br>Download<br>Solutions (CSV)</button>
                                                 </div>
                                                 <!-- /.panel-body -->
                                             </div>
@@ -1034,29 +1076,32 @@ $(document).ready(function() {
         [1220911200000, 0.70050]
     ];
 
-    function euroFormatter(v, axis) {
-        return v.toFixed(axis.tickDecimals) + "€";
+    function flopsFormatter(v, axis) {
+        return v.toFixed(axis.tickDecimals) + "G";
+    }
+    function perHourFormatter(v, axis) {
+        return v.toFixed(axis.tickDecimals) + "/h  ";
     }
 
     function doPlot(position) {
         $.plot($("#flot-line-chart-multi"), [{
             data: oilprices,
-            label: "Oil price ($)"
+            label: "Computation Power in Flops"
         }, {
             data: exchangerates,
-            label: "USD/EUR exchange rate",
+            label: "  Generation Rate of Useful Solutions per Hour",
             yaxis: 2
         }], {
             xaxes: [{
-                mode: 'time'
+                mode: 'time',timeformat: "%H:%M"
             }],
             yaxes: [{
-                min: 0
+                min: 0,tickFormatter: perHourFormatter,alignTicksWithAxis:1
             }, {
                 // align if we are to the right
                 alignTicksWithAxis: position == "right" ? 1 : null,
                 position: position,
-                tickFormatter: euroFormatter
+                tickFormatter: flopsFormatter
             }],
             legend: {
                 position: 'sw'
@@ -1067,7 +1112,7 @@ $(document).ready(function() {
             tooltip: true,
             tooltipOpts: {
                 content: "%s for %x was %y",
-                xDateFormat: "%y-%0m-%0d",
+                xDateFormat: "%0H-%0M",
 
                 onHover: function(flotItem, $tooltipEl) {
                     // console.log(flotItem, $tooltipEl);
