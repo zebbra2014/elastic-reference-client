@@ -5,7 +5,7 @@
             <div class="pull-left info fullwidth">
             	<canvas width="128" height="128" id="canvas_hash" data-jdenticon-hash=""></canvas>
 
-                <div style="margin-bottom:5px;"><span style="font-size: 12px;">What is a <a style="color: #307095;" href="#"><u>Hashvatar</u></a>?</span><br><br><a href="#" id="account_name" data-toggle="modal" data-target="#account_info_modal" data-i18n="no_name_set"><small>Set a name for your account now ...</small></a></div>
+                <div style="margin-bottom:5px;"><span style="font-size: 12px;">What is an <a style="color: #307095;" data-toggle="modal" data-target="#identicon_modal" href="#"><u>Identicon</u></a>?</span><br><br><a href="#" id="account_name" data-toggle="modal" data-target="#account_info_modal" data-i18n="no_name_set"><small>No Account Name Set (<u>set now</u>)</small></a></div>
                 <div id="account_id_dropdown" class="dropdown" style="margin-bottom:5px">
                     <span id="account_id" class="dropdown-toggle" data-toggle="dropdown" data-type="account_id" style="font-weight:bold"></span>
                     <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
@@ -14,6 +14,7 @@
                         <li role="presentation" class="remote_only copy_link"><a role="menuitem" tabindex="-1" href="#" data-type="send_link" data-i18n="copy_send_nxt_link">Copy "Send XEL" Link</a></li>
                     </ul>
                 </div>
+                <div><a href="#" data-toggle="modal" data-target="#qr_code_modal"><button type="button" class="btn btn-default misalignedbutton">Show QR</button></a> <a href="#" data-toggle="modal" data-target="#qr_code_modal"><button type="button" class="btn btn-default misalignedbutton">Copy</button></a></div>
              
             </div>
         </div>

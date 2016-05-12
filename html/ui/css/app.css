@@ -2641,7 +2641,9 @@ tr.tentative-crossed td , tr.tentative-crossed td a {
     0% { opacity: 1; }
     100% { opacity: 0; }
 }
-
+.fourtwenty{
+  width: 420px;
+}
 @-moz-keyframes opacity {
     0% { opacity: 1; }
     100% { opacity: 0; }
@@ -2744,11 +2746,8 @@ tr.tentative-crossed td , tr.tentative-crossed td a {
   border-color: #E0E0E0 !important;
   border: 1px solid;
   border-radius: 5px;
-  display: block;
-  float: right;
   color: #616161;
   font-weight: unset !important;
-  padding: 6px;
 }
 .unselectable {
 	-webkit-user-select: none; /* Chrome/Safari */        
@@ -3037,10 +3036,12 @@ input:invalid {
 }
 
 #account_name {
-  font-style:italic;
   text-overflow:ellipsis;
   white-space:nowrap;
   overflow:hidden;
+}
+#account_name u{
+  color: #2B6586;
 }
 
 #asset_description {
