@@ -3375,3 +3375,12 @@ input.masked {
   background-color: #2B6586 !important;
   color: #fff;
 }
+.flot-chart {
+    display: block;
+    height: 400px;
+}
+
+.flot-chart-content {
+    width: 100%;
+    height: 100%;
+}
