@@ -2722,7 +2722,10 @@ tr.tentative-crossed td , tr.tentative-crossed td a {
 .form-group-last {
 	margin-bottom: 0 !important;
 }
-
+.composelabel{
+    padding-top: 20px;
+    margin-left: 90px;
+}
 .center_el {
      float: none !important;
      margin-left: auto !important;
@@ -2748,6 +2751,11 @@ tr.tentative-crossed td , tr.tentative-crossed td a {
   border-radius: 5px;
   color: #616161;
   font-weight: unset !important;
+}
+.grayadder{
+  background-color: rgb(235, 235, 235);
+  color: rgb(179, 179, 179) !important;
+  padding-top: 15px;
 }
 .unselectable {
 	-webkit-user-select: none; /* Chrome/Safari */        

@@ -113,6 +113,11 @@ var NRS = (function(NRS, $, undefined) {
 		var rows = "";
 		var menu = "";
 
+		// Here, add the NEW WORK row
+		newworkrow = "<a href='#' data-target='#new_work_modal' data-toggle='modal' class='list-group-item larger-sidebar-element grayadder'>";
+		newworkrow += "<i class='fa fa-edit work-image-type fa-5x'></i><p class='composelabel'>Click here to compose a new job</p>"
+		newworkrow += "</a>";
+		rows += newworkrow;
 //"<div class='row'><div class='col-md-3'><i class='fa fa-tasks fa-fw'></i> " + status2Text(message) + "</div><div class='col-md-3'><i class='fa fa-hourglass-1 fa-fw'></i> " + ETA(message) + "</div><div class='col-md-3'><i class='fa fa-times-circle-o fa-fw'></i> " + timeOut(message) + "</div><div class='col-md-3'><i class='fa fa-rocket fa-fw'></i> " + efficiency(message) + "</div></div>"
 		for (var i = 0; i < _messages.length; i++) {
 			var message = _messages[i];
