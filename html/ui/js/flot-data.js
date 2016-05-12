@@ -1,80 +1,95 @@
-<div id="myownwork_page" class="page">
-    <section class="content-header">
-        <h1 data-i18n="myownwork">Get Your Work Done</h1>
-        <!--
-        <div style="position:absolute;top:9px;right:9px;">
-            <div class="btn-group">
-                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">Select Recipient <span class="caret"></span></button>
-                <ul class="dropdown-menu scrollable-menu" role="menu" style="right:0;left:auto;" id="messages_sidebar_menu">
-                    
-                </ul>
-            </div>
-        </div>
-        -->
-    </section>
-    <section class="content content-stretch" style="position:fixed;margin-top:3px;padding:0; width:100%; height:100%; height: calc(100% - 101px); overflow:hidden;">
-        <div class="content-spliter">
-          <div class="content-splitter-inner">
-              <div class="content-splitter-sidebar" id="myownwork_sidebar_outer" style="width:450px;overflow-x:hidden;">
-                  <div class="content-splitter-sidebar-inner">
-                    <div class="list-group unselectable sidebar_context" id="myownwork_sidebar">
-                        <div style="text-align:center;padding-top:10px;"><span data-i18n="loading_please_wait">Loading, please wait</span><span class="loading_dots"><span>.</span><span>.</span><span>.</span></span></div>
-                    </div>
-                     </div>
-                 </div>
-                 <div class="content-splitter-wide-right" id="message_content" >
-                    <div class="content-splitter-right-inner" style="left:450px">
-                        <div id="no_message_selected" style="padding-top: 150px;text-align:center;;display:none;" data-i18n="select_contact_in_sidebar">Please select a task in the left sidebar.</div>
-                        <div id="no_messages_available" style="padding-top: 150px;text-align:center" data-i18n="[html]no_messages_available">
-
-                         <div class="row">
-                                       
-                                        <div class="col-lg-6">
-                                            <div class="panel panel-default">
-                                                <div class="panel-heading">
-                                                    Pie Chart Example
-                                                </div>
-                                                <!-- /.panel-heading -->
-                                                <div class="panel-body">
-                                                    <div class="flot-chart">
-                                                        <div class="flot-chart-content" id="flot-pie-chart"></div>
-                                                    </div>
-                                                </div>
-                                                <!-- /.panel-body -->
-                                            </div>
-                                            <!-- /.panel -->
-                                        </div>
-                                        <!-- /.col-lg-6 -->
-                                        <div class="col-lg-6">
-                                            <div class="panel panel-default">
-                                                <div class="panel-heading">
-                                                    Multiple Axes Line Chart Example
-                                                </div>
-                                                <!-- /.panel-heading -->
-                                                <div class="panel-body">
-                                                    <div class="flot-chart">
-                                                        <div class="flot-chart-content" id="flot-line-chart-multi"></div>
-                                                    </div>
-                                                </div>
-                                                <!-- /.panel-body -->
-                                            </div>
-                                            <!-- /.panel -->
-                                        </div>
-                        </div>
-
-                        </div>
-                        
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-</div>
-<script language="JavaScript">
 //Flot Line Chart
 $(document).ready(function() {
+    console.log("document ready");
+    var offset = 0;
+    plot();
 
+    function plot() {
+        var sin = [],
+            cos = [];
+        for (var i = 0; i < 12; i += 0.2) {
+            sin.push([i, Math.sin(i + offset)]);
+            cos.push([i, Math.cos(i + offset)]);
+        }
 
+        var options = {
+            series: {
+                lines: {
+                    show: true
+                },
+                points: {
+                    show: true
+                }
+            },
+            grid: {
+                hoverable: true //IMPORTANT! this is needed for tooltip to work
+            },
+            yaxis: {
+                min: -1.2,
+                max: 1.2
+            },
+            tooltip: true,
+            tooltipOpts: {
+                content: "'%s' of %x.1 is %y.4",
+                shifts: {
+                    x: -60,
+                    y: 25
+                }
+            }
+        };
+
+        var plotObj = $.plot($("#flot-line-chart"), [{
+                data: sin,
+                label: "sin(x)"
+            }, {
+                data: cos,
+                label: "cos(x)"
+            }],
+            options);
+    }
+});
+
+//Flot Pie Chart
+$(function() {
+
+    var data = [{
+        label: "Series 0",
+        data: 1
+    }, {
+        label: "Series 1",
+        data: 3
+    }, {
+        label: "Series 2",
+        data: 9
+    }, {
+        label: "Series 3",
+        data: 20
+    }];
+
+    var plotObj = $.plot($("#flot-pie-chart"), data, {
+        series: {
+            pie: {
+                show: true
+            }
+        },
+        grid: {
+            hoverable: true
+        },
+        tooltip: true,
+        tooltipOpts: {
+            content: "%p.0%, %s", // show percentages, rounding to 2 decimal places
+            shifts: {
+                x: 20,
+                y: 0
+            },
+            defaultTheme: false
+        }
+    });
+
+});
+
+//Flot Multiple Axes Line Chart
+$(function() {
     var oilprices = [
         [1167692400000, 61.05],
         [1167778800000, 58.32],
@@ -1079,7 +1094,149 @@ $(document).ready(function() {
 
     doPlot("right");
 
+    $("button").click(function() {
+        doPlot($(this).text());
+    });
 });
 
+//Flot Moving Line Chart
 
-</script>
+$(function() {
+
+    var container = $("#flot-line-chart-moving");
+
+    // Determine how many data points to keep based on the placeholder's initial size;
+    // this gives us a nice high-res plot while avoiding more than one point per pixel.
+
+    var maximum = container.outerWidth() / 2 || 300;
+
+    //
+
+    var data = [];
+
+    function getRandomData() {
+
+        if (data.length) {
+            data = data.slice(1);
+        }
+
+        while (data.length < maximum) {
+            var previous = data.length ? data[data.length - 1] : 50;
+            var y = previous + Math.random() * 10 - 5;
+            data.push(y < 0 ? 0 : y > 100 ? 100 : y);
+        }
+
+        // zip the generated y values with the x values
+
+        var res = [];
+        for (var i = 0; i < data.length; ++i) {
+            res.push([i, data[i]])
+        }
+
+        return res;
+    }
+
+    //
+
+    series = [{
+        data: getRandomData(),
+        lines: {
+            fill: true
+        }
+    }];
+
+    //
+
+    var plot = $.plot(container, series, {
+        grid: {
+            borderWidth: 1,
+            minBorderMargin: 20,
+            labelMargin: 10,
+            backgroundColor: {
+                colors: ["#fff", "#e4f4f4"]
+            },
+            margin: {
+                top: 8,
+                bottom: 20,
+                left: 20
+            },
+            markings: function(axes) {
+                var markings = [];
+                var xaxis = axes.xaxis;
+                for (var x = Math.floor(xaxis.min); x < xaxis.max; x += xaxis.tickSize * 2) {
+                    markings.push({
+                        xaxis: {
+                            from: x,
+                            to: x + xaxis.tickSize
+                        },
+                        color: "rgba(232, 232, 255, 0.2)"
+                    });
+                }
+                return markings;
+            }
+        },
+        xaxis: {
+            tickFormatter: function() {
+                return "";
+            }
+        },
+        yaxis: {
+            min: 0,
+            max: 110
+        },
+        legend: {
+            show: true
+        }
+    });
+
+    // Update the random dataset at 25FPS for a smoothly-animating chart
+
+    setInterval(function updateRandom() {
+        series[0].data = getRandomData();
+        plot.setData(series);
+        plot.draw();
+    }, 40);
+
+});
+
+//Flot Bar Chart
+
+$(function() {
+
+    var barOptions = {
+        series: {
+            bars: {
+                show: true,
+                barWidth: 43200000
+            }
+        },
+        xaxis: {
+            mode: "time",
+            timeformat: "%m/%d",
+            minTickSize: [1, "day"]
+        },
+        grid: {
+            hoverable: true
+        },
+        legend: {
+            show: false
+        },
+        tooltip: true,
+        tooltipOpts: {
+            content: "x: %x, y: %y"
+        }
+    };
+    var barData = {
+        label: "bar",
+        data: [
+            [1354521600000, 1000],
+            [1355040000000, 2000],
+            [1355223600000, 3000],
+            [1355306400000, 4000],
+            [1355487300000, 5000],
+            [1355571900000, 6000]
+        ]
+    };
+    $.plot($("#flot-bar-chart"), [barData], barOptions);
+
+});
