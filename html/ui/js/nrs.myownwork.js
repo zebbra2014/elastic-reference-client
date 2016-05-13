@@ -10,41 +10,13 @@ var NRS = (function(NRS, $, undefined) {
 
 	var _work = {};
 
-	function workEntry(time_created, time_closed, was_cancel, title, account, language, code, bounty_hooks, num_input, num_output, balance_remained, balance_work, balance_bounties, percent_done, bounties_connected, refund, timeout_at_block){
-		var workEntryItem = {
-			"time_created": time_created,
-			"time_closed": time_closed,
-			"was_cancel": was_cancel,
-		    "title": title,
-		    "account": account,
-		    "language": language,
-		    "code": code,
-		    "bounty_hooks": bounty_hooks,
-		    "num_input": num_input,
-		    "num_output": num_output,
-		    "balance_remained": balance_remained,
-		    "balance_work": balance_work,
-		    "balance_bounties": balance_bounties,
-		    "percent_done": percent_done,
-		    "bounties_connected": bounties_connected,
-		    "refund": refund,
-		    "timeout_at_block": timeout_at_block
-		};
-		return workEntryItem;
-	}
-
 	NRS.pages.myownwork = function(callback) {
 		_work = [];
 		$("#no_work_selected").show();
 		$("#work_details").hide();
 		$(".content.content-stretch:visible").width($(".page:visible").width());
 
-		// USE TEST DATA FOR NOW
-		var item1 = workEntry(1,0,0,"Prime Number Example", "XEL-E8JD-FHKJ-CQ9H-5KGMQ", "LUA", "", [], 0, 0, 1931, 1000,931,67,7,0,5525);
-		var item2 = workEntry(3,9,2,"Hash Collision Example", "XEL-E8JD-FHKJ-CQ9H-5KGMQ", "LUA", "", [], 0, 0, 2009, 500,1509,25,2,0,6744);
-		
-		_work.push(item1);
-		_work.push(item2);
+
 
 		_work.sort(function(a, b) {
 				if (a.time_created > b.time_created) {
@@ -56,16 +28,14 @@ var NRS = (function(NRS, $, undefined) {
 				}
 			});
 
-		NRS.sendRequest("getAccountTransactions", {
+		// TODO, FIXME! Add lazy loading, specially when users do A LOT OF work
+		NRS.sendRequest("getAccountWork", {
 			"account": NRS.account,
-			"firstIndex": 0,
-			"lastIndex": 75,
-			"type": 1,
-			"subtype": 0
+			"type": 1
 		}, function(response) {
 			if (response.work_packages && response.work_packages.length) {
 				for (var i = 0; i < response.work_packages.length; i++) {
-					// Add to work array here
+					_work.push(response.work_packages[i]);
 				}
 				displayWorkSidebar(callback);
 			} else {
