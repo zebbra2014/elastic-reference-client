@@ -85,7 +85,7 @@ var NRS = (function(NRS, $, undefined) {
 		rows += newworkrow;
 		for (var i = 0; i < _work.length; i++) {
 			var message = _work[i];
-			rows += "<a href='#' class='list-group-item larger-sidebar-element selectable'><p class='list-group-item-text agopullright'>" + balancespan(message) + " " + statusspan(message) + " <span class='label label-primary label12px'>" + message.language + "</span></p><span class='list-group-item-heading betterh4'>" + message.title + "</span><br><small>created 1 day ago (block #13318)</small><span class='middletext_list'>" + /* BEGIN GRID */ "<div class='row fourtwenty'><div class='col-md-3'><i class='fa fa-tasks fa-fw'></i> " + status2Text(message) + "</div><div class='col-md-3'><i class='fa fa-hourglass-1 fa-fw'></i> " + ETA(message) + "</div><div class='col-md-3'><i class='fa fa-times-circle-o fa-fw'></i> " + timeOut(message) + "</div><div class='col-md-3'><i class='fa fa-rocket fa-fw'></i> " + efficiency(message) + "</div></div>" /* END GRID */ + "</span></span></a>";
+			rows += "<a href='#' class='list-group-item larger-sidebar-element selectable' data-array-index='" + i + "'><p class='list-group-item-text agopullright'>" + balancespan(message) + " " + statusspan(message) + " <span class='label label-primary label12px'>" + message.language + "</span></p><span class='list-group-item-heading betterh4'>" + message.title + "</span><br><small>created 1 day ago (block #13318)</small><span class='middletext_list'>" + /* BEGIN GRID */ "<div class='row fourtwenty'><div class='col-md-3'><i class='fa fa-tasks fa-fw'></i> " + status2Text(message) + "</div><div class='col-md-3'><i class='fa fa-hourglass-1 fa-fw'></i> " + ETA(message) + "</div><div class='col-md-3'><i class='fa fa-times-circle-o fa-fw'></i> " + timeOut(message) + "</div><div class='col-md-3'><i class='fa fa-rocket fa-fw'></i> " + efficiency(message) + "</div></div>" /* END GRID */ + "</span></span></a>";
 		}
 
 		$("#myownwork_sidebar").empty().append(rows);
@@ -100,9 +100,23 @@ var NRS = (function(NRS, $, undefined) {
 		$("#myownwork_sidebar a.active").removeClass("active");
 		if($(this).hasClass("selectable")){
 			e.preventDefault();
+			var arrayIndex = $(this).data("array-index");
+			var workItem = _work[arrayIndex];
 
 			$("#myownwork_sidebar a.active").removeClass("active");
 			$(this).addClass("active");
+
+
+
+			// Now fill the right side correctly
+			$("#work_title_right").empty().append(workItem.title);
+			$("#bal_work").empty().append(workItem.balance_work);
+			$("#bal_bounties").empty().append(workItem.balance_bounties);
+			$("#bal_original").empty().append(workItem.balance_original);
+			// END Now fill the right side correctly
+
+
+
 			$("#no_work_selected").hide();
 			$("#work_details").show();
 		}else{

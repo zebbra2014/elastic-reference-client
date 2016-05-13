@@ -30,7 +30,7 @@
                         <div id="work_details" style="display:none;" data-i18n="[html]no_messages_available">
                         <h2 class="workh2" data-i18n="myownwork">
                         <button style="float: right; margin-top: 0px;" id="cancel_btn" type="button" class="btn linkfloater misalignedbutton btn-danger">Cancel and Refund</button>
-                        Prime Number Example</h2>
+                        <span id="work_title_right">Prime Number Example</span></h2>
                          <div class="row">
                                        
                                         <div class="col-lg-6">
@@ -43,11 +43,11 @@
                                                     <form lpformnum="1" role="form">
                                                         <div class="form-group">
                                                             <label><i class="fa fa-money fa-fw"></i> Originally Available Balance</label>
-                                                            <p class="form-control-static"><b>5,000.00</b> XEL - 60% POW / 40% Bounties [<a href=#>?</a>]</p>
+                                                            <p class="form-control-static"><b><span id="bal_original">--</span></b> XEL - <span id="bal_work">--</span>% POW / <span id="bal_bounties">--</span>% Bounties [<a href=#>?</a>]</p>
                                                         </div>
                                                          <div class="form-group">
                                                             <label><i class="fa fa-pie-chart fa-fw"></i> Balance Left</label>
-                                                            <p class="form-control-static"><b>1,525.00</b> XEL [<a href=#>click for detailed listing</a>]</p>
+                                                            <p class="form-control-static"><b><span id="bal_remained">--</span></b> XEL [<a href=#>click for detailed listing</a>]</p>
                                                         </div>
                                                          <div class="form-group">
                                                             <label><i class="fa fa-plane fa-fw"></i> Completion Status</label>
