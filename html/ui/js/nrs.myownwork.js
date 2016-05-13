@@ -2,8 +2,13 @@
  * @depends {nrs.js}
  */
 var NRS = (function(NRS, $, undefined) {
-	var _messages = {};
-	var _latestMessages = {};
+
+	
+	var newworkrow = "<a href='#' data-target='#new_work_modal' data-toggle='modal' class='list-group-item larger-sidebar-element grayadder'>";
+		newworkrow += "<i class='fa fa-edit work-image-type fa-5x'></i><p class='composelabel'>Click here to compose a new job</p>"
+		newworkrow += "</a>";
+
+	var _work = {};
 
 	function workEntry(time_created, time_closed, was_cancel, title, account, language, code, bounty_hooks, num_input, num_output, balance_remained, balance_work, balance_bounties, percent_done, bounties_connected, refund, timeout_at_block){
 		var workEntryItem = {
@@ -29,18 +34,19 @@ var NRS = (function(NRS, $, undefined) {
 	}
 
 	NRS.pages.myownwork = function(callback) {
-		_messages = [];
-
+		_work = [];
+		$("#no_work_selected").show();
+		$("#work_details").hide();
 		$(".content.content-stretch:visible").width($(".page:visible").width());
 
 		// USE TEST DATA FOR NOW
 		var item1 = workEntry(1,0,0,"Prime Number Example", "XEL-E8JD-FHKJ-CQ9H-5KGMQ", "LUA", "", [], 0, 0, 1931, 1000,931,67,7,0,5525);
 		var item2 = workEntry(3,9,2,"Hash Collision Example", "XEL-E8JD-FHKJ-CQ9H-5KGMQ", "LUA", "", [], 0, 0, 2009, 500,1509,25,2,0,6744);
 		
-		_messages.push(item1);
-		_messages.push(item2);
+		_work.push(item1);
+		_work.push(item2);
 
-		_messages.sort(function(a, b) {
+		_work.sort(function(a, b) {
 				if (a.time_created > b.time_created) {
 					return 1;
 				} else if (a.time_created < b.time_created) {
@@ -50,34 +56,26 @@ var NRS = (function(NRS, $, undefined) {
 				}
 			});
 
-		displayWorkSidebar(callback);
-
-		/*NRS.sendRequest("getAccountTransactions+", {
+		NRS.sendRequest("getAccountTransactions", {
 			"account": NRS.account,
 			"firstIndex": 0,
 			"lastIndex": 75,
 			"type": 1,
 			"subtype": 0
 		}, function(response) {
-			if (response.transactions && response.transactions.length) {
-				for (var i = 0; i < response.transactions.length; i++) {
-					var otherUser = (response.transactions[i].recipient == NRS.account ? response.transactions[i].sender : response.transactions[i].recipient);
-
-					if (!(otherUser in _messages)) {
-						_messages[otherUser] = [];
-					}
-
-					_messages[otherUser].push(response.transactions[i]);
+			if (response.work_packages && response.work_packages.length) {
+				for (var i = 0; i < response.work_packages.length; i++) {
+					// Add to work array here
 				}
-				
-				displayMessageSidebar(callback);
+				displayWorkSidebar(callback);
 			} else {
-				$("#no_message_selected").hide();
-				$("#no_messages_available").show();
-				$("#messages_sidebar").empty();
+				$("#no_work_selected").show();
+				$("#work_details").hide();
+				$("#myownwork_sidebar").empty().append(newworkrow);;
+
 				NRS.pageLoaded(callback);
 			}
-		});*/
+		});
 	}
 	function statusText(message){
 		return "<b>" + message.balance_remained + "+</b> XEL left, <b>7742</b> blocks left"; 
@@ -114,17 +112,10 @@ var NRS = (function(NRS, $, undefined) {
 		var menu = "";
 
 		// Here, add the NEW WORK row
-		newworkrow = "<a href='#' data-target='#new_work_modal' data-toggle='modal' class='list-group-item larger-sidebar-element grayadder'>";
-		newworkrow += "<i class='fa fa-edit work-image-type fa-5x'></i><p class='composelabel'>Click here to compose a new job</p>"
-		newworkrow += "</a>";
 		rows += newworkrow;
-//"<div class='row'><div class='col-md-3'><i class='fa fa-tasks fa-fw'></i> " + status2Text(message) + "</div><div class='col-md-3'><i class='fa fa-hourglass-1 fa-fw'></i> " + ETA(message) + "</div><div class='col-md-3'><i class='fa fa-times-circle-o fa-fw'></i> " + timeOut(message) + "</div><div class='col-md-3'><i class='fa fa-rocket fa-fw'></i> " + efficiency(message) + "</div></div>"
-		for (var i = 0; i < _messages.length; i++) {
-			var message = _messages[i];
-//<span class='label label-white label12px'><span class=''>" + statusText(message) + "</span>
-//<span class='label label-primary label12px margin5px'>" + message.language + "</span><span class='label label-success label12px margin5px'>Active</span><span class='label label-warning label12px margin5px'>" + message.bounties_connected + " Solutions</span>
-
-			rows += "<a href='#' class='list-group-item larger-sidebar-element'><p class='list-group-item-text agopullright'>" + balancespan(message) + " " + statusspan(message) + " <span class='label label-primary label12px'>" + message.language + "</span></p><span class='list-group-item-heading betterh4'>" + message.title + "</span><br><small>created 1 day ago (block #13318)</small><span class='middletext_list'>" + /* BEGIN GRID */ "<div class='row fourtwenty'><div class='col-md-3'><i class='fa fa-tasks fa-fw'></i> " + status2Text(message) + "</div><div class='col-md-3'><i class='fa fa-hourglass-1 fa-fw'></i> " + ETA(message) + "</div><div class='col-md-3'><i class='fa fa-times-circle-o fa-fw'></i> " + timeOut(message) + "</div><div class='col-md-3'><i class='fa fa-rocket fa-fw'></i> " + efficiency(message) + "</div></div>" /* END GRID */ + "</span></span></a>";
+		for (var i = 0; i < _work.length; i++) {
+			var message = _work[i];
+			rows += "<a href='#' class='list-group-item larger-sidebar-element selectable'><p class='list-group-item-text agopullright'>" + balancespan(message) + " " + statusspan(message) + " <span class='label label-primary label12px'>" + message.language + "</span></p><span class='list-group-item-heading betterh4'>" + message.title + "</span><br><small>created 1 day ago (block #13318)</small><span class='middletext_list'>" + /* BEGIN GRID */ "<div class='row fourtwenty'><div class='col-md-3'><i class='fa fa-tasks fa-fw'></i> " + status2Text(message) + "</div><div class='col-md-3'><i class='fa fa-hourglass-1 fa-fw'></i> " + ETA(message) + "</div><div class='col-md-3'><i class='fa fa-times-circle-o fa-fw'></i> " + timeOut(message) + "</div><div class='col-md-3'><i class='fa fa-rocket fa-fw'></i> " + efficiency(message) + "</div></div>" /* END GRID */ + "</span></span></a>";
 		}
 
 		$("#myownwork_sidebar").empty().append(rows);
@@ -135,6 +126,20 @@ var NRS = (function(NRS, $, undefined) {
 
 		NRS.pageLoaded(callback);
 	}
+	$("#myownwork_sidebar").on("click", "a", function(e) {
+		$("#myownwork_sidebar a.active").removeClass("active");
+		if($(this).hasClass("selectable")){
+			e.preventDefault();
+
+			$("#myownwork_sidebar a.active").removeClass("active");
+			$(this).addClass("active");
+			$("#no_work_selected").hide();
+			$("#work_details").show();
+		}else{
+			$("#no_work_selected").show();
+			$("#work_details").hide();
+		}
+	});
 
 	return NRS;
 }(NRS || {}, jQuery));
