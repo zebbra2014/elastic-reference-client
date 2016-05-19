@@ -14,7 +14,11 @@ import javax.servlet.http.HttpServletRequest;
 public final class GetAccountWork extends APIServlet.APIRequestHandler {
 
 	static final GetAccountWork instance = new GetAccountWork();
-
+	
+    public double round(final double value, final int frac) {
+        return Math.round(Math.pow(10.0, frac) * value) / Math.pow(10.0, frac);
+    }
+    
 	private JSONObject workEntry(int time_created, int time_closed,
 			int was_cancel, String title, String account, String language,
 			int num_input, int num_output,
@@ -34,7 +38,7 @@ public final class GetAccountWork extends APIServlet.APIRequestHandler {
 		response.put("balance_work", balance_work);
 		response.put("balance_bounties", balance_bounties);
 		
-		double done = (balance_remained * 1.0/balance_original)*100.0;
+		double done = round((balance_remained * 1.0/balance_original)*100.0,2);
 		
 		response.put("percent_done", done);
 		response.put("bounties_connected", bounties_connected);
