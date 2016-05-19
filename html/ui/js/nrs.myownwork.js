@@ -1,6 +1,15 @@
 /**
  * @depends {nrs.js}
  */
+ function formatBytes(bytes,decimals) {
+   if(bytes == 0) return '0 Byte';
+   var k = 1000; // or 1024 for binary
+   var dm = decimals + 1 || 3;
+   var sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+   var i = Math.floor(Math.log(bytes) / Math.log(k));
+   return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+}
+
 var NRS = (function(NRS, $, undefined) {
 
 	
@@ -9,6 +18,8 @@ var NRS = (function(NRS, $, undefined) {
 		newworkrow += "</a>";
 
 	var _work = {};
+	var computation_power=[];
+	var solution_rate=[];
 
 	NRS.pages.myownwork = function(callback) {
 		_work = [];
@@ -57,7 +68,16 @@ var NRS = (function(NRS, $, undefined) {
 		return "ETA <b><1.5h</b>"; 
 	}
 	function timeOut(message){
-		return "<b>" + message.timeout_at_block + "</b> blocks"; 
+		var blocksLeft = parseInt(message.timeout_at_block);
+		blocksLeft -= NRS.lastBlockHeight;
+
+		if (blocksLeft > 500)
+			blocksLeft=">500";
+		if (blocksLeft <=0 )
+			blocksLeft="0";
+
+
+		return "<b>" + blocksLeft + "</b> blocks"; 
 	}
 	function efficiency(efficiency){
 		return "<b>1%</b> efficiency"; 
@@ -68,6 +88,50 @@ var NRS = (function(NRS, $, undefined) {
 	function balancespan(message){
 		return "<span class='label label-white label12px'>Bal: " + message.balance_remained + "XEL</span>";
 	}
+
+	function flopsFormatter(v, axis) {
+        return v.toFixed(axis.tickDecimals) + "G";
+    }
+    function perHourFormatter(v, axis) {
+        return v.toFixed(axis.tickDecimals) + "/h  ";
+    }
+
+	function doPlot(){
+	
+
+		if(computation_power.length == 0 && solution_rate.length == 0){
+			$("#flot_alert").removeClass("flot_hidden");
+		}else{
+			$("#flot_alert").addClass("flot_hidden");
+		}
+	 
+
+	    $.plot($("#flot-line-chart-multi"), [{
+	        data: computation_power,
+	        label: "Computation Power in Flops"
+	    }, {
+	        data: solution_rate,
+	        label: "  Generation Rate of Useful Solutions per Hour",
+	        yaxis: 2
+	    }], {
+	        xaxes: [{
+	            mode: 'time',timeformat: "%H:%M"
+	        }],
+	        yaxes: [{
+	            min: 0,tickFormatter: perHourFormatter
+	        }, {
+	            // align if we are to the right
+	            alignTicksWithAxis: 1,
+	            position: "right",
+	            tickFormatter: flopsFormatter
+	        }],
+	        legend: {
+	            position: 'sw'
+	        }
+	    });
+    
+	}
+
 	function displayWorkSidebar(callback) {
 		console.log("mywork callback fired!");
 		var activeAccount = false;
@@ -97,6 +161,9 @@ var NRS = (function(NRS, $, undefined) {
 		NRS.pageLoaded(callback);
 	}
 	$("#myownwork_sidebar").on("click", "a", function(e) {
+		computation_power=[];
+		solution_rate=[];
+
 		$("#myownwork_sidebar a.active").removeClass("active");
 		if($(this).hasClass("selectable")){
 			e.preventDefault();
@@ -107,14 +174,43 @@ var NRS = (function(NRS, $, undefined) {
 			$(this).addClass("active");
 
 
-
 			// Now fill the right side correctly
 			$("#work_title_right").empty().append(workItem.title);
-			$("#bal_work").empty().append(workItem.balance_work);
-			$("#bal_bounties").empty().append(workItem.balance_bounties);
-			$("#bal_original").empty().append(workItem.balance_original);
-			// END Now fill the right side correctly
 
+			// Percentages
+			$("#bal_work").empty().append(workItem.percent_work);
+			$("#bal_bounties").empty().append(workItem.percent_bounties);
+
+
+			$("#bal_original").empty().append(workItem.balance_original);
+			$("#bal_remained").empty().append(workItem.balance_remained);
+			$("#bnt_connected").empty().append(workItem.bounties_connected);
+
+			if(workItem.language=="LUA")
+				$("#programming_language").empty().append("LUA (Version 1, Hardened)");
+
+			$("#blockchain_bytes").empty().append(formatBytes(parseInt(workItem.script_size_bytes)));
+			$("#fee").empty().append(workItem.fee);
+
+			$("#num_in").empty().append(workItem.num_input);
+			$("#num_out").empty().append(workItem.num_output);
+			$("#percent_done").empty().append(workItem.percent_done);
+			$("#progbar_work").attr("aria-valuenow",parseInt(workItem.percent_done));
+			$("#progbar_work").css("width",workItem.percent_done + "%");
+
+
+			// plot with loading indicator
+			doPlot();
+			// Now load real data
+			NRS.sendRequest("getAccountWorkEfficiencyPlot", {
+			"workId": workItem.workId
+			}, function(response) {
+				if (response.computation_power && response.solution_rate) {
+					computation_power = response.computation_power;
+					solution_rate = response.solution_rate;
+					doPlot(); // refresh
+				} 
+			});
 
 
 			$("#no_work_selected").hide();

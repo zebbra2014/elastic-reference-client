@@ -8,10 +8,46 @@
             </div>
             <div class="modal-body">
                 
-
+                <form role="form" autocomplete="off">
+                    <p class="show_secret_phrase" data-i18n="start_forging_confirmation_passphrase">Please give us a few details related to your new work assignment.</p>
+                    <div class="form-group">
+                        <label for="work_title" data-i18n="work title">WORK TITLE</label>
+                        <input type="input" name="work_title" id="work_title" class="form-control" placeholder="Give your work a meaningful title" tabindex="1">
+                    </div>
+                    <div class="form-group">
+                        <label for="source_code" data-i18n="source code">SOURCE CODE</label>
+                        <input type="file" name="source_code" id="source_code" class="file" placeholder="Please select the source code file, that you have created with the SDK" tabindex="2">
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-6 col-sm-6 col-md-6" data-normal="12" data-advanced="6">
+                            <div class="form-group">
+                                <label for="send_money_amount" data-i18n="amount">AMOUNT</label>
+                                <div class="input-group">
+                                    <input name="amountNXT" id="send_money_amount" step="any" min="0" class="form-control" placeholder="Amount" data-i18n="[placeholder]amount" tabindex="3" type="text">
+                                    <span class="input-group-addon">XEL</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="display: block;" class="col-xs-6 col-sm-6 col-md-6">
+                            <div class="form-group">
+                                <label for="work_deadline" data-i18n="deadline_blocks">DEADLINE (BLOCKS)</label>
+                                <input name="work_deadline" id="work_deadline" class="form-control" placeholder="Deadline" data-i18n="deadline" min="1" data-default="250" value="250" tabindex="5" type="number">
+                            </div>
+                        </div>
+                    </div>
+                    <p class="help-block hb2">
+                        Required format: <code>42,00</code>, <code>42.00</code> or <code>42</code>
+                    </p>
+          
+                    <div class="form-group secret_phrase">
+                        <label for="passphrase" data-i18n="passphrase">PASSPHRASE</label>
+                        <input type="password" name="passphrase" id="passphrase" class="form-control" placeholder="" tabindex="3">
+                    </div>
+                </form>
 
             </div>
             <div class="modal-footer" style="margin-top:0;">
+                <div class="advanced_info"><strong data-i18n="fee">Fee</strong>: <span class="advanced_fee">1 XEL</span></div>
                 <button type="button" class="btn btn-default" data-dismiss="modal" data-i18n="cancel">Cancel</button>
                 <button type="button" class="btn btn-primary" data-loading-text="Submitting...">Submit Work</button>
             </div>
