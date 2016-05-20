@@ -7,7 +7,7 @@ import nxt.Poll;
 import nxt.util.Convert;
 import org.json.simple.JSONStreamAware;
 
-import javax.servlet.http.HttpServletRequest;
+
 
 import static nxt.http.JSONResponses.INCORRECT_POLL;
 import static nxt.http.JSONResponses.INCORRECT_VOTE;
@@ -22,7 +22,7 @@ public final class CastVote extends CreateTransaction {
     }
 
     @Override
-    JSONStreamAware processRequest(HttpServletRequest req) throws NxtException {
+    JSONStreamAware processRequest(FakeServletRequest req) throws NxtException {
 
         String pollValue = req.getParameter("poll");
 

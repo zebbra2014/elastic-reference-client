@@ -94,10 +94,18 @@
 
 
             // Here do global tasks
-            $(document).ready(function() {
-            $("#source_code").fileinput({'showUpload':false, 'previewFileType':'any'});
+            //$(document).ready(function() {
+                console.log("loaded fileinput plugin to #source_code");
+                $("#source_code").fileinput({
+                    uploadAsync: false,
+                    showUpload: false, // hide upload button
+                    showRemove: true, // hide remove button
+                    minFileCount: 1,
+                    maxFileCount: 1,
+                    previewFileType:'any'
+                });
           
-            });
+            //});
         </script>
 
         <script src="js/util/extensions.js" type="text/javascript"></script>

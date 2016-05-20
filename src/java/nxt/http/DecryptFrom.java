@@ -8,7 +8,7 @@ import nxt.util.Logger;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONStreamAware;
 
-import javax.servlet.http.HttpServletRequest;
+
 
 import static nxt.http.JSONResponses.DECRYPTION_FAILED;
 import static nxt.http.JSONResponses.INCORRECT_ACCOUNT;
@@ -22,7 +22,7 @@ public final class DecryptFrom extends APIServlet.APIRequestHandler {
     }
 
     @Override
-    JSONStreamAware processRequest(HttpServletRequest req) throws NxtException {
+    JSONStreamAware processRequest(FakeServletRequest req) throws NxtException {
 
         Account account = ParameterParser.getAccount(req);
         if (account.getPublicKey() == null) {

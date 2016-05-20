@@ -206,6 +206,7 @@ var NRS = (function(NRS, $, undefined) {
 				var name = String($(this).attr("name")).replace("NXT", "").replace("NQT", "").replace("XEL", "").capitalize();
 				var value = $(this).val();
 
+
 				if ($(this).hasAttr("max")) {
 					if (!/^[\-\d\.]+$/.test(value)) {
 						error = $.t("error_not_a_number", {
@@ -323,6 +324,23 @@ var NRS = (function(NRS, $, undefined) {
 					};
 				}
 			}
+		}
+
+
+		// handle file upload in create work function
+		if (requestType == "createNewWork"){
+			var files = $('#source_code').fileinput('getFileStack'); // returns file list selected
+			if(files.length!=1){
+				$form.find(".error_message").html($.t("no_source_code")).show();
+				if (formErrorFunction) {
+					formErrorFunction(false, data);
+				}
+				NRS.unlockForm($modal, $btn);
+				return;
+			}
+			// add source code to data object
+			console.log(files[0]);
+    		data["source_code"] = files[0];
 		}
 
 		if (requestType == "sendMoney" || requestType == "transferAsset") {

@@ -6,11 +6,12 @@ import nxt.Constants;
 import nxt.Nxt;
 import nxt.NxtException;
 import nxt.Transaction;
+import nxt.http.FakeServletRequest;
 import nxt.util.Convert;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONStreamAware;
 
-import javax.servlet.http.HttpServletRequest;
+
 import java.io.IOException;
 
 import static nxt.user.JSONResponses.NOTIFY_OF_ACCEPTED_TRANSACTION;
@@ -18,11 +19,10 @@ import static nxt.user.JSONResponses.NOTIFY_OF_ACCEPTED_TRANSACTION;
 public final class SendMoney extends UserServlet.UserRequestHandler {
 
     static final SendMoney instance = new SendMoney();
-
     private SendMoney() {}
 
     @Override
-    JSONStreamAware processRequest(HttpServletRequest req, User user) throws NxtException.ValidationException, IOException {
+    JSONStreamAware processRequest(FakeServletRequest req, User user) throws NxtException.ValidationException, IOException {
         if (user.getSecretPhrase() == null) {
             return null;
         }

@@ -8,7 +8,7 @@ import nxt.util.Logger;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONStreamAware;
 
-import javax.servlet.http.HttpServletRequest;
+
 import java.util.Arrays;
 
 import static nxt.http.JSONResponses.MISSING_SECRET_PHRASE;
@@ -22,7 +22,7 @@ public final class SignTransaction extends APIServlet.APIRequestHandler {
     }
 
     @Override
-    JSONStreamAware processRequest(HttpServletRequest req) throws NxtException {
+    JSONStreamAware processRequest(FakeServletRequest req) throws NxtException {
 
         String transactionBytes = Convert.emptyToNull(req.getParameter("unsignedTransactionBytes"));
         String transactionJSON = Convert.emptyToNull(req.getParameter("unsignedTransactionJSON"));

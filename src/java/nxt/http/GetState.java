@@ -8,7 +8,7 @@ import nxt.peer.Peers;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONStreamAware;
 
-import javax.servlet.http.HttpServletRequest;
+
 
 public final class GetState extends APIServlet.APIRequestHandler {
 
@@ -19,7 +19,7 @@ public final class GetState extends APIServlet.APIRequestHandler {
     }
 
     @Override
-    JSONStreamAware processRequest(HttpServletRequest req) {
+    JSONStreamAware processRequest(FakeServletRequest req) {
 
         JSONObject response = GetBlockchainStatus.instance.processRequest(req);
 

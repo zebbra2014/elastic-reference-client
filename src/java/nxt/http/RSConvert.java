@@ -4,7 +4,7 @@ import nxt.util.Convert;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONStreamAware;
 
-import javax.servlet.http.HttpServletRequest;
+
 
 import static nxt.http.JSONResponses.INCORRECT_ACCOUNT;
 import static nxt.http.JSONResponses.MISSING_ACCOUNT;
@@ -18,7 +18,7 @@ public final class RSConvert extends APIServlet.APIRequestHandler {
     }
 
     @Override
-    JSONStreamAware processRequest(HttpServletRequest req) {
+    JSONStreamAware processRequest(FakeServletRequest req) {
         String accountValue = Convert.emptyToNull(req.getParameter("account"));
         if (accountValue == null) {
             return MISSING_ACCOUNT;

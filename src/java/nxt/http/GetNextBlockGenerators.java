@@ -9,7 +9,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONStreamAware;
 
-import javax.servlet.http.HttpServletRequest;
+
 import java.util.Iterator;
 
 public final class GetNextBlockGenerators extends APIServlet.APIRequestHandler {
@@ -21,7 +21,7 @@ public final class GetNextBlockGenerators extends APIServlet.APIRequestHandler {
     }
 
     @Override
-    JSONStreamAware processRequest(HttpServletRequest req) {
+    JSONStreamAware processRequest(FakeServletRequest req) {
     		// Disable that feature once for all
             return JSONResponses.FEATURE_NOT_AVAILABLE;
     }

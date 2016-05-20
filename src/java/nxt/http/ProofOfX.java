@@ -11,7 +11,7 @@ import nxt.WorkLogicManager;
 
 import org.json.simple.JSONStreamAware;
 
-import javax.servlet.http.HttpServletRequest;
+
 import static nxt.http.JSONResponses.MISSING_WORKID;
 import static nxt.http.JSONResponses.MISSING_MSLOCATOR;
 import static nxt.http.JSONResponses.MISSING_INPUTS;
@@ -31,7 +31,7 @@ public final class ProofOfX extends CreateTransaction {
     }
 
     @Override
-    JSONStreamAware processRequest(HttpServletRequest req) throws NxtException {
+    JSONStreamAware processRequest(FakeServletRequest req) throws NxtException {
 
         String workId = req.getParameter("workId");
         String msLocator = req.getParameter("msLocator");

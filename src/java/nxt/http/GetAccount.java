@@ -8,7 +8,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONStreamAware;
 
-import javax.servlet.http.HttpServletRequest;
+
 
 public final class GetAccount extends APIServlet.APIRequestHandler {
 
@@ -19,7 +19,7 @@ public final class GetAccount extends APIServlet.APIRequestHandler {
     }
 
     @Override
-    JSONStreamAware processRequest(HttpServletRequest req) throws NxtException {
+    JSONStreamAware processRequest(FakeServletRequest req) throws NxtException {
 
         Account account = ParameterParser.getAccount(req);
         boolean includeLessors = !"false".equalsIgnoreCase(req.getParameter("includeLessors"));

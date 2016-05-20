@@ -4,7 +4,7 @@ import nxt.Poll;
 import nxt.util.Convert;
 import org.json.simple.JSONStreamAware;
 
-import javax.servlet.http.HttpServletRequest;
+
 
 import static nxt.http.JSONResponses.INCORRECT_POLL;
 import static nxt.http.JSONResponses.MISSING_POLL;
@@ -19,7 +19,7 @@ public final class GetPoll extends APIServlet.APIRequestHandler {
     }
 
     @Override
-    JSONStreamAware processRequest(HttpServletRequest req) {
+    JSONStreamAware processRequest(FakeServletRequest req) {
 
         String poll = req.getParameter("poll");
         if (poll == null) {

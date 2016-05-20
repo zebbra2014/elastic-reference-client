@@ -5,7 +5,7 @@ import nxt.util.Convert;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONStreamAware;
 
-import javax.servlet.http.HttpServletRequest;
+
 import java.security.MessageDigest;
 
 import static nxt.http.JSONResponses.MISSING_SIGNATURE_HASH;
@@ -20,7 +20,7 @@ public final class CalculateFullHash extends APIServlet.APIRequestHandler {
     }
 
     @Override
-    JSONStreamAware processRequest(HttpServletRequest req) {
+    JSONStreamAware processRequest(FakeServletRequest req) {
 
         String unsignedBytesString = Convert.emptyToNull(req.getParameter("unsignedTransactionBytes"));
         String signatureHashString = Convert.emptyToNull(req.getParameter("signatureHash"));

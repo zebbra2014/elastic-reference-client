@@ -6,7 +6,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONStreamAware;
 
-import javax.servlet.http.HttpServletRequest;
+
 import java.util.List;
 
 public final class PopOff extends APIServlet.APIRequestHandler {
@@ -18,7 +18,7 @@ public final class PopOff extends APIServlet.APIRequestHandler {
     }
 
     @Override
-    JSONStreamAware processRequest(HttpServletRequest req) {
+    JSONStreamAware processRequest(FakeServletRequest req) {
 
         JSONObject response = new JSONObject();
         int numBlocks = 0;

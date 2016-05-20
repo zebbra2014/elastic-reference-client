@@ -5,6 +5,7 @@ import nxt.Constants;
 import nxt.Nxt;
 import nxt.Transaction;
 import nxt.db.DbIterator;
+import nxt.http.FakeServletRequest;
 import nxt.peer.Peer;
 import nxt.peer.Peers;
 import nxt.util.Convert;
@@ -12,7 +13,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONStreamAware;
 
-import javax.servlet.http.HttpServletRequest;
+
 import java.io.IOException;
 import java.math.BigInteger;
 
@@ -23,7 +24,7 @@ public final class GetInitialData extends UserServlet.UserRequestHandler {
     private GetInitialData() {}
 
     @Override
-    JSONStreamAware processRequest(HttpServletRequest req, User user) throws IOException {
+    JSONStreamAware processRequest(FakeServletRequest req, User user) throws IOException {
 
         JSONArray unconfirmedTransactions = new JSONArray();
         JSONArray activePeers = new JSONArray(), knownPeers = new JSONArray(), blacklistedPeers = new JSONArray();

@@ -3,7 +3,7 @@ package nxt.http;
 import nxt.NxtException;
 import org.json.simple.JSONStreamAware;
 
-import javax.servlet.http.HttpServletRequest;
+
 
 public final class GetBalance extends APIServlet.APIRequestHandler {
 
@@ -14,7 +14,7 @@ public final class GetBalance extends APIServlet.APIRequestHandler {
     }
 
     @Override
-    JSONStreamAware processRequest(HttpServletRequest req) throws NxtException {
+    JSONStreamAware processRequest(FakeServletRequest req) throws NxtException {
         return JSONData.accountBalance(ParameterParser.getAccount(req));
     }
 

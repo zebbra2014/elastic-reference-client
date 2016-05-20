@@ -13,7 +13,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 import org.json.simple.parser.ParseException;
 
-import javax.servlet.http.HttpServletRequest;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,7 +21,7 @@ import static nxt.http.JSONResponses.*;
 
 final class ParameterParser {
 
-    static byte getByte(HttpServletRequest req, String name, byte min, byte max) throws ParameterException {
+    static byte getByte(FakeServletRequest req, String name, byte min, byte max) throws ParameterException {
         String paramValue = Convert.emptyToNull(req.getParameter(name));
         if (paramValue == null) {
             return 0;
@@ -38,7 +38,7 @@ final class ParameterParser {
         return value;
     }
 
-    static int getInt(HttpServletRequest req, String name, int min, int max, boolean isMandatory) throws ParameterException {
+    static int getInt(FakeServletRequest req, String name, int min, int max, boolean isMandatory) throws ParameterException {
         String paramValue = Convert.emptyToNull(req.getParameter(name));
         if (paramValue == null) {
             if (isMandatory) {
@@ -58,7 +58,7 @@ final class ParameterParser {
         return value;
     }
 
-    static long getLong(HttpServletRequest req, String name, long min, long max, boolean isMandatory) throws ParameterException {
+    static long getLong(FakeServletRequest req, String name, long min, long max, boolean isMandatory) throws ParameterException {
         String paramValue = Convert.emptyToNull(req.getParameter(name));
         if (paramValue == null) {
             if (isMandatory) {
@@ -78,24 +78,24 @@ final class ParameterParser {
         return value;
     }
 
-    static long getAmountNQT(HttpServletRequest req) throws ParameterException {
+    static long getAmountNQT(FakeServletRequest req) throws ParameterException {
         return getLong(req, "amountNQT", 1L, Constants.MAX_BALANCE_NQT, true);
     }
 
-    static long getFeeNQT(HttpServletRequest req) throws ParameterException {
+    static long getFeeNQT(FakeServletRequest req) throws ParameterException {
         return getLong(req, "feeNQT", 0L, Constants.MAX_BALANCE_NQT, true);
     }
 
-    static long getPriceNQT(HttpServletRequest req) throws ParameterException {
+    static long getPriceNQT(FakeServletRequest req) throws ParameterException {
         return getLong(req, "priceNQT", 1L, Constants.MAX_BALANCE_NQT, true);
     }
 
 
-    static long getAmountNQTPerQNT(HttpServletRequest req) throws ParameterException {
+    static long getAmountNQTPerQNT(FakeServletRequest req) throws ParameterException {
         return getLong(req, "amountNQTPerQNT", 1L, Constants.MAX_BALANCE_NQT, true);
     }
 
-    static EncryptedData getEncryptedMessage(HttpServletRequest req, Account recipientAccount) throws ParameterException {
+    static EncryptedData getEncryptedMessage(FakeServletRequest req, Account recipientAccount) throws ParameterException {
         String data = Convert.emptyToNull(req.getParameter("encryptedMessageData"));
         String nonce = Convert.emptyToNull(req.getParameter("encryptedMessageNonce"));
         if (data != null && nonce != null) {
@@ -122,7 +122,7 @@ final class ParameterParser {
         }
     }
 
-    static EncryptedData getEncryptToSelfMessage(HttpServletRequest req) throws ParameterException {
+    static EncryptedData getEncryptToSelfMessage(FakeServletRequest req) throws ParameterException {
         String data = Convert.emptyToNull(req.getParameter("encryptToSelfMessageData"));
         String nonce = Convert.emptyToNull(req.getParameter("encryptToSelfMessageNonce"));
         if (data != null && nonce != null) {
@@ -147,7 +147,7 @@ final class ParameterParser {
         }
     }
 
-    static EncryptedData getEncryptedGoods(HttpServletRequest req) throws ParameterException {
+    static EncryptedData getEncryptedGoods(FakeServletRequest req) throws ParameterException {
         String data = Convert.emptyToNull(req.getParameter("goodsData"));
         String nonce = Convert.emptyToNull(req.getParameter("goodsNonce"));
         if (data != null && nonce != null) {
@@ -160,7 +160,7 @@ final class ParameterParser {
         return null;
     }
 
-    static String getSecretPhrase(HttpServletRequest req) throws ParameterException {
+    static String getSecretPhrase(FakeServletRequest req) throws ParameterException {
         String secretPhrase = Convert.emptyToNull(req.getParameter("secretPhrase"));
         if (secretPhrase == null) {
             throw new ParameterException(MISSING_SECRET_PHRASE);
@@ -168,7 +168,7 @@ final class ParameterParser {
         return secretPhrase;
     }
 
-    static Account getSenderAccount(HttpServletRequest req) throws ParameterException {
+    static Account getSenderAccount(FakeServletRequest req) throws ParameterException {
         Account account;
         String secretPhrase = Convert.emptyToNull(req.getParameter("secretPhrase"));
         String publicKeyString = Convert.emptyToNull(req.getParameter("publicKey"));
@@ -189,7 +189,7 @@ final class ParameterParser {
         return account;
     }
 
-    static Account getAccount(HttpServletRequest req) throws ParameterException {
+    static Account getAccount(FakeServletRequest req) throws ParameterException {
         String accountValue = Convert.emptyToNull(req.getParameter("account"));
         if (accountValue == null) {
             throw new ParameterException(MISSING_ACCOUNT);
@@ -205,7 +205,7 @@ final class ParameterParser {
         }
     }
 
-    static List<Account> getAccounts(HttpServletRequest req) throws ParameterException {
+    static List<Account> getAccounts(FakeServletRequest req) throws ParameterException {
         String[] accountValues = req.getParameterValues("account");
         if (accountValues == null || accountValues.length == 0) {
             throw new ParameterException(MISSING_ACCOUNT);
@@ -228,11 +228,11 @@ final class ParameterParser {
         return result;
     }
 
-    static int getTimestamp(HttpServletRequest req) throws ParameterException {
+    static int getTimestamp(FakeServletRequest req) throws ParameterException {
         return getInt(req, "timestamp", 0, Integer.MAX_VALUE, false);
     }
 
-    static long getRecipientId(HttpServletRequest req) throws ParameterException {
+    static long getRecipientId(FakeServletRequest req) throws ParameterException {
         String recipientValue = Convert.emptyToNull(req.getParameter("recipient"));
         if (recipientValue == null || "0".equals(recipientValue)) {
             throw new ParameterException(MISSING_RECIPIENT);
@@ -250,7 +250,7 @@ final class ParameterParser {
     }
 
 
-    static int getFirstIndex(HttpServletRequest req) {
+    static int getFirstIndex(FakeServletRequest req) {
         int firstIndex;
         try {
             firstIndex = Integer.parseInt(req.getParameter("firstIndex"));
@@ -263,7 +263,7 @@ final class ParameterParser {
         return firstIndex;
     }
 
-    static int getLastIndex(HttpServletRequest req) {
+    static int getLastIndex(FakeServletRequest req) {
         int lastIndex;
         try {
             lastIndex = Integer.parseInt(req.getParameter("lastIndex"));
@@ -276,11 +276,11 @@ final class ParameterParser {
         return lastIndex;
     }
 
-    static int getNumberOfConfirmations(HttpServletRequest req) throws ParameterException {
+    static int getNumberOfConfirmations(FakeServletRequest req) throws ParameterException {
         return getInt(req, "numberOfConfirmations", 0, Nxt.getBlockchain().getHeight(), false);
     }
 
-    static int getHeight(HttpServletRequest req) throws ParameterException {
+    static int getHeight(FakeServletRequest req) throws ParameterException {
         String heightValue = Convert.emptyToNull(req.getParameter("height"));
         if (heightValue != null) {
             try {

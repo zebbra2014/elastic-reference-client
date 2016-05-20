@@ -1,15 +1,14 @@
 <div class="modal fade" id="new_work_modal" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
+        <form role="form" autocomplete="off" >
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                 <!-- todo -->
                 <h4 class="modal-title">Compose a New Job</h4>
             </div>
             <div class="modal-body">
-                
-                <form role="form" autocomplete="off">
-                    <p class="show_secret_phrase" data-i18n="start_forging_confirmation_passphrase">Please give us a few details related to your new work assignment.</p>
+                    <div class="callout callout-danger error_message" style="display:none"></div>
                     <div class="form-group">
                         <label for="work_title" data-i18n="work title">WORK TITLE</label>
                         <input type="input" name="work_title" id="work_title" class="form-control" placeholder="Give your work a meaningful title" tabindex="1">
@@ -43,7 +42,8 @@
                         <label for="passphrase" data-i18n="passphrase">PASSPHRASE</label>
                         <input type="password" name="passphrase" id="passphrase" class="form-control" placeholder="" tabindex="3">
                     </div>
-                </form>
+                    <input type="hidden" name="request_type" value="createNewWork" />
+                
 
             </div>
             <div class="modal-footer" style="margin-top:0;">
@@ -51,6 +51,7 @@
                 <button type="button" class="btn btn-default" data-dismiss="modal" data-i18n="cancel">Cancel</button>
                 <button type="button" class="btn btn-primary" data-loading-text="Submitting...">Submit Work</button>
             </div>
+        </form>
         </div>
     </div>
 </div>

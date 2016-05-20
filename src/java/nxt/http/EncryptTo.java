@@ -5,7 +5,7 @@ import nxt.NxtException;
 import nxt.crypto.EncryptedData;
 import org.json.simple.JSONStreamAware;
 
-import javax.servlet.http.HttpServletRequest;
+
 
 import static nxt.http.JSONResponses.INCORRECT_RECIPIENT;
 
@@ -18,7 +18,7 @@ public final class EncryptTo extends APIServlet.APIRequestHandler {
     }
 
     @Override
-    JSONStreamAware processRequest(HttpServletRequest req) throws NxtException {
+    JSONStreamAware processRequest(FakeServletRequest req) throws NxtException {
 
         long recipientId = ParameterParser.getRecipientId(req);
         Account recipientAccount = Account.getAccount(recipientId);

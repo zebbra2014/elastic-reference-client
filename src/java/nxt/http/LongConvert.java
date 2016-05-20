@@ -5,7 +5,7 @@ import nxt.util.JSON;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONStreamAware;
 
-import javax.servlet.http.HttpServletRequest;
+
 import java.math.BigInteger;
 
 public final class LongConvert extends APIServlet.APIRequestHandler {
@@ -17,7 +17,7 @@ public final class LongConvert extends APIServlet.APIRequestHandler {
     }
 
     @Override
-    JSONStreamAware processRequest(HttpServletRequest req) {
+    JSONStreamAware processRequest(FakeServletRequest req) {
         String id = Convert.emptyToNull(req.getParameter("id"));
         if (id == null) {
             return JSON.emptyJSON;

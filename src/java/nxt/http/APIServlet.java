@@ -11,6 +11,7 @@ import org.json.simple.JSONStreamAware;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
+
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.Writer;
@@ -57,7 +58,7 @@ public final class APIServlet extends HttpServlet {
             return apiTags;
         }
 
-        abstract JSONStreamAware processRequest(HttpServletRequest request) throws NxtException;
+        abstract JSONStreamAware processRequest(FakeServletRequest request) throws NxtException;
 
         boolean requirePost() {
             return false;
@@ -81,6 +82,7 @@ public final class APIServlet extends HttpServlet {
 
         map.put("broadcastTransaction", BroadcastTransaction.instance);
         map.put("calculateFullHash", CalculateFullHash.instance);
+        map.put("createNewWork", CreateNewWork.instance);
         //map.put("castVote", CastVote.instance);
         //map.put("createPoll", CreatePoll.instance);
         map.put("decryptFrom", DecryptFrom.instance);
@@ -140,15 +142,15 @@ public final class APIServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        process(req, resp);
+        process(new FakeServletRequest(req), resp);
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        process(req, resp);
+        process(new FakeServletRequest(req), resp);
     }
 
-    private void process(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    private void process(FakeServletRequest req, HttpServletResponse resp) throws IOException {
 
         resp.setHeader("Cache-Control", "no-cache, no-store, must-revalidate, private");
         resp.setHeader("Pragma", "no-cache");

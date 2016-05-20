@@ -1,5 +1,6 @@
 package nxt.peer;
 
+import nxt.http.FakeServletRequest;
 import nxt.util.CountingInputStream;
 import nxt.util.CountingOutputStream;
 import nxt.util.JSON;
@@ -14,6 +15,7 @@ import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
+
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -70,7 +72,9 @@ public final class PeerServlet extends HttpServlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest _req, HttpServletResponse resp) throws ServletException, IOException {
+    	
+    	FakeServletRequest req = new FakeServletRequest(_req);
 
         PeerImpl peer = null;
         JSONStreamAware response;

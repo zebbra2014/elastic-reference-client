@@ -6,7 +6,7 @@ import nxt.NxtException;
 import nxt.util.Convert;
 import org.json.simple.JSONStreamAware;
 
-import javax.servlet.http.HttpServletRequest;
+
 
 public final class SendMessage extends CreateTransaction {
 
@@ -17,7 +17,7 @@ public final class SendMessage extends CreateTransaction {
     }
 
     @Override
-    JSONStreamAware processRequest(HttpServletRequest req) throws NxtException {
+    JSONStreamAware processRequest(FakeServletRequest req) throws NxtException {
         String recipientValue = Convert.emptyToNull(req.getParameter("recipient"));
         long recipientId = recipientValue != null ? ParameterParser.getRecipientId(req) : 0;
         Account account = ParameterParser.getSenderAccount(req);

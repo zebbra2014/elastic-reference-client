@@ -9,7 +9,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONStreamAware;
 
-import javax.servlet.http.HttpServletRequest;
+
 
 public final class GetAccountWork extends APIServlet.APIRequestHandler {
 
@@ -79,7 +79,7 @@ public final class GetAccountWork extends APIServlet.APIRequestHandler {
 	}
 
 	@Override
-	JSONStreamAware processRequest(HttpServletRequest req) throws NxtException {
+	JSONStreamAware processRequest(FakeServletRequest req) throws NxtException {
 
 		Account account = ParameterParser.getAccount(req);
 		int timestamp = ParameterParser.getTimestamp(req);

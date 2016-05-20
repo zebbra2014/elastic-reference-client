@@ -2,6 +2,7 @@ package nxt.user;
 
 import nxt.Nxt;
 import nxt.NxtException;
+import nxt.http.FakeServletRequest;
 import nxt.util.Logger;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONStreamAware;
@@ -9,6 +10,7 @@ import org.json.simple.JSONStreamAware;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
+
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Collections;
@@ -22,7 +24,7 @@ import static nxt.user.JSONResponses.POST_REQUIRED;
 public final class UserServlet extends HttpServlet  {
 
     abstract static class UserRequestHandler {
-        abstract JSONStreamAware processRequest(HttpServletRequest request, User user) throws NxtException, IOException;
+        abstract JSONStreamAware processRequest(FakeServletRequest request, User user) throws NxtException, IOException;
         boolean requirePost() {
             return false;
         }
@@ -48,15 +50,15 @@ public final class UserServlet extends HttpServlet  {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        process(req, resp);
+        process(new FakeServletRequest(req), resp);
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        process(req, resp);
+        process(new FakeServletRequest(req), resp);
     }
 
-    private void process(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    private void process(FakeServletRequest req, HttpServletResponse resp) throws IOException {
 
         resp.setHeader("Cache-Control", "no-cache, no-store, must-revalidate, private");
         resp.setHeader("Pragma", "no-cache");
@@ -114,6 +116,7 @@ public final class UserServlet extends HttpServlet  {
             if (user != null) {
                 user.processPendingResponses(req, resp);
             }
+            
 
         }
 

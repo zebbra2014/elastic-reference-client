@@ -1,9 +1,10 @@
 package nxt.user;
 
+import nxt.http.FakeServletRequest;
 import nxt.peer.Peer;
 import org.json.simple.JSONStreamAware;
 
-import javax.servlet.http.HttpServletRequest;
+
 import java.io.IOException;
 import java.net.InetAddress;
 
@@ -16,7 +17,7 @@ public final class RemoveBlacklistedPeer extends UserServlet.UserRequestHandler 
     private RemoveBlacklistedPeer() {}
 
     @Override
-    JSONStreamAware processRequest(HttpServletRequest req, User user) throws IOException {
+    JSONStreamAware processRequest(FakeServletRequest req, User user) throws IOException {
         if (Users.allowedUserHosts == null && ! InetAddress.getByName(req.getRemoteAddr()).isLoopbackAddress()) {
             return LOCAL_USERS_ONLY;
         } else {

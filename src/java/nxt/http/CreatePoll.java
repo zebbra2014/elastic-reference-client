@@ -6,7 +6,7 @@ import nxt.Constants;
 import nxt.NxtException;
 import org.json.simple.JSONStreamAware;
 
-import javax.servlet.http.HttpServletRequest;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,7 +32,7 @@ public final class CreatePoll extends CreateTransaction {
     }
 
     @Override
-    JSONStreamAware processRequest(HttpServletRequest req) throws NxtException {
+    JSONStreamAware processRequest(FakeServletRequest req) throws NxtException {
 
         String nameValue = req.getParameter("name");
         String descriptionValue = req.getParameter("description");

@@ -4,7 +4,7 @@ import nxt.Account;
 import nxt.NxtException;
 import org.json.simple.JSONStreamAware;
 
-import javax.servlet.http.HttpServletRequest;
+
 
 public final class SendMoney extends CreateTransaction {
 
@@ -15,7 +15,7 @@ public final class SendMoney extends CreateTransaction {
     }
 
     @Override
-    JSONStreamAware processRequest(HttpServletRequest req) throws NxtException {
+    JSONStreamAware processRequest(FakeServletRequest req) throws NxtException {
         try{
 	    	long recipient = ParameterParser.getRecipientId(req);
 	        long amountNQT = ParameterParser.getAmountNQT(req);

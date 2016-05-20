@@ -6,7 +6,7 @@ import nxt.Nxt;
 import nxt.peer.Peer;
 import org.json.simple.JSONObject;
 
-import javax.servlet.http.HttpServletRequest;
+
 
 public final class GetBlockchainStatus extends APIServlet.APIRequestHandler {
 
@@ -17,7 +17,7 @@ public final class GetBlockchainStatus extends APIServlet.APIRequestHandler {
     }
 
     @Override
-    JSONObject processRequest(HttpServletRequest req) {
+    JSONObject processRequest(FakeServletRequest req) {
         JSONObject response = new JSONObject();
         response.put("application", Nxt.APPLICATION);
         response.put("version", Nxt.VERSION);

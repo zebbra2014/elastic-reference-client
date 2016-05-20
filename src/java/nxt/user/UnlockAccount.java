@@ -5,12 +5,13 @@ import nxt.Block;
 import nxt.Nxt;
 import nxt.Transaction;
 import nxt.db.DbIterator;
+import nxt.http.FakeServletRequest;
 import nxt.util.Convert;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONStreamAware;
 
-import javax.servlet.http.HttpServletRequest;
+
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -44,7 +45,7 @@ public final class UnlockAccount extends UserServlet.UserRequestHandler {
     };
 
     @Override
-    JSONStreamAware processRequest(HttpServletRequest req, User user) throws IOException {
+    JSONStreamAware processRequest(FakeServletRequest req, User user) throws IOException {
         String secretPhrase = req.getParameter("secretPhrase");
         // lock all other instances of this account being unlocked
         for (User u : Users.getAllUsers()) {

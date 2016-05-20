@@ -5,7 +5,7 @@ import nxt.Nxt;
 import nxt.util.Convert;
 import org.json.simple.JSONStreamAware;
 
-import javax.servlet.http.HttpServletRequest;
+
 
 import static nxt.http.JSONResponses.INCORRECT_BLOCK;
 import static nxt.http.JSONResponses.INCORRECT_HEIGHT;
@@ -21,7 +21,7 @@ public final class GetBlock extends APIServlet.APIRequestHandler {
     }
 
     @Override
-    JSONStreamAware processRequest(HttpServletRequest req) {
+    JSONStreamAware processRequest(FakeServletRequest req) {
 
         Block blockData;
         String blockValue = Convert.emptyToNull(req.getParameter("block"));

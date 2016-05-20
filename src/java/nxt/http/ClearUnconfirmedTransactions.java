@@ -4,7 +4,7 @@ import nxt.Nxt;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONStreamAware;
 
-import javax.servlet.http.HttpServletRequest;
+
 
 public final class ClearUnconfirmedTransactions extends APIServlet.APIRequestHandler {
 
@@ -15,7 +15,7 @@ public final class ClearUnconfirmedTransactions extends APIServlet.APIRequestHan
     }
 
     @Override
-    JSONStreamAware processRequest(HttpServletRequest req) {
+    JSONStreamAware processRequest(FakeServletRequest req) {
         JSONObject response = new JSONObject();
         try {
             Nxt.getTransactionProcessor().clearUnconfirmedTransactions();

@@ -4,7 +4,7 @@ import nxt.util.Convert;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
+
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -122,7 +122,7 @@ public class APITestServlet extends HttpServlet {
         }
     }
 
-    private static String buildLinks(HttpServletRequest req) {
+    private static String buildLinks(FakeServletRequest req) {
         StringBuilder buf = new StringBuilder();
         String requestTag = Convert.nullToEmpty(req.getParameter("requestTag"));
         buf.append("<li");
@@ -150,7 +150,7 @@ public class APITestServlet extends HttpServlet {
         return buf.toString();
     }
 
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doGet(FakeServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
         resp.setHeader("Cache-Control", "no-cache, no-store, must-revalidate, private");
         resp.setHeader("Pragma", "no-cache");
