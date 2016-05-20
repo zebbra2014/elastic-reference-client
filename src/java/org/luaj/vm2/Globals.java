@@ -229,7 +229,7 @@ public class Globals extends LuaTable {
 		if (script.length() > limit) {
 			throw new RuntimeException("Script to long " + script.length() + "/" + limit);
 		}
-		System.out.println("Size " + script.length() + "/" + limit);
+		// System.out.println("Size " + script.length() + "/" + limit);
 		return this.load(new StrReader(script), script);
 	}
 

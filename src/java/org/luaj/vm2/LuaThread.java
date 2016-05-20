@@ -153,7 +153,7 @@ public class LuaThread extends LuaValue {
 				throw new RuntimeException("No instruction Limit found, but thread already marked as created!");
 			}
 			if (instLimits.getCurrentInstructions() >= instLimits.getMaxInstructions()) {
-				System.out.println("Skipping resume already at instruction limit");
+				//System.out.println("Skipping resume already at instruction limit");
 				return LuaValue.NIL;
 			}
 		}
