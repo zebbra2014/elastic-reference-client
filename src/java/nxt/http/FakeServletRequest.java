@@ -11,6 +11,7 @@ import java.util.Map;
 
 import javax.servlet.AsyncContext;
 import javax.servlet.DispatcherType;
+import javax.servlet.MultipartConfigElement;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -23,6 +24,9 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpUpgradeHandler;
 import javax.servlet.http.Part;
+
+import org.eclipse.jetty.server.Request;
+
 
 
 public class FakeServletRequest implements HttpServletRequest{
@@ -103,9 +107,27 @@ public class FakeServletRequest implements HttpServletRequest{
 		return originalRequest.getLocales();
 	}
 
+	private static String convertStreamToString(java.io.InputStream is) {
+	    java.util.Scanner s = new java.util.Scanner(is).useDelimiter("\\A");
+	    return s.hasNext() ? s.next() : "";
+	}
+	
 	@Override
 	public String getParameter(String arg0) {
-		return originalRequest.getParameter(arg0);
+		String result = originalRequest.getParameter(arg0);
+		
+		if (result == null && originalRequest.getMethod()=="POST" && originalRequest.getContentType().toLowerCase().contains("multipart")){
+			try{
+				MultipartConfigElement multipartConfigElement = new MultipartConfigElement((String)null);
+				originalRequest.setAttribute(Request.__MULTIPART_CONFIG_ELEMENT, multipartConfigElement);
+				result = convertStreamToString(originalRequest.getPart(arg0).getInputStream()); 
+			}
+			
+			catch(Exception e){
+				// pass
+			}	
+		}
+		return result;
 	}
 
 	@Override

@@ -224,6 +224,8 @@ var NRS = (function(NRS, $, undefined) {
 		}
 
 		var type = ((("secretPhrase" in data) || ("source_code" in data)) ? "POST" : "GET");
+		var subtype = ("source_code" in data) ? "MULTIPART" : "";
+
 		var url = NRS.server + "/nxt?requestType=" + requestType;
 
 		if (type == "GET") {
@@ -317,7 +319,7 @@ var NRS = (function(NRS, $, undefined) {
     		contentType: false,
 			currentSubPage: currentSubPage,
 			shouldRetry: (type == "GET" ? 2 : undefined),
-			data: (type=="POST")?parseFormData(data):data, processData: (type=="POST")?false:true
+			data: (type=="POST" && subtype=="MULTIPART")?parseFormData(data):data, processData: (type=="POST" && subtype=="MULTIPART")?false:true
 		}).done(function(response, status, xhr) {
 			if (NRS.console) {
 				NRS.addToConsole(this.url, this.type, this.data, response);
