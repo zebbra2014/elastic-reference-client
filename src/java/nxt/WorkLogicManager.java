@@ -1,5 +1,10 @@
 package nxt;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.security.MessageDigest;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -7,6 +12,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.zip.DeflaterOutputStream;
+import java.util.zip.InflaterInputStream;
 
 import nxt.Attachment.PiggybackedProofOfBounty;
 import nxt.Attachment.PiggybackedProofOfWork;
@@ -18,12 +25,47 @@ import nxt.TransactionProcessor.Event;
 import nxt.crypto.Crypto;
 import nxt.db.DbIterator;
 import nxt.db.DbUtils;
+
 import nxt.util.Logger;
 
 public class WorkLogicManager {
 
+
+    public static byte[] compress(String text) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        try {
+            OutputStream out = new DeflaterOutputStream(baos);
+            out.write(text.getBytes("UTF-8"));
+            out.close();
+        } catch (IOException e) {
+            throw new AssertionError(e);
+        }
+        return baos.toByteArray();
+    }
+
+    public static String decompress(byte[] bytes) {
+        InputStream in = new InflaterInputStream(new ByteArrayInputStream(bytes));
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        try {
+            byte[] buffer = new byte[8192];
+            int len;
+            while((len = in.read(buffer))>0)
+                baos.write(buffer, 0, len);
+            return new String(baos.toByteArray(), "UTF-8");
+        } catch (IOException e) {
+            throw new AssertionError(e);
+        }
+    }
+
+
+	public static byte getLanguageByte(String language){
+		if (language.equalsIgnoreCase("LUA")){
+			return (byte)0x01;
+		}
+		return 0;
+	}
 	public static boolean checkWorkLanguage(byte w){
-		return true;
+		return (w>0);
 		//TODO FIXME: ADD REAL CHECKS HERE
 	}
 	public static boolean checkDeadline(int deadlineInt) {
@@ -134,7 +176,7 @@ public class WorkLogicManager {
         }
         try {
         	try (Connection con = Db.db.getConnection(); PreparedStatement pstmt = con.prepareStatement("INSERT INTO work (id, work_title, variables_input, variables_output, version_id, language_id, deadline, amount, referenced_transaction_id, block_id, sender_account_id, code, hook) "
-                    + " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
+                    + " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
                 int i = 0;
                 pstmt.setLong(++i, workId);
                 pstmt.setString(++i, attachment.getWorkTitle());
@@ -148,7 +190,6 @@ public class WorkLogicManager {
                 pstmt.setLong(++i, blockId);
                 pstmt.setLong(++i, senderId);
                 pstmt.setBytes(++i, attachment.getProgrammCode());
-                pstmt.setBytes(++i, attachment.getBountyHook());
                 pstmt.executeUpdate();
             }
         } catch (SQLException e) {

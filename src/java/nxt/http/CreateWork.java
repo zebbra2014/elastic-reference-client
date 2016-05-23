@@ -24,11 +24,12 @@ import static nxt.http.JSONResponses.MISSING_NUMBER_INPUTVARS;
 import static nxt.http.JSONResponses.MISSING_LANGUAGE;
 import static nxt.http.JSONResponses.MISSING_DEADLINE;
 import static nxt.http.JSONResponses.MISSING_SECRET_PHRASE;
-
+import static nxt.http.JSONResponses.INCORRECT_SECRET_PHRASE;
 import static nxt.http.JSONResponses.MISSING_PROGAMCODE;
 import static nxt.http.JSONResponses.MISSING_BOUNTYHOOK;
 import static nxt.http.JSONResponses.MISSING_NUMBER_OUTPUTVARS;
 import static nxt.http.JSONResponses.MISSING_NAME;
+
 
 public final class CreateWork extends CreateTransaction {
 
@@ -41,21 +42,21 @@ public final class CreateWork extends CreateTransaction {
     @Override
     JSONStreamAware processRequest(FakeServletRequest req) throws NxtException {
 
-        String workTitle = req.getParameter("workTitle");
-        String workLanguage = req.getParameter("workLanguage");
-        String programCode = req.getParameter("programCode");
-        String bountyHook = req.getParameter("bountyHook");
-        String numberInputVars = req.getParameter("numberInputVars");
-        String numberOutputVars = req.getParameter("numberOutputVars");
-        String deadline = req.getParameter("deadline");
-        String passphrase = Convert.emptyToNull(req.getParameter("passphrase"));
+        String workTitle = req.getParameter("work_title");
+        String workLanguage = "LUA"; // FIXME, HACKME, TODO: Hardcoded language, fix that if you wanna support more
+        String programCode = req.getParameter("source_code");
+        String deadline = req.getParameter("work_deadline");
+        String amount_spent = req.getParameter("amountNQT");
         
-        if (passphrase == null) {
-            return MISSING_SECRET_PHRASE;
-        } 
         
-        byte[] publicKey = Crypto.getPublicKey(passphrase); // TODO, FIXME: Check if it is valid for current account actually
-
+        
+        Account account = ParameterParser.getSenderAccount(req);
+               
+        Byte numberInputVars = 1;
+        Byte numberOutputVars = 1;
+        // TODO, FIXME, HACKME: At this point, we have to parse the source file and fill this here correctly
+        
+        
         
         if (workTitle == null) {
             return MISSING_NAME;
@@ -63,9 +64,7 @@ public final class CreateWork extends CreateTransaction {
             return MISSING_LANGUAGE;
         } else if (programCode == null) {
             return MISSING_PROGAMCODE;
-        } else if (bountyHook == null) {
-            return MISSING_BOUNTYHOOK;
-        } else if (numberInputVars == null) {
+        }  else if (numberInputVars == null) {
             return MISSING_NUMBER_INPUTVARS;
         } else if (numberOutputVars == null) {
             return MISSING_NUMBER_OUTPUTVARS;
@@ -80,13 +79,10 @@ public final class CreateWork extends CreateTransaction {
         // TODO FIXME: DO SOME ADDITIONAL CODE CHECKS, THIS IS REALLY IMPORTANT
         // RIGHT NOW WE ARE JUST PASSING THROUGH
         
-        // TODO FIXME: DO SOME ADDITIONAL BOUNTY CODE CHECKS, THIS IS REALLY IMPORTANT
-        // RIGHT NOW WE ARE JUST PASSING THROUGH
-
-      
+           
         byte workLanguageByte;
         try {
-        	workLanguageByte = Byte.parseByte(workLanguage);
+        	workLanguageByte = WorkLogicManager.getLanguageByte(workLanguage);
         	if(WorkLogicManager.checkWorkLanguage(workLanguageByte) == false){
         		return INCORRECT_WORK_LANGUAGE;
         	}
@@ -104,44 +100,7 @@ public final class CreateWork extends CreateTransaction {
             return INCORRECT_DEADLINE;
         }
         
-        byte numberInputVarsByte;
-        try {
-        	numberInputVarsByte = Byte.parseByte(numberInputVars);
-        	if(WorkLogicManager.checkNumberVariables(numberInputVarsByte,true) == false){
-        		return INCORRECT_VARIABLES_NUM;
-        	}
-        } catch (NumberFormatException e) {
-            return INCORRECT_VARIABLES_NUM;
-        }
-
-        byte numberOutputVarsByte;
-        try {
-        	numberOutputVarsByte = Byte.parseByte(numberOutputVars);
-        	if(WorkLogicManager.checkNumberVariables(numberOutputVarsByte,false) == false){
-        		return INCORRECT_VARIABLES_NUM;
-        	}
-        } catch (NumberFormatException e) {
-            return INCORRECT_VARIABLES_NUM;
-        }
-        
-        byte[] compiledProgramCode;
-        byte[] compiledBountyHook;
-        try {
-        	compiledProgramCode = WorkLogicManager.compileCode(programCode, false, workLanguageByte);
-        } catch (NumberFormatException e) {
-            return INCORRECT_PROGRAM;
-        }
-        try {
-        	compiledBountyHook = WorkLogicManager.compileCode(bountyHook, true, workLanguageByte);
-        } catch (NumberFormatException e) {
-            return INCORRECT_BOUNTYHOOK;
-        }
-
-        
-        Account account = ParameterParser.getSenderAccount(req);
-
-        Attachment attachment = new Attachment.WorkCreation(workTitle, workLanguageByte, compiledProgramCode, compiledBountyHook, numberInputVarsByte, numberOutputVarsByte, deadlineInt);
-        
+        Attachment attachment = new Attachment.WorkCreation(workTitle, workLanguageByte, WorkLogicManager.compress(programCode), numberInputVars, numberOutputVars, deadlineInt);
         return createTransaction(req, account, attachment);
 
     }

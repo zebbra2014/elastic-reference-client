@@ -68,6 +68,7 @@ public class BasicDb {
 
     public void init(String username, String password, DbVersion dbVersion) {
         Logger.logDebugMessage("Database jdbc url set to: " + dbUrl);
+        System.out.println("Database jdbc url set to: " + dbUrl+", u/p = " + username +  " / " + password);
         cp = JdbcConnectionPool.create(dbUrl, username, password);
         cp.setMaxConnections(maxConnections);
         cp.setLoginTimeout(loginTimeout);

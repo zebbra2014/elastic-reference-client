@@ -328,7 +328,7 @@ var NRS = (function(NRS, $, undefined) {
 
 
 		// handle file upload in create work function
-		if (requestType == "createNewWork"){
+		if (requestType == "createWork"){
 			var files = $('#source_code').fileinput('getFileStack'); // returns file list selected
 			if(files.length!=1){
 				$form.find(".error_message").html($.t("no_source_code")).show();

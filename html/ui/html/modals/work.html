@@ -39,11 +39,13 @@
                     </p>
           
                     <div class="form-group secret_phrase">
-                        <label for="passphrase" data-i18n="passphrase">PASSPHRASE</label>
-                        <input type="password" name="passphrase" id="passphrase" class="form-control" placeholder="" tabindex="3">
+                        <label for="secretPhrase" data-i18n="passphrase">PASSPHRASE</label>
+                        <input type="password" name="secretPhrase" id="secretPhrase" class="form-control" placeholder="" tabindex="3">
                     </div>
                     <input type="hidden" name="request_type" value="createWork" />
-                
+                    <input type="hidden" name="deadline" value="24" />
+                    <input type="hidden" name="broadcast" value="true" />
+                    <input type="hidden" name="feeNQT" value="200000000" /> <!-- TODO, HACKME: Fix this here to dynamic fees -->
 
             </div>
             <div class="modal-footer" style="margin-top:0;">

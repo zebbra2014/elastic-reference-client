@@ -36,6 +36,7 @@ public final class JSONResponses {
     public static final JSONStreamAware INCORRECT_MSLOCATOR = incorrect("workId");
     
 	// generic ones
+    public static final JSONStreamAware INCORRECT_SECRET_PHRASE = incorrect("secretPhrase");
     public static final JSONStreamAware MISSING_SECRET_PHRASE = missing("secretPhrase");
     public static final JSONStreamAware INCORRECT_PUBLIC_KEY = incorrect("publicKey");
     public static final JSONStreamAware MISSING_ALIAS_NAME = missing("aliasName");
