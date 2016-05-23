@@ -20,7 +20,8 @@ public final class GetUnconfirmedTransactions extends APIServlet.APIRequestHandl
         super(new APITag[] {APITag.TRANSACTIONS, APITag.ACCOUNTS}, "account");
     }
 
-    @Override
+    @SuppressWarnings("unchecked")
+	@Override
     JSONStreamAware processRequest(FakeServletRequest req) {
 
         String accountIdString = Convert.emptyToNull(req.getParameter("account"));

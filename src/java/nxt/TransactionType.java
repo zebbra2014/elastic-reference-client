@@ -14,7 +14,8 @@ public abstract class TransactionType {
     private static final byte TYPE_PAYMENT = 0;
     private static final byte TYPE_MESSAGING = 1;
     private static final byte TYPE_ACCOUNT_CONTROL = 2;
-    private static final byte TYPE_WORK_CONTROL = 2;
+    private static final byte TYPE_WORK_CONTROL = 3;
+    
 
     private static final byte SUBTYPE_PAYMENT_ORDINARY_PAYMENT = 0;
 
@@ -28,10 +29,8 @@ public abstract class TransactionType {
     
     private static final byte SUBTYPE_WORK_CONTROL_NEW_TASK = 0;
     private static final byte SUBTYPE_WORK_CONTROL_CANCEL_TASK = 1;
-    private static final byte SUBTYPE_WORK_CONTROL_REFUEL_TASK = 2;
-    private static final byte SUBTYPE_WORK_CONTROL_UPDATE_TASK = 3;
-    private static final byte SUBTYPE_WORK_CONTROL_PROOF_OF_WORK = 4;
-    private static final byte SUBTYPE_WORK_CONTROL_BOUNTY = 5;
+    private static final byte SUBTYPE_WORK_CONTROL_PROOF_OF_WORK = 2;
+    private static final byte SUBTYPE_WORK_CONTROL_BOUNTY = 3;
 
     private static final int BASELINE_FEE_HEIGHT = 1; // At release time must be less than current block - 1440
     private static final Fee BASELINE_FEE = new Fee(Constants.ONE_NXT, 0);
@@ -66,6 +65,19 @@ public abstract class TransactionType {
                 switch (subtype) {
                     case SUBTYPE_ACCOUNT_CONTROL_EFFECTIVE_BALANCE_LEASING:
                         return AccountControl.EFFECTIVE_BALANCE_LEASING;
+                    default:
+                        return null;
+                }
+            case TYPE_WORK_CONTROL:
+                switch (subtype) {
+                    case SUBTYPE_WORK_CONTROL_NEW_TASK:
+                        return WorkControl.NEW_TASK;
+                    case SUBTYPE_WORK_CONTROL_CANCEL_TASK:
+                        return WorkControl.CANCEL_TASK;
+                    case SUBTYPE_WORK_CONTROL_PROOF_OF_WORK:
+                        return WorkControl.PROOF_OF_WORK;
+                    case SUBTYPE_WORK_CONTROL_BOUNTY:
+                        return WorkControl.BOUNTY;
                     default:
                         return null;
                 }
@@ -332,82 +344,7 @@ public abstract class TransactionType {
             }
         };
         
-        public final static TransactionType REFUEL_TASK = new WorkControl() {
-
-            @Override
-            public final byte getSubtype() {
-                return TransactionType.SUBTYPE_WORK_CONTROL_REFUEL_TASK;
-            }
-
-            @Override
-            Attachment.WorkIdentifierRefueling parseAttachment(ByteBuffer buffer, byte transactionVersion) throws NxtException.NotValidException {
-            	return new Attachment.WorkIdentifierRefueling(buffer, transactionVersion);
-            }
-
-            @Override
-            Attachment.WorkIdentifierRefueling parseAttachment(JSONObject attachmentData) throws NxtException.NotValidException {
-            	return new Attachment.WorkIdentifierRefueling(attachmentData);
-            }
-
-            @Override
-            void applyAttachment(Transaction transaction, Account senderAccount, Account recipientAccount) {
-            	Attachment.WorkIdentifierRefueling attachment = (Attachment.WorkIdentifierRefueling) transaction.getAttachment();
-            	WorkLogicManager.refuelWork(attachment, transaction.getAmountNQT());
-            }
-
-            @Override
-            void validateAttachment(Transaction transaction) throws NxtException.ValidationException {
-                
-            }
-
-            @Override
-            public boolean canHaveRecipient() {
-                return false;
-            }
-
-            @Override
-            public boolean mustHaveRecipient() {
-                return false;
-            }
-        };
-        public final static TransactionType UPDATE_TASK = new WorkControl() {
-
-            @Override
-            public final byte getSubtype() {
-                return TransactionType.SUBTYPE_WORK_CONTROL_UPDATE_TASK;
-            }
-
-            @Override
-            Attachment.WorkUpdate parseAttachment(ByteBuffer buffer, byte transactionVersion) throws NxtException.NotValidException {
-            	return new Attachment.WorkUpdate(buffer, transactionVersion);
-            }
-
-            @Override
-            Attachment.WorkUpdate parseAttachment(JSONObject attachmentData) throws NxtException.NotValidException {
-            	return new Attachment.WorkUpdate(attachmentData);
-            }
-
-            @Override
-            void applyAttachment(Transaction transaction, Account senderAccount, Account recipientAccount) {
-            	Attachment.WorkUpdate attachment = (Attachment.WorkUpdate) transaction.getAttachment();
-            	WorkLogicManager.updateWork(attachment);
-            }
-
-            @Override
-            void validateAttachment(Transaction transaction) throws NxtException.ValidationException {
-                
-            }
-
-            @Override
-            public boolean canHaveRecipient() {
-                return false;
-            }
-
-            @Override
-            public boolean mustHaveRecipient() {
-                return false;
-            }
-        };
+       
         public final static TransactionType PROOF_OF_WORK = new WorkControl() {
 
             @Override
