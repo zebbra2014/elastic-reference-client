@@ -150,11 +150,13 @@ public final class APIServlet extends HttpServlet {
         process(req, resp);
     }
 
-    private void process(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    @SuppressWarnings("unchecked")
+	private void process(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 
-        resp.setHeader("Cache-Control", "no-cache, no-store, must-revalidate, private");
+    	resp.setHeader("Cache-Control", "no-cache, no-store, must-revalidate, private");
         resp.setHeader("Pragma", "no-cache");
         resp.setDateHeader("Expires", 0);
+        resp.setContentType("text/plain; charset=UTF-8");
 
         JSONStreamAware response = JSON.emptyJSON;
 

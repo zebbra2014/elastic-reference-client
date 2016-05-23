@@ -21,7 +21,6 @@ public final class StartForging extends APIServlet.APIRequestHandler {
 
     @Override
     JSONStreamAware processRequest(HttpServletRequest req) {
-
         String secretPhrase = ParameterParser.getParameterMultipart(req, "secretPhrase");
         if (secretPhrase == null) {
             return MISSING_SECRET_PHRASE;
