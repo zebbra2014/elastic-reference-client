@@ -112,6 +112,7 @@ public class FakeServletRequest implements HttpServletRequest{
 	    return s.hasNext() ? s.next() : "";
 	}
 	
+	// FUCKED SHIT! Not working here at all
 	@Override
 	public String getParameter(String arg0) {
 		String result = originalRequest.getParameter(arg0);

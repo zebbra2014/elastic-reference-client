@@ -215,54 +215,6 @@ public interface Attachment extends Appendix {
 
     }
  
-    public final static class WorkIdentifierRefueling extends AbstractAttachment {
-
-        public long getWorkId() {
-			return workId;
-		}
-
-		private final long workId;
-
-		WorkIdentifierRefueling(ByteBuffer buffer, byte transactionVersion) throws NxtException.NotValidException {
-            super(buffer, transactionVersion);
-            this.workId = buffer.getLong();
-        }
-
-		WorkIdentifierRefueling(JSONObject attachmentData) {
-            super(attachmentData);
-            this.workId = Convert.parseUnsignedLong((String)attachmentData.get("id"));
-        }
-
-        public WorkIdentifierRefueling(long workId) {
-            this.workId = workId;
-        }
-
-        @Override
-        String getAppendixName() {
-            return "WorkIdentifierRefueling";
-        }
-
-        @Override
-        int getMySize() {
-            return 8;
-        }
-
-        @Override
-        void putMyBytes(ByteBuffer buffer) {
-            buffer.putLong(this.workId);
-        }
-
-        @Override
-        void putMyJSON(JSONObject attachment) {
-            attachment.put("id", Convert.toUnsignedLong(this.workId));
-        }
-
-        @Override
-        public TransactionType getTransactionType() {
-        	return TransactionType.WorkControl.REFUEL_TASK;
-        }
-    }
-    
     public final static class WorkIdentifierCancellation extends AbstractAttachment {
 
         public long getWorkId() {
@@ -545,7 +497,7 @@ public interface Attachment extends Appendix {
             super(buffer, transactionVersion);
             this.workTitle = Convert.readString(buffer, buffer.getShort(), Constants.MAX_POLL_NAME_LENGTH);
             this.workLanguage = buffer.get();
-            int codeLength = (buffer.get()<<8) | buffer.get();
+            int codeLength = buffer.getInt();
             if (codeLength > Constants.MAX_WORK_CODE_LENGTH) {
                 throw new NxtException.NotValidException("Invalid source code length: " + codeLength);
             }
@@ -586,7 +538,7 @@ public interface Attachment extends Appendix {
 
         @Override
         int getMySize() {
-            int size = 2 + Convert.toBytes(workTitle).length + 1 + 2 + this.programmCode.length + 1 + 1 + 4;
+            int size = 2 + Convert.toBytes(workTitle).length + 1 + 4 + this.programmCode.length + 1 + 1 + 4;
             return size;
         }
 
@@ -598,9 +550,8 @@ public interface Attachment extends Appendix {
             buffer.put(name);
             
             buffer.put((byte) this.workLanguage);
-           
-            buffer.put((byte) this.programmCode.length);
-            buffer.put(this.programmCode);
+            int length = this.programmCode.length;
+            buffer.putInt(length);
 
             buffer.put(this.numberInputVars);
             buffer.put(this.numberOutputVars);
@@ -651,139 +602,6 @@ public interface Attachment extends Appendix {
 
     }
     
-    public final static class WorkUpdate extends AbstractAttachment {
-    	private final long workId;
-        private final String workTitle;
-		private final byte workLanguage;
-        private final byte[] programmCode;
-        private final byte[] bountyHook;
-        private final byte numberInputVars, numberOutputVars;
-
-        WorkUpdate(ByteBuffer buffer, byte transactionVersion) throws NxtException.NotValidException {
-            super(buffer, transactionVersion);
-            this.workId = buffer.getLong();
-            this.workTitle = Convert.readString(buffer, buffer.getShort(), Constants.MAX_POLL_NAME_LENGTH);
-            this.workLanguage = buffer.get();
-            int codeLength = (buffer.get()<<8) | buffer.get();
-            if (codeLength > Constants.MAX_WORK_CODE_LENGTH) {
-                throw new NxtException.NotValidException("Invalid source code length: " + codeLength);
-            }
-            this.programmCode = new byte[codeLength];
-            buffer.get(this.programmCode, 0, this.programmCode.length);
-            
-            int bountyHookLength = (buffer.get()<<8) | buffer.get();
-            if (bountyHookLength > Constants.MAX_BOUNTY_CODE_LENGTH) {
-                throw new NxtException.NotValidException("Invalid bounty hook code length: " + bountyHookLength);
-            }
-            this.bountyHook = new byte[bountyHookLength];
-            buffer.get(this.bountyHook, 0, this.bountyHook.length);
-          
-            this.numberInputVars = buffer.get();
-            this.numberOutputVars = buffer.get();
-        }
-
-        WorkUpdate(JSONObject attachmentData) {
-            super(attachmentData);
-            this.workId = ((Long) attachmentData.get("id")).byteValue();
-            this.workTitle = ((String) attachmentData.get("title")).trim();
-            this.workLanguage = ((Long) attachmentData.get("language")).byteValue();
-            this.programmCode = Ascii85.decode(((String) attachmentData.get("programCode")).trim());
-            this.bountyHook = Ascii85.decode(((String) attachmentData.get("bountyCode")).trim());          
-            this.numberInputVars = ((Long) attachmentData.get("numInputs")).byteValue();
-            this.numberOutputVars = ((Long) attachmentData.get("numOutputs")).byteValue();
-        }
-
-        public WorkUpdate(long workId, String workTitle, byte workLanguage, byte[] programmCode, byte[] bountyHook,
-                                     byte numberInputVars, byte numberOutputVars) {
-        	this.workId = workId;
-        	this.workTitle = workTitle;
-            this.workLanguage = workLanguage;
-            this.programmCode = programmCode;
-            this.bountyHook = bountyHook;          
-            this.numberInputVars = numberInputVars;
-            this.numberOutputVars = numberOutputVars;
-        }
-
-        @Override
-        String getAppendixName() {
-            return "WorkUpdate";
-        }
-
-        @Override
-        int getMySize() {
-            int size = 8 + 2 + Convert.toBytes(workTitle).length + 1 + 2 + this.programmCode.length + 2 + this.bountyHook.length + 1 + 1;
-            return size;
-        }
-
-        @Override
-        void putMyBytes(ByteBuffer buffer) {
-            byte[] name = Convert.toBytes(this.workTitle);
-            
-            buffer.putLong(this.workId);
-            buffer.putShort((short)name.length);
-            buffer.put(name);
-            
-            buffer.put((byte) this.workLanguage);
-           
-            buffer.put((byte) this.programmCode.length);
-            buffer.put(this.programmCode);
-            
-            buffer.put((byte) this.bountyHook.length);
-            buffer.put(this.bountyHook);
-            
-            buffer.put(this.numberInputVars);
-            buffer.put(this.numberOutputVars);
-        }
-
-        @Override
-        void putMyJSON(JSONObject attachment) {
-        	attachment.put("id", this.workId);
-            attachment.put("title", this.workTitle);
-            attachment.put("language", this.workLanguage);
-            attachment.put("programCode", Ascii85.encode(this.programmCode));
-            attachment.put("bountyCode", Ascii85.encode(this.bountyHook));
-            attachment.put("numInputs", this.numberInputVars);
-            attachment.put("numOutputs", this.numberOutputVars);
-        }
-
-		@Override
-        public TransactionType getTransactionType() {
-            return TransactionType.WorkControl.UPDATE_TASK;
-        }
-		
-		public long getWorkId() {
-			return workId;
-		}
-
-        public String getWorkTitle() {
-			return workTitle;
-		}
-
-		public byte getWorkLanguage() {
-			return workLanguage;
-		}
-
-		public byte[] getProgrammCode() {
-			return programmCode;
-		}
-
-		public byte[] getBountyHook() {
-			return bountyHook;
-		}
-
-		public byte getNumberInputVars() {
-			return numberInputVars;
-		}
-
-		public byte getNumberOutputVars() {
-			return numberOutputVars;
-		}
-
-    }
-    
-    
-    
-
     public final static class MessagingVoteCasting extends AbstractAttachment {
 
         private final long pollId;

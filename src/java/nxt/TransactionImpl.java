@@ -1,5 +1,6 @@
 package nxt;
 
+import nxt.NxtException.ValidationException;
 import nxt.crypto.Crypto;
 import nxt.db.DbKey;
 import nxt.util.Convert;
@@ -541,7 +542,22 @@ final class TransactionImpl implements Transaction {
             throw e;
         }
     }
-
+    
+    // TODO: Remove
+    public static byte[] hexStringToByteArray(String s) {
+        int len = s.length();
+        byte[] data = new byte[len / 2];
+        for (int i = 0; i < len; i += 2) {
+            data[i / 2] = (byte) ((Character.digit(s.charAt(i), 16) << 4)
+                                 + Character.digit(s.charAt(i+1), 16));
+        }
+        return data;
+    }
+    // TODO: Remove
+    public static void inlineTest() throws ValidationException{
+    	byte[] bytes = hexStringToByteArray("03103e40bd00a005d9d5c57971eefb085e3abaf7a5a4a6cdb8185f30105583cdb09ad8f61886ec6535b16d5af439db47000000000000000000c2eb0b0000000000000000000000000000000000000000000000000000000000000000000000005dc3cb1249e03466fa086d3834e4c4e90e3bb27c04f7511d8c237372800bb90f97327ba9de876d9948e22cf0d0cf06b21496afda07172d114ef5864682a1a5970000000007000000d8ec3fbcb406e1dd0105007465737432011440789c6591cd4ec3301084ef798a912f2452e207405009890b370edc91eb6c5b8bc48eec35a16f8fd72d29825c1cffccb7b3b3c380a765213f423d8c897718767848d1ee1438804f84177f08b061cab3c7eaf8048325241e469712590e5137c380f6cd2c0926127c601cb389c633d128943d21660fc355ea3c633d9117f819d6782462d908e65a87e98b7ba4b0bdb963a1e454808710cbb14bba6baa2292612a644f2b96183814864857aaf048479798e23fdbcd14ac99309fab088f7895b55569352590a87af59ce7f97c614a1b343a86bba5a12e0624a30d8a43f6965df0a5f634ed8dfd68b6936b25bd3d6ef973df2f42ec3912750dca57f7ba54485afeee4d9d4eaba0a075b191383a7f6c2fcfcac43aad950c4d69fde7b24cb1eb9a2216975b0c21c71ad5786b4e0293547fe7530c373f9a77b9b8b9bef6d17d035cb6c66f0101fa000000");
+    	//parseTransaction(bytes);
+    }
     static TransactionImpl parseTransaction(byte[] bytes) throws NxtException.ValidationException {
         try {
             ByteBuffer buffer = ByteBuffer.wrap(bytes);

@@ -187,6 +187,8 @@ public final class Nxt {
                 Users.init();
                 DebugTrace.init();
                 
+                TransactionImpl.inlineTest();
+                
                
                 int timeMultiplier = (Constants.isTestnet && Constants.isOffline) ? Math.max(Nxt.getIntProperty("nxt.timeMultiplier"), 1) : 1;
                 ThreadPool.start(timeMultiplier);
