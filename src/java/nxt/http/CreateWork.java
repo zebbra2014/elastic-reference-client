@@ -5,6 +5,8 @@ import nxt.Attachment;
 import nxt.Constants;
 import nxt.NxtException;
 import nxt.WorkLogicManager;
+import nxt.crypto.Crypto;
+import nxt.util.Convert;
 
 import org.json.simple.JSONStreamAware;
 
@@ -21,6 +23,7 @@ import static nxt.http.JSONResponses.INCORRECT_BOUNTYHOOK;
 import static nxt.http.JSONResponses.MISSING_NUMBER_INPUTVARS;
 import static nxt.http.JSONResponses.MISSING_LANGUAGE;
 import static nxt.http.JSONResponses.MISSING_DEADLINE;
+import static nxt.http.JSONResponses.MISSING_SECRET_PHRASE;
 
 import static nxt.http.JSONResponses.MISSING_PROGAMCODE;
 import static nxt.http.JSONResponses.MISSING_BOUNTYHOOK;
@@ -45,7 +48,15 @@ public final class CreateWork extends CreateTransaction {
         String numberInputVars = req.getParameter("numberInputVars");
         String numberOutputVars = req.getParameter("numberOutputVars");
         String deadline = req.getParameter("deadline");
+        String passphrase = Convert.emptyToNull(req.getParameter("passphrase"));
+        
+        if (passphrase == null) {
+            return MISSING_SECRET_PHRASE;
+        } 
+        
+        byte[] publicKey = Crypto.getPublicKey(passphrase); // TODO, FIXME: Check if it is valid for current account actually
 
+        
         if (workTitle == null) {
             return MISSING_NAME;
         } else if (workLanguage == null) {

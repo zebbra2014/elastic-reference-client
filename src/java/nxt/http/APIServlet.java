@@ -82,7 +82,6 @@ public final class APIServlet extends HttpServlet {
 
         map.put("broadcastTransaction", BroadcastTransaction.instance);
         map.put("calculateFullHash", CalculateFullHash.instance);
-        map.put("createNewWork", CreateNewWork.instance);
         //map.put("castVote", CastVote.instance);
         //map.put("createPoll", CreatePoll.instance);
         map.put("decryptFrom", DecryptFrom.instance);
