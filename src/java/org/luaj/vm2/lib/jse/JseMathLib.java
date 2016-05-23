@@ -21,6 +21,7 @@
 ******************************************************************************/
 package org.luaj.vm2.lib.jse;
 
+import org.luaj.vm2.Globals;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.lib.LibFunction;
 

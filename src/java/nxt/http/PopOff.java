@@ -1,13 +1,15 @@
 package nxt.http;
 
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+
 import nxt.Block;
 import nxt.Nxt;
+
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONStreamAware;
-
-
-import java.util.List;
 
 public final class PopOff extends APIServlet.APIRequestHandler {
 
@@ -18,16 +20,16 @@ public final class PopOff extends APIServlet.APIRequestHandler {
     }
 
     @Override
-    JSONStreamAware processRequest(FakeServletRequest req) {
+    JSONStreamAware processRequest(HttpServletRequest req) {
 
         JSONObject response = new JSONObject();
         int numBlocks = 0;
         try {
-            numBlocks = Integer.parseInt(req.getParameter("numBlocks"));
+            numBlocks = Integer.parseInt(ParameterParser.getParameterMultipart(req, "numBlocks"));
         } catch (NumberFormatException e) {}
         int height = 0;
         try {
-            height = Integer.parseInt(req.getParameter("height"));
+            height = Integer.parseInt(ParameterParser.getParameterMultipart(req, "height"));
         } catch (NumberFormatException e) {}
 
         List<? extends Block> blocks;

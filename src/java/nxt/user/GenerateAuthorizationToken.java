@@ -1,15 +1,15 @@
 package nxt.user;
 
+import static nxt.user.JSONResponses.INVALID_SECRET_PHRASE;
+
+import java.io.IOException;
+import javax.servlet.http.HttpServletRequest;
+
 import nxt.Token;
-import nxt.http.FakeServletRequest;
+import nxt.http.ParameterParser;
 
 import org.json.simple.JSONObject;
 import org.json.simple.JSONStreamAware;
-
-
-import java.io.IOException;
-
-import static nxt.user.JSONResponses.INVALID_SECRET_PHRASE;
 
 public final class GenerateAuthorizationToken extends UserServlet.UserRequestHandler {
 
@@ -18,13 +18,13 @@ public final class GenerateAuthorizationToken extends UserServlet.UserRequestHan
     private GenerateAuthorizationToken() {}
 
     @Override
-    JSONStreamAware processRequest(FakeServletRequest req, User user) throws IOException {
-        String secretPhrase = req.getParameter("secretPhrase");
+    JSONStreamAware processRequest(HttpServletRequest req, User user) throws IOException {
+        String secretPhrase = ParameterParser.getParameterMultipart(req, "secretPhrase");
         if (! user.getSecretPhrase().equals(secretPhrase)) {
             return INVALID_SECRET_PHRASE;
         }
 
-        String tokenString = Token.generateToken(secretPhrase, req.getParameter("website").trim());
+        String tokenString = Token.generateToken(secretPhrase, ParameterParser.getParameterMultipart(req, "website").trim());
 
         JSONObject response = new JSONObject();
         response.put("response", "showAuthorizationToken");

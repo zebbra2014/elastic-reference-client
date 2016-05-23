@@ -1,10 +1,10 @@
 package nxt.http;
 
+import javax.servlet.http.HttpServletRequest;
+
 import nxt.Account;
-import nxt.Nxt;
 import nxt.NxtException;
-import nxt.Transaction;
-import nxt.db.DbIterator;
+
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONStreamAware;
@@ -79,7 +79,7 @@ public final class GetAccountWork extends APIServlet.APIRequestHandler {
 	}
 
 	@Override
-	JSONStreamAware processRequest(FakeServletRequest req) throws NxtException {
+	JSONStreamAware processRequest(HttpServletRequest req) throws NxtException {
 
 		Account account = ParameterParser.getAccount(req);
 		int timestamp = ParameterParser.getTimestamp(req);
@@ -88,7 +88,7 @@ public final class GetAccountWork extends APIServlet.APIRequestHandler {
 
 		byte type;
 		try {
-			type = Byte.parseByte(req.getParameter("type"));
+			type = Byte.parseByte(ParameterParser.getParameterMultipart(req, "type"));
 		} catch (NumberFormatException e) {
 			type = -1;
 		}

@@ -1,8 +1,8 @@
 package nxt;
 
-import nxt.db.DbVersion;
-
 import java.sql.SQLException;
+
+import nxt.db.DbVersion;
 
 class NxtDbVersion extends DbVersion {
 

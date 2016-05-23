@@ -1,20 +1,22 @@
 package nxt.user;
 
+import static nxt.user.JSONResponses.NOTIFY_OF_ACCEPTED_TRANSACTION;
+
+import java.io.IOException;
+
+import javax.servlet.http.HttpServletRequest;
+
 import nxt.Account;
 import nxt.Attachment;
 import nxt.Constants;
 import nxt.Nxt;
 import nxt.NxtException;
 import nxt.Transaction;
-import nxt.http.FakeServletRequest;
+import nxt.http.ParameterParser;
 import nxt.util.Convert;
+
 import org.json.simple.JSONObject;
 import org.json.simple.JSONStreamAware;
-
-
-import java.io.IOException;
-
-import static nxt.user.JSONResponses.NOTIFY_OF_ACCEPTED_TRANSACTION;
 
 public final class SendMoney extends UserServlet.UserRequestHandler {
 
@@ -22,16 +24,16 @@ public final class SendMoney extends UserServlet.UserRequestHandler {
     private SendMoney() {}
 
     @Override
-    JSONStreamAware processRequest(FakeServletRequest req, User user) throws NxtException.ValidationException, IOException {
+    JSONStreamAware processRequest(HttpServletRequest req, User user) throws NxtException.ValidationException, IOException {
         if (user.getSecretPhrase() == null) {
             return null;
         }
 
-        String recipientValue = req.getParameter("recipient");
-        String amountValue = req.getParameter("amountNXT");
-        String feeValue = req.getParameter("feeNXT");
-        String deadlineValue = req.getParameter("deadline");
-        String secretPhrase = req.getParameter("secretPhrase");
+        String recipientValue = ParameterParser.getParameterMultipart(req, "recipient");
+        String amountValue = ParameterParser.getParameterMultipart(req, "amountNXT");
+        String feeValue = ParameterParser.getParameterMultipart(req, "feeNXT");
+        String deadlineValue = ParameterParser.getParameterMultipart(req, "deadline");
+        String secretPhrase = ParameterParser.getParameterMultipart(req, "secretPhrase");
 
         long recipient;
         long amountNQT = 0;
@@ -59,6 +61,7 @@ public final class SendMoney extends UserServlet.UserRequestHandler {
             return response;
         }
 
+        
         if (! user.getSecretPhrase().equals(secretPhrase)) {
 
             JSONObject response = new JSONObject();

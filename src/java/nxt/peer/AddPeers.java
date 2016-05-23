@@ -1,6 +1,7 @@
 package nxt.peer;
 
 import nxt.util.JSON;
+
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONStreamAware;

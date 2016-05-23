@@ -1,9 +1,12 @@
 package nxt.http;
 
+import javax.servlet.http.HttpServletRequest;
+
 import nxt.Account;
 import nxt.Nxt;
 import nxt.NxtException;
 import nxt.db.DbIterator;
+
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONStreamAware;
@@ -19,7 +22,7 @@ public final class GetAccountLessors extends APIServlet.APIRequestHandler {
     }
 
     @Override
-    JSONStreamAware processRequest(FakeServletRequest req) throws NxtException {
+    JSONStreamAware processRequest(HttpServletRequest req) throws NxtException {
 
         Account account = ParameterParser.getAccount(req);
         int height = ParameterParser.getHeight(req);

@@ -1,9 +1,12 @@
 package nxt.http;
 
+import javax.servlet.http.HttpServletRequest;
+
 import nxt.Account;
 import nxt.NxtException;
 import nxt.db.DbIterator;
 import nxt.util.Convert;
+
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONStreamAware;
@@ -19,12 +22,12 @@ public final class GetAccount extends APIServlet.APIRequestHandler {
     }
 
     @Override
-    JSONStreamAware processRequest(FakeServletRequest req) throws NxtException {
+    JSONStreamAware processRequest(HttpServletRequest req) throws NxtException {
 
         Account account = ParameterParser.getAccount(req);
-        boolean includeLessors = !"false".equalsIgnoreCase(req.getParameter("includeLessors"));
-        boolean includeAssets = !"false".equalsIgnoreCase(req.getParameter("includeAssets"));
-        boolean includeCurrencies = !"false".equalsIgnoreCase(req.getParameter("includeCurrencies"));
+        boolean includeLessors = !"false".equalsIgnoreCase(ParameterParser.getParameterMultipart(req, "includeLessors"));
+        boolean includeAssets = !"false".equalsIgnoreCase(ParameterParser.getParameterMultipart(req, "includeAssets"));
+        boolean includeCurrencies = !"false".equalsIgnoreCase(ParameterParser.getParameterMultipart(req, "includeCurrencies"));
 
         JSONObject response = JSONData.accountBalance(account);
         JSONData.putAccount(response, "account", account.getId());

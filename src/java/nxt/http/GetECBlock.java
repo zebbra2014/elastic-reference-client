@@ -1,9 +1,12 @@
 package nxt.http;
 
+import javax.servlet.http.HttpServletRequest;
+
 import nxt.Block;
 import nxt.EconomicClustering;
 import nxt.Nxt;
 import nxt.NxtException;
+
 import org.json.simple.JSONObject;
 import org.json.simple.JSONStreamAware;
 
@@ -18,7 +21,7 @@ public final class GetECBlock extends APIServlet.APIRequestHandler {
     }
 
     @Override
-    JSONStreamAware processRequest(FakeServletRequest req) throws NxtException {
+    JSONStreamAware processRequest(HttpServletRequest req) throws NxtException {
         int timestamp = ParameterParser.getTimestamp(req);
         if (timestamp == 0) {
             timestamp = Nxt.getEpochTime();

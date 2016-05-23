@@ -1,10 +1,10 @@
 package nxt.util;
 
-import org.json.simple.JSONObject;
-import org.json.simple.JSONStreamAware;
-
 import java.io.IOException;
 import java.io.Writer;
+
+import org.json.simple.JSONObject;
+import org.json.simple.JSONStreamAware;
 
 public final class JSON {
 

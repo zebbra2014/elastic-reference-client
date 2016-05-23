@@ -1,30 +1,31 @@
 package nxt.user;
 
-import nxt.Nxt;
-import nxt.NxtException;
-import nxt.http.FakeServletRequest;
-import nxt.util.Logger;
-import org.json.simple.JSONObject;
-import org.json.simple.JSONStreamAware;
+import static nxt.user.JSONResponses.DENY_ACCESS;
+import static nxt.user.JSONResponses.INCORRECT_REQUEST;
+import static nxt.user.JSONResponses.POST_REQUIRED;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import static nxt.user.JSONResponses.DENY_ACCESS;
-import static nxt.user.JSONResponses.INCORRECT_REQUEST;
-import static nxt.user.JSONResponses.POST_REQUIRED;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import nxt.Nxt;
+import nxt.NxtException;
+import nxt.http.ParameterParser;
+import nxt.util.Logger;
+
+import org.json.simple.JSONObject;
+import org.json.simple.JSONStreamAware;
 
 public final class UserServlet extends HttpServlet  {
 
     abstract static class UserRequestHandler {
-        abstract JSONStreamAware processRequest(FakeServletRequest request, User user) throws NxtException, IOException;
+        abstract JSONStreamAware processRequest(HttpServletRequest request, User user) throws NxtException, IOException;
         boolean requirePost() {
             return false;
         }
@@ -50,15 +51,15 @@ public final class UserServlet extends HttpServlet  {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        process(new FakeServletRequest(req), resp);
+        process(req, resp);
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        process(new FakeServletRequest(req), resp);
+        process(req, resp);
     }
 
-    private void process(FakeServletRequest req, HttpServletResponse resp) throws IOException {
+    private void process(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 
         resp.setHeader("Cache-Control", "no-cache, no-store, must-revalidate, private");
         resp.setHeader("Pragma", "no-cache");
@@ -68,7 +69,7 @@ public final class UserServlet extends HttpServlet  {
 
         try {
 
-            String userPasscode = req.getParameter("user");
+            String userPasscode = ParameterParser.getParameterMultipart(req, "user");
             if (userPasscode == null) {
                 return;
             }
@@ -79,7 +80,7 @@ public final class UserServlet extends HttpServlet  {
                 return;
             }
 
-            String requestType = req.getParameter("requestType");
+            String requestType = ParameterParser.getParameterMultipart(req, "requestType");
             if (requestType == null) {
                 user.enqueue(INCORRECT_REQUEST);
                 return;
@@ -103,6 +104,7 @@ public final class UserServlet extends HttpServlet  {
 
         } catch (RuntimeException|NxtException e) {
 
+        	
             Logger.logMessage("Error processing GET request", e);
             if (user != null) {
                 JSONObject response = new JSONObject();

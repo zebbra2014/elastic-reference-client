@@ -1,5 +1,12 @@
 package nxt.http;
 
+import static nxt.http.JSONResponses.INCORRECT_TRANSACTION;
+import static nxt.http.JSONResponses.MISSING_TRANSACTION;
+import static nxt.http.JSONResponses.NO_MESSAGE;
+import static nxt.http.JSONResponses.UNKNOWN_TRANSACTION;
+
+import javax.servlet.http.HttpServletRequest;
+
 import nxt.Account;
 import nxt.Appendix;
 import nxt.Nxt;
@@ -7,15 +14,9 @@ import nxt.Transaction;
 import nxt.crypto.Crypto;
 import nxt.util.Convert;
 import nxt.util.Logger;
+
 import org.json.simple.JSONObject;
 import org.json.simple.JSONStreamAware;
-
-
-
-import static nxt.http.JSONResponses.INCORRECT_TRANSACTION;
-import static nxt.http.JSONResponses.MISSING_TRANSACTION;
-import static nxt.http.JSONResponses.NO_MESSAGE;
-import static nxt.http.JSONResponses.UNKNOWN_TRANSACTION;
 
 public final class ReadMessage extends APIServlet.APIRequestHandler {
 
@@ -26,9 +27,9 @@ public final class ReadMessage extends APIServlet.APIRequestHandler {
     }
 
     @Override
-    JSONStreamAware processRequest(FakeServletRequest req) throws ParameterException {
+    JSONStreamAware processRequest(HttpServletRequest req) throws ParameterException {
 
-        String transactionIdString = Convert.emptyToNull(req.getParameter("transaction"));
+        String transactionIdString = Convert.emptyToNull(ParameterParser.getParameterMultipart(req, "transaction"));
         if (transactionIdString == null) {
             return MISSING_TRANSACTION;
         }
@@ -54,7 +55,7 @@ public final class ReadMessage extends APIServlet.APIRequestHandler {
         if (message != null) {
             response.put("message", message.isText() ? Convert.toString(message.getMessage()) : Convert.toHexString(message.getMessage()));
         }
-        String secretPhrase = Convert.emptyToNull(req.getParameter("secretPhrase"));
+        String secretPhrase = Convert.emptyToNull(ParameterParser.getParameterMultipart(req, "secretPhrase"));
         if (secretPhrase != null) {
             if (encryptedMessage != null) {
                 long readerAccountId = Account.getId(Crypto.getPublicKey(secretPhrase));

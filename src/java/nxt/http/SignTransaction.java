@@ -1,17 +1,19 @@
 package nxt.http;
 
+import static nxt.http.JSONResponses.MISSING_SECRET_PHRASE;
+
+import java.util.Arrays;
+
+import javax.servlet.http.HttpServletRequest;
+
 import nxt.NxtException;
 import nxt.Transaction;
 import nxt.crypto.Crypto;
 import nxt.util.Convert;
 import nxt.util.Logger;
+
 import org.json.simple.JSONObject;
 import org.json.simple.JSONStreamAware;
-
-
-import java.util.Arrays;
-
-import static nxt.http.JSONResponses.MISSING_SECRET_PHRASE;
 
 public final class SignTransaction extends APIServlet.APIRequestHandler {
 
@@ -22,18 +24,18 @@ public final class SignTransaction extends APIServlet.APIRequestHandler {
     }
 
     @Override
-    JSONStreamAware processRequest(FakeServletRequest req) throws NxtException {
+    JSONStreamAware processRequest(HttpServletRequest req) throws NxtException {
 
-        String transactionBytes = Convert.emptyToNull(req.getParameter("unsignedTransactionBytes"));
-        String transactionJSON = Convert.emptyToNull(req.getParameter("unsignedTransactionJSON"));
+        String transactionBytes = Convert.emptyToNull(ParameterParser.getParameterMultipart(req, "unsignedTransactionBytes"));
+        String transactionJSON = Convert.emptyToNull(ParameterParser.getParameterMultipart(req, "unsignedTransactionJSON"));
         Transaction transaction = ParameterParser.parseTransaction(transactionBytes, transactionJSON);
 
-        String secretPhrase = Convert.emptyToNull(req.getParameter("secretPhrase"));
+        String secretPhrase = Convert.emptyToNull(ParameterParser.getParameterMultipart(req, "secretPhrase"));
         if (secretPhrase == null) {
             return MISSING_SECRET_PHRASE;
         }
 
-        boolean validate = !"false".equalsIgnoreCase(req.getParameter("validate"));
+        boolean validate = !"false".equalsIgnoreCase(ParameterParser.getParameterMultipart(req, "validate"));
 
         JSONObject response = new JSONObject();
         try {

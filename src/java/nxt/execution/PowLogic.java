@@ -14,7 +14,12 @@ import java.util.List;
 import java.util.Random;
 
 import org.luaj.vm2.Globals;
+import org.luaj.vm2.InstructionLimit;
+import org.luaj.vm2.LuaBoolean;
+import org.luaj.vm2.LuaClosure;
+import org.luaj.vm2.LuaThread;
 import org.luaj.vm2.LuaValue;
+import org.luaj.vm2.Varargs;
 import org.luaj.vm2.compiler.LuaC;
 import org.luaj.vm2.lib.BaseLib;
 import org.luaj.vm2.lib.Bit32Lib;
@@ -23,13 +28,6 @@ import org.luaj.vm2.lib.PackageLib;
 import org.luaj.vm2.lib.StringLib;
 import org.luaj.vm2.lib.TableLib;
 import org.luaj.vm2.lib.jse.JseMathLib;
-import org.luaj.vm2.InstructionLimit;
-import org.luaj.vm2.LuaBoolean;
-import org.luaj.vm2.LuaClosure;
-import org.luaj.vm2.LuaNil;
-import org.luaj.vm2.LuaThread;
-import org.luaj.vm2.LuaValue;
-import org.luaj.vm2.Varargs;
 
 
 

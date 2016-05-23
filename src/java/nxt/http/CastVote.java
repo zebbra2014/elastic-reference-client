@@ -1,17 +1,20 @@
 package nxt.http;
 
-import nxt.Account;
-import nxt.Attachment;
-import nxt.NxtException;
-import nxt.Poll;
-import nxt.util.Convert;
-import org.json.simple.JSONStreamAware;
-
 
 
 import static nxt.http.JSONResponses.INCORRECT_POLL;
 import static nxt.http.JSONResponses.INCORRECT_VOTE;
 import static nxt.http.JSONResponses.MISSING_POLL;
+
+import javax.servlet.http.HttpServletRequest;
+
+import nxt.Account;
+import nxt.Attachment;
+import nxt.NxtException;
+import nxt.Poll;
+import nxt.util.Convert;
+
+import org.json.simple.JSONStreamAware;
 
 public final class CastVote extends CreateTransaction {
 
@@ -22,9 +25,9 @@ public final class CastVote extends CreateTransaction {
     }
 
     @Override
-    JSONStreamAware processRequest(FakeServletRequest req) throws NxtException {
+    JSONStreamAware processRequest(HttpServletRequest req) throws NxtException {
 
-        String pollValue = req.getParameter("poll");
+        String pollValue = ParameterParser.getParameterMultipart(req, "poll");
 
         if (pollValue == null) {
             return MISSING_POLL;
@@ -46,7 +49,7 @@ public final class CastVote extends CreateTransaction {
         byte[] vote = new byte[numberOfOptions];
         try {
             for (int i = 0; i < numberOfOptions; i++) {
-                String voteValue = req.getParameter("vote" + i);
+                String voteValue = ParameterParser.getParameterMultipart(req, "vote" + i);
                 if (voteValue != null) {
                     vote[i] = Byte.parseByte(voteValue);
                 }

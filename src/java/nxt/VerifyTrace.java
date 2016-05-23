@@ -1,8 +1,5 @@
 package nxt;
 
-import nxt.util.Convert;
-import nxt.util.Logger;
-
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -12,6 +9,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import nxt.util.Convert;
+import nxt.util.Logger;
 
 public final class VerifyTrace {
 

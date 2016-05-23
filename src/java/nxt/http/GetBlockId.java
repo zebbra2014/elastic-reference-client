@@ -1,14 +1,15 @@
 package nxt.http;
 
-import nxt.Nxt;
-import nxt.util.Convert;
-import org.json.simple.JSONObject;
-import org.json.simple.JSONStreamAware;
-
-
-
 import static nxt.http.JSONResponses.INCORRECT_HEIGHT;
 import static nxt.http.JSONResponses.MISSING_HEIGHT;
+
+import javax.servlet.http.HttpServletRequest;
+
+import nxt.Nxt;
+import nxt.util.Convert;
+
+import org.json.simple.JSONObject;
+import org.json.simple.JSONStreamAware;
 
 public final class GetBlockId extends APIServlet.APIRequestHandler {
 
@@ -19,11 +20,11 @@ public final class GetBlockId extends APIServlet.APIRequestHandler {
     }
 
     @Override
-    JSONStreamAware processRequest(FakeServletRequest req) {
+    JSONStreamAware processRequest(HttpServletRequest req) {
 
         int height;
         try {
-            String heightValue = Convert.emptyToNull(req.getParameter("height"));
+            String heightValue = Convert.emptyToNull(ParameterParser.getParameterMultipart(req, "height"));
             if (heightValue == null) {
                 return MISSING_HEIGHT;
             }

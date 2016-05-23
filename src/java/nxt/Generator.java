@@ -1,12 +1,5 @@
 package nxt;
 
-import nxt.crypto.Crypto;
-import nxt.util.Convert;
-import nxt.util.Listener;
-import nxt.util.Listeners;
-import nxt.util.Logger;
-import nxt.util.ThreadPool;
-
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.util.ArrayList;
@@ -17,6 +10,13 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
+
+import nxt.crypto.Crypto;
+import nxt.util.Convert;
+import nxt.util.Listener;
+import nxt.util.Listeners;
+import nxt.util.Logger;
+import nxt.util.ThreadPool;
 
 public final class Generator implements Comparable<Generator> {
 

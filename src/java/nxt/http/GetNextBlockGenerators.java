@@ -1,16 +1,8 @@
 package nxt.http;
 
-import nxt.Block;
-import nxt.Constants;
-import nxt.Hub;
-import nxt.Nxt;
-import nxt.util.Convert;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
+import javax.servlet.http.HttpServletRequest;
+
 import org.json.simple.JSONStreamAware;
-
-
-import java.util.Iterator;
 
 public final class GetNextBlockGenerators extends APIServlet.APIRequestHandler {
 
@@ -21,7 +13,7 @@ public final class GetNextBlockGenerators extends APIServlet.APIRequestHandler {
     }
 
     @Override
-    JSONStreamAware processRequest(FakeServletRequest req) {
+    JSONStreamAware processRequest(HttpServletRequest req) {
     		// Disable that feature once for all
             return JSONResponses.FEATURE_NOT_AVAILABLE;
     }

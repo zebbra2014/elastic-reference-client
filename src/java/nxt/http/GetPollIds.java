@@ -1,8 +1,11 @@
 package nxt.http;
 
+import javax.servlet.http.HttpServletRequest;
+
 import nxt.Poll;
 import nxt.db.DbIterator;
 import nxt.util.Convert;
+
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONStreamAware;
@@ -18,7 +21,7 @@ public final class GetPollIds extends APIServlet.APIRequestHandler {
     }
 
     @Override
-    JSONStreamAware processRequest(FakeServletRequest req) {
+    JSONStreamAware processRequest(HttpServletRequest req) {
 
         int firstIndex = ParameterParser.getFirstIndex(req);
         int lastIndex = ParameterParser.getLastIndex(req);

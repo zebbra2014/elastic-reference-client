@@ -1,11 +1,11 @@
 package nxt.db;
 
-import nxt.Nxt;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+
+import nxt.Nxt;
 
 public abstract class EntityDbTable<T> extends DerivedDbTable {
 

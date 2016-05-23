@@ -1,12 +1,13 @@
 package nxt.http;
 
+import static nxt.http.JSONResponses.MISSING_SECRET_PHRASE;
+
+import javax.servlet.http.HttpServletRequest;
+
 import nxt.Generator;
+
 import org.json.simple.JSONObject;
 import org.json.simple.JSONStreamAware;
-
-
-
-import static nxt.http.JSONResponses.MISSING_SECRET_PHRASE;
 
 
 public final class StopForging extends APIServlet.APIRequestHandler {
@@ -18,9 +19,9 @@ public final class StopForging extends APIServlet.APIRequestHandler {
     }
 
     @Override
-    JSONStreamAware processRequest(FakeServletRequest req) {
+    JSONStreamAware processRequest(HttpServletRequest req) {
 
-        String secretPhrase = req.getParameter("secretPhrase");
+        String secretPhrase = ParameterParser.getParameterMultipart(req, "secretPhrase");
         if (secretPhrase == null) {
             return MISSING_SECRET_PHRASE;
         }

@@ -1,10 +1,11 @@
 package nxt;
 
+import java.util.List;
+
 import nxt.db.DbIterator;
 import nxt.util.Observable;
-import org.json.simple.JSONObject;
 
-import java.util.List;
+import org.json.simple.JSONObject;
 
 public interface TransactionProcessor extends Observable<List<? extends Transaction>,TransactionProcessor.Event> {
 

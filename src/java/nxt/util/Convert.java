@@ -1,13 +1,13 @@
 package nxt.util;
 
-import nxt.Constants;
-import nxt.NxtException;
-import nxt.crypto.Crypto;
-
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
+
+import nxt.Constants;
+import nxt.NxtException;
+import nxt.crypto.Crypto;
 
 public final class Convert {
 

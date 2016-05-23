@@ -1,10 +1,13 @@
 package nxt.http;
 
+import javax.servlet.http.HttpServletRequest;
+
 import nxt.Account;
 import nxt.Constants;
 import nxt.Generator;
 import nxt.Nxt;
 import nxt.peer.Peers;
+
 import org.json.simple.JSONObject;
 import org.json.simple.JSONStreamAware;
 
@@ -19,7 +22,7 @@ public final class GetState extends APIServlet.APIRequestHandler {
     }
 
     @Override
-    JSONStreamAware processRequest(FakeServletRequest req) {
+    JSONStreamAware processRequest(HttpServletRequest req) {
 
         JSONObject response = GetBlockchainStatus.instance.processRequest(req);
 
@@ -36,7 +39,7 @@ public final class GetState extends APIServlet.APIRequestHandler {
         response.put("totalEffectiveBalanceNXT", totalEffectiveBalance);
         */
 
-        if (!"false".equalsIgnoreCase(req.getParameter("includeCounts"))) {
+        if (!"false".equalsIgnoreCase(ParameterParser.getParameterMultipart(req, "includeCounts"))) {
             response.put("numberOfTransactions", Nxt.getBlockchain().getTransactionCount());
             response.put("numberOfAccounts", Account.getCount());
             //response.put("numberOfPolls", Poll.getCount());

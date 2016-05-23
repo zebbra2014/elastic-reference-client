@@ -1,18 +1,5 @@
 package nxt.peer;
 
-import nxt.Account;
-import nxt.BlockchainProcessor;
-import nxt.Constants;
-import nxt.Nxt;
-import nxt.NxtException;
-import nxt.util.Convert;
-import nxt.util.CountingInputStream;
-import nxt.util.CountingOutputStream;
-import nxt.util.Logger;
-import org.json.simple.JSONObject;
-import org.json.simple.JSONStreamAware;
-import org.json.simple.JSONValue;
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
@@ -36,6 +23,20 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.GZIPInputStream;
+
+import nxt.Account;
+import nxt.BlockchainProcessor;
+import nxt.Constants;
+import nxt.Nxt;
+import nxt.NxtException;
+import nxt.util.Convert;
+import nxt.util.CountingInputStream;
+import nxt.util.CountingOutputStream;
+import nxt.util.Logger;
+
+import org.json.simple.JSONObject;
+import org.json.simple.JSONStreamAware;
+import org.json.simple.JSONValue;
 
 final class PeerImpl implements Peer {
 

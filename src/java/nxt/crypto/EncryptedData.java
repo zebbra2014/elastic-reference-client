@@ -1,7 +1,5 @@
 package nxt.crypto;
 
-import nxt.NxtException;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -9,6 +7,8 @@ import java.nio.ByteBuffer;
 import java.security.SecureRandom;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
+
+import nxt.NxtException;
 
 public final class EncryptedData {
 

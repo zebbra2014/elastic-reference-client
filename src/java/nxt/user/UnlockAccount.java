@@ -1,16 +1,6 @@
 package nxt.user;
 
-import nxt.Account;
-import nxt.Block;
-import nxt.Nxt;
-import nxt.Transaction;
-import nxt.db.DbIterator;
-import nxt.http.FakeServletRequest;
-import nxt.util.Convert;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.JSONStreamAware;
-
+import static nxt.user.JSONResponses.LOCK_ACCOUNT;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -19,7 +9,19 @@ import java.util.Iterator;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import static nxt.user.JSONResponses.LOCK_ACCOUNT;
+import javax.servlet.http.HttpServletRequest;
+
+import nxt.Account;
+import nxt.Block;
+import nxt.Nxt;
+import nxt.Transaction;
+import nxt.db.DbIterator;
+import nxt.http.ParameterParser;
+import nxt.util.Convert;
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.JSONStreamAware;
 
 public final class UnlockAccount extends UserServlet.UserRequestHandler {
 
@@ -45,8 +47,8 @@ public final class UnlockAccount extends UserServlet.UserRequestHandler {
     };
 
     @Override
-    JSONStreamAware processRequest(FakeServletRequest req, User user) throws IOException {
-        String secretPhrase = req.getParameter("secretPhrase");
+    JSONStreamAware processRequest(HttpServletRequest req, User user) throws IOException {
+        String secretPhrase = ParameterParser.getParameterMultipart(req, "secretPhrase");
         // lock all other instances of this account being unlocked
         for (User u : Users.getAllUsers()) {
             if (secretPhrase.equals(u.getSecretPhrase())) {
@@ -69,6 +71,7 @@ public final class UnlockAccount extends UserServlet.UserRequestHandler {
 
         } else {
 
+        	
             response.put("secretPhraseStrength", 5);
 
         }

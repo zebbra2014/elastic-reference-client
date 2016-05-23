@@ -1,9 +1,12 @@
 package nxt.http;
 
+import javax.servlet.http.HttpServletRequest;
+
 import nxt.NxtException;
 import nxt.Transaction;
 import nxt.util.Convert;
 import nxt.util.Logger;
+
 import org.json.simple.JSONObject;
 import org.json.simple.JSONStreamAware;
 
@@ -18,10 +21,10 @@ public final class ParseTransaction extends APIServlet.APIRequestHandler {
     }
 
     @Override
-    JSONStreamAware processRequest(FakeServletRequest req) throws NxtException {
+    JSONStreamAware processRequest(HttpServletRequest req) throws NxtException {
 
-        String transactionBytes = Convert.emptyToNull(req.getParameter("transactionBytes"));
-        String transactionJSON = Convert.emptyToNull(req.getParameter("transactionJSON"));
+        String transactionBytes = Convert.emptyToNull(ParameterParser.getParameterMultipart(req, "transactionBytes"));
+        String transactionJSON = Convert.emptyToNull(ParameterParser.getParameterMultipart(req, "transactionJSON"));
         Transaction transaction = ParameterParser.parseTransaction(transactionBytes, transactionJSON);
         JSONObject response = JSONData.unconfirmedTransaction(transaction);
         try {

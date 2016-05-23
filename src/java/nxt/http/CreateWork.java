@@ -1,34 +1,25 @@
 package nxt.http;
 
+import static java.lang.Integer.parseInt;
+import static nxt.http.JSONResponses.INCORRECT_DEADLINE;
+import static nxt.http.JSONResponses.INCORRECT_WORK_LANGUAGE;
+import static nxt.http.JSONResponses.INCORRECT_WORK_NAME_LENGTH;
+import static nxt.http.JSONResponses.MISSING_DEADLINE;
+import static nxt.http.JSONResponses.MISSING_LANGUAGE;
+import static nxt.http.JSONResponses.MISSING_NAME;
+import static nxt.http.JSONResponses.MISSING_NUMBER_INPUTVARS;
+import static nxt.http.JSONResponses.MISSING_NUMBER_OUTPUTVARS;
+import static nxt.http.JSONResponses.MISSING_PROGAMCODE;
+
+import javax.servlet.http.HttpServletRequest;
+
 import nxt.Account;
 import nxt.Attachment;
 import nxt.Constants;
 import nxt.NxtException;
 import nxt.WorkLogicManager;
-import nxt.crypto.Crypto;
-import nxt.util.Convert;
 
 import org.json.simple.JSONStreamAware;
-
-
-
-
-
-import static nxt.http.JSONResponses.INCORRECT_WORK_NAME_LENGTH;
-import static nxt.http.JSONResponses.INCORRECT_VARIABLES_NUM;
-import static nxt.http.JSONResponses.INCORRECT_WORK_LANGUAGE;
-import static nxt.http.JSONResponses.INCORRECT_DEADLINE;
-import static nxt.http.JSONResponses.INCORRECT_PROGRAM;
-import static nxt.http.JSONResponses.INCORRECT_BOUNTYHOOK;
-import static nxt.http.JSONResponses.MISSING_NUMBER_INPUTVARS;
-import static nxt.http.JSONResponses.MISSING_LANGUAGE;
-import static nxt.http.JSONResponses.MISSING_DEADLINE;
-import static nxt.http.JSONResponses.MISSING_SECRET_PHRASE;
-import static nxt.http.JSONResponses.INCORRECT_SECRET_PHRASE;
-import static nxt.http.JSONResponses.MISSING_PROGAMCODE;
-import static nxt.http.JSONResponses.MISSING_BOUNTYHOOK;
-import static nxt.http.JSONResponses.MISSING_NUMBER_OUTPUTVARS;
-import static nxt.http.JSONResponses.MISSING_NAME;
 
 
 public final class CreateWork extends CreateTransaction {
@@ -40,13 +31,13 @@ public final class CreateWork extends CreateTransaction {
     }
 
     @Override
-    JSONStreamAware processRequest(FakeServletRequest req) throws NxtException {
+    JSONStreamAware processRequest(HttpServletRequest req) throws NxtException {
 
-        String workTitle = req.getParameter("work_title");
+        String workTitle = ParameterParser.getParameterMultipart(req, "work_title");
         String workLanguage = "LUA"; // FIXME, HACKME, TODO: Hardcoded language, fix that if you wanna support more
-        String programCode = req.getParameter("source_code");
-        String deadline = req.getParameter("work_deadline");
-        String amount_spent = req.getParameter("amountNQT");
+        String programCode = ParameterParser.getParameterMultipart(req, "source_code");
+        String deadline = ParameterParser.getParameterMultipart(req, "work_deadline");
+        String amount_spent = ParameterParser.getParameterMultipart(req, "amountNQT");
         
         
         
@@ -92,7 +83,7 @@ public final class CreateWork extends CreateTransaction {
         
         int deadlineInt;
         try {
-        	deadlineInt = Integer.parseInt(deadline);
+        	deadlineInt = parseInt(deadline);
         	if(WorkLogicManager.checkDeadline(deadlineInt) == false){
         		return INCORRECT_DEADLINE;
         	}

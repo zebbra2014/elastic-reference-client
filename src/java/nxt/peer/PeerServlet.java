@@ -1,22 +1,5 @@
 package nxt.peer;
 
-import nxt.http.FakeServletRequest;
-import nxt.util.CountingInputStream;
-import nxt.util.CountingOutputStream;
-import nxt.util.JSON;
-import nxt.util.Logger;
-import org.eclipse.jetty.server.Response;
-import org.eclipse.jetty.servlets.gzip.CompressedResponseWrapper;
-import org.json.simple.JSONObject;
-import org.json.simple.JSONStreamAware;
-import org.json.simple.JSONValue;
-
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -25,6 +8,23 @@ import java.io.Writer;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import nxt.util.CountingInputStream;
+import nxt.util.CountingOutputStream;
+import nxt.util.JSON;
+import nxt.util.Logger;
+
+import org.eclipse.jetty.server.Response;
+import org.eclipse.jetty.servlets.gzip.CompressedResponseWrapper;
+import org.json.simple.JSONObject;
+import org.json.simple.JSONStreamAware;
+import org.json.simple.JSONValue;
 
 public final class PeerServlet extends HttpServlet {
 
@@ -72,9 +72,8 @@ public final class PeerServlet extends HttpServlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest _req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
     	
-    	FakeServletRequest req = new FakeServletRequest(_req);
 
         PeerImpl peer = null;
         JSONStreamAware response;

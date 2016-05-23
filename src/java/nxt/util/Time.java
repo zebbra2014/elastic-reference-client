@@ -1,8 +1,8 @@
 package nxt.util;
 
-import nxt.Constants;
-
 import java.util.concurrent.atomic.AtomicInteger;
+
+import nxt.Constants;
 
 public interface Time {
 

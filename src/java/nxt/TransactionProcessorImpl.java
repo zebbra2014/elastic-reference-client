@@ -1,21 +1,5 @@
 package nxt;
 
-import nxt.db.DbClause;
-import nxt.db.DbIterator;
-import nxt.db.DbKey;
-import nxt.db.EntityDbTable;
-import nxt.peer.Peer;
-import nxt.peer.Peers;
-import nxt.util.Convert;
-import nxt.util.JSON;
-import nxt.util.Listener;
-import nxt.util.Listeners;
-import nxt.util.Logger;
-import nxt.util.ThreadPool;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.JSONStreamAware;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -30,6 +14,23 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+
+import nxt.db.DbClause;
+import nxt.db.DbIterator;
+import nxt.db.DbKey;
+import nxt.db.EntityDbTable;
+import nxt.peer.Peer;
+import nxt.peer.Peers;
+import nxt.util.Convert;
+import nxt.util.JSON;
+import nxt.util.Listener;
+import nxt.util.Listeners;
+import nxt.util.Logger;
+import nxt.util.ThreadPool;
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.JSONStreamAware;
 
 final class TransactionProcessorImpl implements TransactionProcessor {
 

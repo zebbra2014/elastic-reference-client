@@ -1,5 +1,15 @@
 package nxt;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Types;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.regex.Pattern;
+
 import nxt.crypto.Crypto;
 import nxt.crypto.EncryptedData;
 import nxt.db.DbClause;
@@ -12,16 +22,6 @@ import nxt.util.Convert;
 import nxt.util.Listener;
 import nxt.util.Listeners;
 import nxt.util.Logger;
-
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Types;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.regex.Pattern;
 
 @SuppressWarnings({"UnusedDeclaration", "SuspiciousNameCombination"})
 public final class Account {

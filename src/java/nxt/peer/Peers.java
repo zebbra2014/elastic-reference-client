@@ -1,29 +1,5 @@
 package nxt.peer;
 
-import nxt.Account;
-import nxt.Block;
-import nxt.Constants;
-import nxt.Db;
-import nxt.Nxt;
-import nxt.Transaction;
-import nxt.util.Filter;
-import nxt.util.JSON;
-import nxt.util.Listener;
-import nxt.util.Listeners;
-import nxt.util.Logger;
-import nxt.util.ThreadPool;
-import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.ServerConnector;
-import org.eclipse.jetty.servlet.FilterHolder;
-import org.eclipse.jetty.servlet.FilterMapping;
-import org.eclipse.jetty.servlet.ServletHandler;
-import org.eclipse.jetty.servlet.ServletHolder;
-import org.eclipse.jetty.servlets.DoSFilter;
-import org.eclipse.jetty.servlets.GzipFilter;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.JSONStreamAware;
-
 import java.net.InetAddress;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -45,6 +21,31 @@ import java.util.concurrent.Future;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+
+import nxt.Account;
+import nxt.Block;
+import nxt.Constants;
+import nxt.Db;
+import nxt.Nxt;
+import nxt.Transaction;
+import nxt.util.Filter;
+import nxt.util.JSON;
+import nxt.util.Listener;
+import nxt.util.Listeners;
+import nxt.util.Logger;
+import nxt.util.ThreadPool;
+
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.ServerConnector;
+import org.eclipse.jetty.servlet.FilterHolder;
+import org.eclipse.jetty.servlet.FilterMapping;
+import org.eclipse.jetty.servlet.ServletHandler;
+import org.eclipse.jetty.servlet.ServletHolder;
+import org.eclipse.jetty.servlets.DoSFilter;
+import org.eclipse.jetty.servlets.GzipFilter;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.JSONStreamAware;
 
 public final class Peers {
 

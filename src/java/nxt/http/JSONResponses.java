@@ -1,11 +1,12 @@
 package nxt.http;
 
+import java.util.Arrays;
+
 import nxt.Constants;
 import nxt.util.JSON;
+
 import org.json.simple.JSONObject;
 import org.json.simple.JSONStreamAware;
-
-import java.util.Arrays;
 
 public final class JSONResponses {
 

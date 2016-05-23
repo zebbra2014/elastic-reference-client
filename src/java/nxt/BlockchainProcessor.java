@@ -1,11 +1,12 @@
 package nxt;
 
+import java.util.List;
+
 import nxt.db.DerivedDbTable;
 import nxt.peer.Peer;
 import nxt.util.Observable;
-import org.json.simple.JSONObject;
 
-import java.util.List;
+import org.json.simple.JSONObject;
 
 public interface BlockchainProcessor extends Observable<Block,BlockchainProcessor.Event> {
 

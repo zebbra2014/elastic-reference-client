@@ -1,23 +1,5 @@
 package nxt;
 
-import nxt.crypto.Crypto;
-import nxt.db.DbIterator;
-import nxt.db.DerivedDbTable;
-import nxt.db.FilteringIterator;
-import nxt.peer.Peer;
-import nxt.peer.Peers;
-import nxt.util.Convert;
-import nxt.util.Filter;
-import nxt.util.JSON;
-import nxt.util.Listener;
-import nxt.util.Listeners;
-import nxt.util.Logger;
-import nxt.util.ThreadPool;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.JSONStreamAware;
-import org.json.simple.JSONValue;
-
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.sql.Connection;
@@ -35,6 +17,25 @@ import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.concurrent.CopyOnWriteArrayList;
+
+import nxt.crypto.Crypto;
+import nxt.db.DbIterator;
+import nxt.db.DerivedDbTable;
+import nxt.db.FilteringIterator;
+import nxt.peer.Peer;
+import nxt.peer.Peers;
+import nxt.util.Convert;
+import nxt.util.Filter;
+import nxt.util.JSON;
+import nxt.util.Listener;
+import nxt.util.Listeners;
+import nxt.util.Logger;
+import nxt.util.ThreadPool;
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.JSONStreamAware;
+import org.json.simple.JSONValue;
 
 final class BlockchainProcessorImpl implements BlockchainProcessor {
 

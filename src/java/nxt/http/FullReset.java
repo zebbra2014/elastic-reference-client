@@ -1,6 +1,9 @@
 package nxt.http;
 
+import javax.servlet.http.HttpServletRequest;
+
 import nxt.Nxt;
+
 import org.json.simple.JSONObject;
 import org.json.simple.JSONStreamAware;
 
@@ -15,7 +18,7 @@ public final class FullReset extends APIServlet.APIRequestHandler {
     }
 
     @Override
-    JSONStreamAware processRequest(FakeServletRequest req) {
+    JSONStreamAware processRequest(HttpServletRequest req) {
         JSONObject response = new JSONObject();
         try {
             Nxt.getBlockchainProcessor().fullReset();

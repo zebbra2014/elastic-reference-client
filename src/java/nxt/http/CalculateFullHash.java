@@ -1,15 +1,17 @@
 package nxt.http;
 
-import nxt.crypto.Crypto;
-import nxt.util.Convert;
-import org.json.simple.JSONObject;
-import org.json.simple.JSONStreamAware;
-
+import static nxt.http.JSONResponses.MISSING_SIGNATURE_HASH;
+import static nxt.http.JSONResponses.MISSING_UNSIGNED_BYTES;
 
 import java.security.MessageDigest;
 
-import static nxt.http.JSONResponses.MISSING_SIGNATURE_HASH;
-import static nxt.http.JSONResponses.MISSING_UNSIGNED_BYTES;
+import javax.servlet.http.HttpServletRequest;
+
+import nxt.crypto.Crypto;
+import nxt.util.Convert;
+
+import org.json.simple.JSONObject;
+import org.json.simple.JSONStreamAware;
 
 public final class CalculateFullHash extends APIServlet.APIRequestHandler {
 
@@ -20,10 +22,10 @@ public final class CalculateFullHash extends APIServlet.APIRequestHandler {
     }
 
     @Override
-    JSONStreamAware processRequest(FakeServletRequest req) {
+    JSONStreamAware processRequest(HttpServletRequest req) {
 
-        String unsignedBytesString = Convert.emptyToNull(req.getParameter("unsignedTransactionBytes"));
-        String signatureHashString = Convert.emptyToNull(req.getParameter("signatureHash"));
+        String unsignedBytesString = Convert.emptyToNull(ParameterParser.getParameterMultipart(req, "unsignedTransactionBytes"));
+        String signatureHashString = Convert.emptyToNull(ParameterParser.getParameterMultipart(req, "signatureHash"));
 
         if (unsignedBytesString == null) {
             return MISSING_UNSIGNED_BYTES;

@@ -1,18 +1,11 @@
 package nxt.http;
 
-import nxt.Db;
-import nxt.Nxt;
-import nxt.NxtException;
-import nxt.util.JSON;
-import nxt.util.Logger;
-import org.json.simple.JSONObject;
-import org.json.simple.JSONStreamAware;
+import static nxt.http.JSONResponses.ERROR_INCORRECT_REQUEST;
+import static nxt.http.JSONResponses.ERROR_NOT_ALLOWED;
+import static nxt.http.JSONResponses.INCORRECT_ADMIN_PASSWORD;
+import static nxt.http.JSONResponses.NO_PASSWORD_IN_CONFIG;
+import static nxt.http.JSONResponses.POST_REQUIRED;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
@@ -24,11 +17,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static nxt.http.JSONResponses.ERROR_INCORRECT_REQUEST;
-import static nxt.http.JSONResponses.ERROR_NOT_ALLOWED;
-import static nxt.http.JSONResponses.INCORRECT_ADMIN_PASSWORD;
-import static nxt.http.JSONResponses.NO_PASSWORD_IN_CONFIG;
-import static nxt.http.JSONResponses.POST_REQUIRED;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import nxt.Db;
+import nxt.Nxt;
+import nxt.NxtException;
+import nxt.util.JSON;
+import nxt.util.Logger;
+
+import org.json.simple.JSONObject;
+import org.json.simple.JSONStreamAware;
 
 public final class APIServlet extends HttpServlet {
 
@@ -58,7 +59,7 @@ public final class APIServlet extends HttpServlet {
             return apiTags;
         }
 
-        abstract JSONStreamAware processRequest(FakeServletRequest request) throws NxtException;
+        abstract JSONStreamAware processRequest(HttpServletRequest request) throws NxtException;
 
         boolean requirePost() {
             return false;
@@ -141,15 +142,15 @@ public final class APIServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        process(new FakeServletRequest(req), resp);
+        process(req, resp);
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        process(new FakeServletRequest(req), resp);
+        process(req, resp);
     }
 
-    private void process(FakeServletRequest req, HttpServletResponse resp) throws IOException {
+    private void process(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 
         resp.setHeader("Cache-Control", "no-cache, no-store, must-revalidate, private");
         resp.setHeader("Pragma", "no-cache");
@@ -166,7 +167,7 @@ public final class APIServlet extends HttpServlet {
                 return;
             }
 
-            String requestType = req.getParameter("requestType");
+            String requestType = ParameterParser.getParameterMultipart(req, "requestType");
             if (requestType == null) {
                 response = ERROR_INCORRECT_REQUEST;
                 return;
@@ -187,7 +188,7 @@ public final class APIServlet extends HttpServlet {
                 if (API.adminPassword.isEmpty()) {
                     response = NO_PASSWORD_IN_CONFIG;
                     return;
-                } else if (!API.adminPassword.equals(req.getParameter("adminPassword"))) {
+                } else if (!API.adminPassword.equals(ParameterParser.getParameterMultipart(req, "adminPassword"))) {
                     response = INCORRECT_ADMIN_PASSWORD;
                     return;
                 }

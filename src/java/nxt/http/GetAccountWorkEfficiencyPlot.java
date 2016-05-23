@@ -3,11 +3,10 @@ package nxt.http;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
-import nxt.Account;
-import nxt.Nxt;
+import javax.servlet.http.HttpServletRequest;
+
 import nxt.NxtException;
-import nxt.Transaction;
-import nxt.db.DbIterator;
+
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONStreamAware;
@@ -34,14 +33,14 @@ public final class GetAccountWorkEfficiencyPlot extends APIServlet.APIRequestHan
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	JSONStreamAware processRequest(FakeServletRequest req) throws NxtException {
+	JSONStreamAware processRequest(HttpServletRequest req) throws NxtException {
 		JSONObject response = new JSONObject();
 
 		
 
 		long workId;
 		try {
-			workId = Long.parseLong(req.getParameter("workId"));
+			workId = Long.parseLong(ParameterParser.getParameterMultipart(req, "workId"));
 		} catch (NumberFormatException e) {
 			return response;
 		}

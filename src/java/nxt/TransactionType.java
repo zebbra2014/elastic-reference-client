@@ -1,12 +1,13 @@
 package nxt;
 
-import nxt.util.Convert;
-import org.json.simple.JSONObject;
-
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+
+import nxt.util.Convert;
+
+import org.json.simple.JSONObject;
 
 
 public abstract class TransactionType {

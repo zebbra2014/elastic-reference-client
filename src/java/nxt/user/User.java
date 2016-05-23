@@ -1,22 +1,23 @@
 package nxt.user;
 
-import nxt.Generator;
-import nxt.crypto.Crypto;
-import nxt.http.FakeServletRequest;
-import nxt.util.JSON;
-import nxt.util.Logger;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.JSONStreamAware;
+import java.io.IOException;
+import java.io.Writer;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import javax.servlet.AsyncContext;
 import javax.servlet.AsyncEvent;
 import javax.servlet.AsyncListener;
-
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.Writer;
-import java.util.concurrent.ConcurrentLinkedQueue;
+
+import nxt.Generator;
+import nxt.crypto.Crypto;
+import nxt.util.JSON;
+import nxt.util.Logger;
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.JSONStreamAware;
 
 final class User {
 
@@ -66,7 +67,7 @@ final class User {
         return Generator.startForging(secretPhrase).getAccountId();
     }
 
-    synchronized void processPendingResponses(FakeServletRequest req, HttpServletResponse resp) throws IOException {
+    synchronized void processPendingResponses(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         JSONArray responses = new JSONArray();
         JSONStreamAware pendingResponse;
         while ((pendingResponse = pendingResponses.poll()) != null) {

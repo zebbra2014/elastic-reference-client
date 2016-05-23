@@ -1,8 +1,20 @@
 package nxt.http;
 
+import static nxt.http.JSONResponses.INCORRECT_BOOLEAN;
+import static nxt.http.JSONResponses.INCORRECT_INPUTS;
+import static nxt.http.JSONResponses.INCORRECT_MSLOCATOR;
+import static nxt.http.JSONResponses.INCORRECT_STATE;
+import static nxt.http.JSONResponses.INCORRECT_WORKID;
+import static nxt.http.JSONResponses.MISSING_INPUTS;
+import static nxt.http.JSONResponses.MISSING_MSLOCATOR;
+import static nxt.http.JSONResponses.MISSING_STATE;
+import static nxt.http.JSONResponses.MISSING_WORKID;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+
+import javax.servlet.http.HttpServletRequest;
 
 import nxt.Account;
 import nxt.Attachment;
@@ -10,17 +22,6 @@ import nxt.NxtException;
 import nxt.WorkLogicManager;
 
 import org.json.simple.JSONStreamAware;
-
-
-import static nxt.http.JSONResponses.MISSING_WORKID;
-import static nxt.http.JSONResponses.MISSING_MSLOCATOR;
-import static nxt.http.JSONResponses.MISSING_INPUTS;
-import static nxt.http.JSONResponses.MISSING_STATE;
-import static nxt.http.JSONResponses.INCORRECT_WORKID;
-import static nxt.http.JSONResponses.INCORRECT_STATE;
-import static nxt.http.JSONResponses.INCORRECT_INPUTS;
-import static nxt.http.JSONResponses.INCORRECT_MSLOCATOR;
-import static nxt.http.JSONResponses.INCORRECT_BOOLEAN;
 
 public final class ProofOfX extends CreateTransaction {
 
@@ -31,13 +32,13 @@ public final class ProofOfX extends CreateTransaction {
     }
 
     @Override
-    JSONStreamAware processRequest(FakeServletRequest req) throws NxtException {
+    JSONStreamAware processRequest(HttpServletRequest req) throws NxtException {
 
-        String workId = req.getParameter("workId");
-        String msLocator = req.getParameter("msLocator");
-        String inputs = req.getParameter("inputs");
-        String state = req.getParameter("state");
-        String ProofOfWork = req.getParameter("pow");
+        String workId = ParameterParser.getParameterMultipart(req, "workId");
+        String msLocator = ParameterParser.getParameterMultipart(req, "msLocator");
+        String inputs = ParameterParser.getParameterMultipart(req, "inputs");
+        String state = ParameterParser.getParameterMultipart(req, "state");
+        String ProofOfWork = ParameterParser.getParameterMultipart(req, "pow");
         
         if (workId == null) {
             return MISSING_WORKID;

@@ -1,16 +1,17 @@
 package nxt.http;
 
-import nxt.Nxt;
-import nxt.Transaction;
-import nxt.util.Convert;
-import org.json.simple.JSONObject;
-import org.json.simple.JSONStreamAware;
-
-
-
 import static nxt.http.JSONResponses.INCORRECT_TRANSACTION;
 import static nxt.http.JSONResponses.MISSING_TRANSACTION;
 import static nxt.http.JSONResponses.UNKNOWN_TRANSACTION;
+
+import javax.servlet.http.HttpServletRequest;
+
+import nxt.Nxt;
+import nxt.Transaction;
+import nxt.util.Convert;
+
+import org.json.simple.JSONObject;
+import org.json.simple.JSONStreamAware;
 
 public final class GetTransactionBytes extends APIServlet.APIRequestHandler {
 
@@ -21,9 +22,9 @@ public final class GetTransactionBytes extends APIServlet.APIRequestHandler {
     }
 
     @Override
-    JSONStreamAware processRequest(FakeServletRequest req) {
+    JSONStreamAware processRequest(HttpServletRequest req) {
 
-        String transactionValue = req.getParameter("transaction");
+        String transactionValue = ParameterParser.getParameterMultipart(req, "transaction");
         if (transactionValue == null) {
             return MISSING_TRANSACTION;
         }

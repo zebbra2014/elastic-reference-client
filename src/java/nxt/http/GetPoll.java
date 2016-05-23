@@ -1,14 +1,15 @@
 package nxt.http;
 
-import nxt.Poll;
-import nxt.util.Convert;
-import org.json.simple.JSONStreamAware;
-
-
-
 import static nxt.http.JSONResponses.INCORRECT_POLL;
 import static nxt.http.JSONResponses.MISSING_POLL;
 import static nxt.http.JSONResponses.UNKNOWN_POLL;
+
+import javax.servlet.http.HttpServletRequest;
+
+import nxt.Poll;
+import nxt.util.Convert;
+
+import org.json.simple.JSONStreamAware;
 
 public final class GetPoll extends APIServlet.APIRequestHandler {
 
@@ -19,9 +20,9 @@ public final class GetPoll extends APIServlet.APIRequestHandler {
     }
 
     @Override
-    JSONStreamAware processRequest(FakeServletRequest req) {
+    JSONStreamAware processRequest(HttpServletRequest req) {
 
-        String poll = req.getParameter("poll");
+        String poll = ParameterParser.getParameterMultipart(req, "poll");
         if (poll == null) {
             return MISSING_POLL;
         }

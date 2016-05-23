@@ -1,13 +1,14 @@
 package nxt.http;
 
+import static nxt.http.JSONResponses.INCORRECT_RECIPIENT;
+
+import javax.servlet.http.HttpServletRequest;
+
 import nxt.Account;
 import nxt.NxtException;
 import nxt.crypto.EncryptedData;
+
 import org.json.simple.JSONStreamAware;
-
-
-
-import static nxt.http.JSONResponses.INCORRECT_RECIPIENT;
 
 public final class EncryptTo extends APIServlet.APIRequestHandler {
 
@@ -18,7 +19,7 @@ public final class EncryptTo extends APIServlet.APIRequestHandler {
     }
 
     @Override
-    JSONStreamAware processRequest(FakeServletRequest req) throws NxtException {
+    JSONStreamAware processRequest(HttpServletRequest req) throws NxtException {
 
         long recipientId = ParameterParser.getRecipientId(req);
         Account recipientAccount = Account.getAccount(recipientId);

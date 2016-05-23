@@ -1,13 +1,14 @@
 package nxt.http;
 
-import nxt.peer.Peer;
-import nxt.peer.Peers;
-import org.json.simple.JSONStreamAware;
-
-
-
 import static nxt.http.JSONResponses.MISSING_PEER;
 import static nxt.http.JSONResponses.UNKNOWN_PEER;
+
+import javax.servlet.http.HttpServletRequest;
+
+import nxt.peer.Peer;
+import nxt.peer.Peers;
+
+import org.json.simple.JSONStreamAware;
 
 public final class GetPeer extends APIServlet.APIRequestHandler {
 
@@ -18,9 +19,9 @@ public final class GetPeer extends APIServlet.APIRequestHandler {
     }
 
     @Override
-    JSONStreamAware processRequest(FakeServletRequest req) {
+    JSONStreamAware processRequest(HttpServletRequest req) {
 
-        String peerAddress = req.getParameter("peer");
+        String peerAddress = ParameterParser.getParameterMultipart(req, "peer");
         if (peerAddress == null) {
             return MISSING_PEER;
         }

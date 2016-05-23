@@ -5,13 +5,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.security.MessageDigest;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.zip.DeflaterOutputStream;
 import java.util.zip.InflaterInputStream;
 
@@ -19,12 +16,6 @@ import nxt.Attachment.PiggybackedProofOfBounty;
 import nxt.Attachment.PiggybackedProofOfWork;
 import nxt.Attachment.WorkCreation;
 import nxt.Attachment.WorkIdentifierCancellation;
-
-import nxt.TransactionProcessor.Event;
-import nxt.crypto.Crypto;
-import nxt.db.DbIterator;
-import nxt.db.DbUtils;
-
 import nxt.util.Logger;
 
 public class WorkLogicManager {

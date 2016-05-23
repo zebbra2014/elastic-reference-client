@@ -1,6 +1,9 @@
 package nxt.http;
 
+import javax.servlet.http.HttpServletRequest;
+
 import nxt.Nxt;
+
 import org.json.simple.JSONObject;
 import org.json.simple.JSONStreamAware;
 
@@ -15,17 +18,17 @@ public final class Scan extends APIServlet.APIRequestHandler {
     }
 
     @Override
-    JSONStreamAware processRequest(FakeServletRequest req) {
+    JSONStreamAware processRequest(HttpServletRequest req) {
         JSONObject response = new JSONObject();
         try {
-            boolean validate = "true".equalsIgnoreCase(req.getParameter("validate"));
+            boolean validate = "true".equalsIgnoreCase(ParameterParser.getParameterMultipart(req, "validate"));
             int numBlocks = 0;
             try {
-                numBlocks = Integer.parseInt(req.getParameter("numBlocks"));
+                numBlocks = Integer.parseInt(ParameterParser.getParameterMultipart(req, "numBlocks"));
             } catch (NumberFormatException e) {}
             int height = -1;
             try {
-                height = Integer.parseInt(req.getParameter("height"));
+                height = Integer.parseInt(ParameterParser.getParameterMultipart(req, "height"));
             } catch (NumberFormatException ignore) {}
             long start = System.currentTimeMillis();
             try {

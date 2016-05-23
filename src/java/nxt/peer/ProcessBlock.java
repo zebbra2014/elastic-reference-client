@@ -3,6 +3,7 @@ package nxt.peer;
 import nxt.Nxt;
 import nxt.NxtException;
 import nxt.util.JSON;
+
 import org.json.simple.JSONObject;
 import org.json.simple.JSONStreamAware;
 

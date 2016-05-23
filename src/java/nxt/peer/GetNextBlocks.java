@@ -1,15 +1,14 @@
 package nxt.peer;
 
+import java.util.List;
+
 import nxt.Block;
-import nxt.Constants;
 import nxt.Nxt;
 import nxt.util.Convert;
+
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONStreamAware;
-
-import java.util.ArrayList;
-import java.util.List;
 
 final class GetNextBlocks extends PeerServlet.PeerRequestHandler {
 

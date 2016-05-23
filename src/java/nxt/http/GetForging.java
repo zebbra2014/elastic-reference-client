@@ -1,17 +1,18 @@
 package nxt.http;
 
+import static nxt.http.JSONResponses.MISSING_SECRET_PHRASE;
+import static nxt.http.JSONResponses.NOT_FORGING;
+import static nxt.http.JSONResponses.UNKNOWN_ACCOUNT;
+
+import javax.servlet.http.HttpServletRequest;
+
 import nxt.Account;
 import nxt.Generator;
 import nxt.Nxt;
 import nxt.crypto.Crypto;
+
 import org.json.simple.JSONObject;
 import org.json.simple.JSONStreamAware;
-
-
-
-import static nxt.http.JSONResponses.MISSING_SECRET_PHRASE;
-import static nxt.http.JSONResponses.NOT_FORGING;
-import static nxt.http.JSONResponses.UNKNOWN_ACCOUNT;
 
 
 public final class GetForging extends APIServlet.APIRequestHandler {
@@ -23,9 +24,9 @@ public final class GetForging extends APIServlet.APIRequestHandler {
     }
 
     @Override
-    JSONStreamAware processRequest(FakeServletRequest req) {
+    JSONStreamAware processRequest(HttpServletRequest req) {
 
-        String secretPhrase = req.getParameter("secretPhrase");
+        String secretPhrase = ParameterParser.getParameterMultipart(req, "secretPhrase");
         if (secretPhrase == null) {
             return MISSING_SECRET_PHRASE;
         }

@@ -1,10 +1,10 @@
 package nxt;
 
-import nxt.db.DbIterator;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.util.List;
+
+import nxt.db.DbIterator;
 
 public interface Blockchain {
 

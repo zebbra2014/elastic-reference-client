@@ -1,10 +1,13 @@
 package nxt.http;
 
+import javax.servlet.http.HttpServletRequest;
+
 import nxt.Constants;
 import nxt.Genesis;
 import nxt.TransactionType;
 import nxt.util.Convert;
 import nxt.util.JSON;
+
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONStreamAware;
@@ -103,7 +106,7 @@ public final class GetConstants extends APIServlet.APIRequestHandler {
     }
 
     @Override
-    JSONStreamAware processRequest(FakeServletRequest req) {
+    JSONStreamAware processRequest(HttpServletRequest req) {
         return CONSTANTS;
     }
 

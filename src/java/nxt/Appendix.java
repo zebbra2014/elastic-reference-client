@@ -1,11 +1,12 @@
 package nxt;
 
-import nxt.crypto.EncryptedData;
-import nxt.util.Convert;
-import org.json.simple.JSONObject;
-
 import java.nio.ByteBuffer;
 import java.util.Arrays;
+
+import nxt.crypto.EncryptedData;
+import nxt.util.Convert;
+
+import org.json.simple.JSONObject;
 
 public interface Appendix {
 

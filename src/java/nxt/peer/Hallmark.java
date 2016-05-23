@@ -1,13 +1,13 @@
 package nxt.peer;
 
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.util.concurrent.ThreadLocalRandom;
+
 import nxt.Account;
 import nxt.Constants;
 import nxt.crypto.Crypto;
 import nxt.util.Convert;
-
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.util.concurrent.ThreadLocalRandom;
 
 public final class Hallmark {
 

@@ -1,5 +1,16 @@
 package nxt.user;
 
+import java.math.BigInteger;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.atomic.AtomicInteger;
+
 import nxt.Account;
 import nxt.Block;
 import nxt.BlockchainProcessor;
@@ -14,6 +25,7 @@ import nxt.util.Convert;
 import nxt.util.Listener;
 import nxt.util.Logger;
 import nxt.util.ThreadPool;
+
 import org.eclipse.jetty.server.HttpConfiguration;
 import org.eclipse.jetty.server.HttpConnectionFactory;
 import org.eclipse.jetty.server.SecureRequestCustomizer;
@@ -33,17 +45,6 @@ import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONStreamAware;
-
-import java.math.BigInteger;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public final class Users {
 

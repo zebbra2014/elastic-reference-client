@@ -1,11 +1,10 @@
 package nxt.user;
 
-import nxt.http.FakeServletRequest;
+import java.io.IOException;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.json.simple.JSONStreamAware;
-
-
-import java.io.IOException;
 
 public final class GetNewData extends UserServlet.UserRequestHandler {
 
@@ -14,7 +13,7 @@ public final class GetNewData extends UserServlet.UserRequestHandler {
     private GetNewData() {}
 
     @Override
-    JSONStreamAware processRequest(FakeServletRequest req, User user) throws IOException {
+    JSONStreamAware processRequest(HttpServletRequest req, User user) throws IOException {
         return null;
     }
 }

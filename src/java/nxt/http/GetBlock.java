@@ -1,16 +1,17 @@
 package nxt.http;
 
-import nxt.Block;
-import nxt.Nxt;
-import nxt.util.Convert;
-import org.json.simple.JSONStreamAware;
-
-
-
 import static nxt.http.JSONResponses.INCORRECT_BLOCK;
 import static nxt.http.JSONResponses.INCORRECT_HEIGHT;
 import static nxt.http.JSONResponses.INCORRECT_TIMESTAMP;
 import static nxt.http.JSONResponses.UNKNOWN_BLOCK;
+
+import javax.servlet.http.HttpServletRequest;
+
+import nxt.Block;
+import nxt.Nxt;
+import nxt.util.Convert;
+
+import org.json.simple.JSONStreamAware;
 
 public final class GetBlock extends APIServlet.APIRequestHandler {
 
@@ -21,12 +22,12 @@ public final class GetBlock extends APIServlet.APIRequestHandler {
     }
 
     @Override
-    JSONStreamAware processRequest(FakeServletRequest req) {
+    JSONStreamAware processRequest(HttpServletRequest req) {
 
         Block blockData;
-        String blockValue = Convert.emptyToNull(req.getParameter("block"));
-        String heightValue = Convert.emptyToNull(req.getParameter("height"));
-        String timestampValue = Convert.emptyToNull(req.getParameter("timestamp"));
+        String blockValue = Convert.emptyToNull(ParameterParser.getParameterMultipart(req, "block"));
+        String heightValue = Convert.emptyToNull(ParameterParser.getParameterMultipart(req, "height"));
+        String timestampValue = Convert.emptyToNull(ParameterParser.getParameterMultipart(req, "timestamp"));
         if (blockValue != null) {
             try {
                 blockData = Nxt.getBlockchain().getBlock(Convert.parseUnsignedLong(blockValue));
@@ -61,7 +62,7 @@ public final class GetBlock extends APIServlet.APIRequestHandler {
             return UNKNOWN_BLOCK;
         }
 
-        boolean includeTransactions = "true".equalsIgnoreCase(req.getParameter("includeTransactions"));
+        boolean includeTransactions = "true".equalsIgnoreCase(ParameterParser.getParameterMultipart(req, "includeTransactions"));
 
         return JSONData.block(blockData, includeTransactions);
 

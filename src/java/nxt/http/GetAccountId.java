@@ -1,14 +1,15 @@
 package nxt.http;
 
+import static nxt.http.JSONResponses.MISSING_SECRET_PHRASE_OR_PUBLIC_KEY;
+
+import javax.servlet.http.HttpServletRequest;
+
 import nxt.Account;
 import nxt.crypto.Crypto;
 import nxt.util.Convert;
+
 import org.json.simple.JSONObject;
 import org.json.simple.JSONStreamAware;
-
-
-
-import static nxt.http.JSONResponses.MISSING_SECRET_PHRASE_OR_PUBLIC_KEY;
 
 public final class GetAccountId extends APIServlet.APIRequestHandler {
 
@@ -19,11 +20,11 @@ public final class GetAccountId extends APIServlet.APIRequestHandler {
     }
 
     @Override
-    JSONStreamAware processRequest(FakeServletRequest req) {
+    JSONStreamAware processRequest(HttpServletRequest req) {
 
         long accountId;
-        String secretPhrase = Convert.emptyToNull(req.getParameter("secretPhrase"));
-        String publicKeyString = Convert.emptyToNull(req.getParameter("publicKey"));
+        String secretPhrase = Convert.emptyToNull(ParameterParser.getParameterMultipart(req, "secretPhrase"));
+        String publicKeyString = Convert.emptyToNull(ParameterParser.getParameterMultipart(req, "publicKey"));
         if (secretPhrase != null) {
             byte[] publicKey = Crypto.getPublicKey(secretPhrase);
             accountId = Account.getId(publicKey);

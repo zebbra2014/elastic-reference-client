@@ -1,8 +1,10 @@
 package nxt.http;
 
+import java.util.Collections;
+import java.util.Map;
+
 import nxt.Account;
 import nxt.Appendix;
-import nxt.Attachment;
 import nxt.Block;
 import nxt.Constants;
 import nxt.Nxt;
@@ -14,11 +16,9 @@ import nxt.crypto.EncryptedData;
 import nxt.peer.Hallmark;
 import nxt.peer.Peer;
 import nxt.util.Convert;
+
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-
-import java.util.Collections;
-import java.util.Map;
 
 final class JSONData {
 

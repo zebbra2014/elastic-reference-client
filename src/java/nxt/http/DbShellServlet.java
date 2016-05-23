@@ -1,18 +1,19 @@
 package nxt.http;
 
-import nxt.Db;
-import nxt.util.Convert;
-import org.h2.tools.Shell;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.net.URLEncoder;
 import java.sql.SQLException;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import nxt.Db;
+import nxt.util.Convert;
+
+import org.h2.tools.Shell;
 
 public final class DbShellServlet extends HttpServlet {
 
@@ -91,9 +92,8 @@ public final class DbShellServlet extends HttpServlet {
 
     
     @Override
-    protected void doGet(HttpServletRequest _req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
     	
-    	FakeServletRequest req = new FakeServletRequest(_req);
     	
         resp.setHeader("Cache-Control", "no-cache, no-store, must-revalidate, private");
         resp.setHeader("Pragma", "no-cache");
@@ -122,9 +122,8 @@ public final class DbShellServlet extends HttpServlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest _req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
     	
-    	FakeServletRequest req = new FakeServletRequest(_req);
     	
         resp.setHeader("Cache-Control", "no-cache, no-store, must-revalidate, private");
         resp.setHeader("Pragma", "no-cache");
@@ -139,9 +138,9 @@ public final class DbShellServlet extends HttpServlet {
             if (API.adminPassword.isEmpty()) {
                 body = errorNoPasswordIsConfigured;
             } else {
-                String adminPassword = req.getParameter("adminPassword");
+                String adminPassword = ParameterParser.getParameterMultipart(req, "adminPassword");
                 if (API.adminPassword.equals(adminPassword)) {
-                    if ("true".equals(req.getParameter("showShell"))) {
+                    if ("true".equals(ParameterParser.getParameterMultipart(req, "showShell"))) {
                         body = form.replace("{adminPassword}", URLEncoder.encode(adminPassword, "UTF-8") );
                     }
                 } else {
@@ -159,7 +158,7 @@ public final class DbShellServlet extends HttpServlet {
             return;
         }
         
-        String line = Convert.nullToEmpty(req.getParameter("line"));
+        String line = Convert.nullToEmpty(ParameterParser.getParameterMultipart(req, "line"));
         try (PrintStream out = new PrintStream(resp.getOutputStream())) {
             out.println("\n> " + line);
             try {

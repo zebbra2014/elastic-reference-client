@@ -1,12 +1,5 @@
 package nxt;
 
-import nxt.NxtException.ValidationException;
-import nxt.crypto.Crypto;
-import nxt.db.DbKey;
-import nxt.util.Convert;
-import nxt.util.Logger;
-import org.json.simple.JSONObject;
-
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -16,6 +9,14 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+
+import nxt.NxtException.ValidationException;
+import nxt.crypto.Crypto;
+import nxt.db.DbKey;
+import nxt.util.Convert;
+import nxt.util.Logger;
+
+import org.json.simple.JSONObject;
 
 final class TransactionImpl implements Transaction {
 

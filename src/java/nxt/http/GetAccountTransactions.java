@@ -1,10 +1,13 @@
 package nxt.http;
 
+import javax.servlet.http.HttpServletRequest;
+
 import nxt.Account;
 import nxt.Nxt;
 import nxt.NxtException;
 import nxt.Transaction;
 import nxt.db.DbIterator;
+
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONStreamAware;
@@ -20,22 +23,22 @@ public final class GetAccountTransactions extends APIServlet.APIRequestHandler {
     }
 
     @Override
-    JSONStreamAware processRequest(FakeServletRequest req) throws NxtException {
+    JSONStreamAware processRequest(HttpServletRequest req) throws NxtException {
 
         Account account = ParameterParser.getAccount(req);
         int timestamp = ParameterParser.getTimestamp(req);
         int numberOfConfirmations = ParameterParser.getNumberOfConfirmations(req);
-        boolean withMessage = "true".equalsIgnoreCase(req.getParameter("withMessage"));
+        boolean withMessage = "true".equalsIgnoreCase(ParameterParser.getParameterMultipart(req, "withMessage"));
 
         byte type;
         byte subtype;
         try {
-            type = Byte.parseByte(req.getParameter("type"));
+            type = Byte.parseByte(ParameterParser.getParameterMultipart(req, "type"));
         } catch (NumberFormatException e) {
             type = -1;
         }
         try {
-            subtype = Byte.parseByte(req.getParameter("subtype"));
+            subtype = Byte.parseByte(ParameterParser.getParameterMultipart(req, "subtype"));
         } catch (NumberFormatException e) {
             subtype = -1;
         }

@@ -1,12 +1,14 @@
 package nxt.http;
 
-import nxt.Db;
-import org.json.simple.JSONObject;
-import org.json.simple.JSONStreamAware;
-
-
 import java.sql.Connection;
 import java.sql.SQLException;
+
+import javax.servlet.http.HttpServletRequest;
+
+import nxt.Db;
+
+import org.json.simple.JSONObject;
+import org.json.simple.JSONStreamAware;
 
 public final class LuceneReindex extends APIServlet.APIRequestHandler {
 
@@ -17,7 +19,7 @@ public final class LuceneReindex extends APIServlet.APIRequestHandler {
     }
 
     @Override
-    JSONStreamAware processRequest(FakeServletRequest req) {
+    JSONStreamAware processRequest(HttpServletRequest req) {
         JSONObject response = new JSONObject();
         try (Connection con = Db.db.getConnection()) {
             org.h2.fulltext.FullTextLucene.reindex(con);

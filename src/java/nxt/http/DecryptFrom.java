@@ -1,17 +1,18 @@
 package nxt.http;
 
+import static nxt.http.JSONResponses.DECRYPTION_FAILED;
+import static nxt.http.JSONResponses.INCORRECT_ACCOUNT;
+
+import javax.servlet.http.HttpServletRequest;
+
 import nxt.Account;
 import nxt.NxtException;
 import nxt.crypto.EncryptedData;
 import nxt.util.Convert;
 import nxt.util.Logger;
+
 import org.json.simple.JSONObject;
 import org.json.simple.JSONStreamAware;
-
-
-
-import static nxt.http.JSONResponses.DECRYPTION_FAILED;
-import static nxt.http.JSONResponses.INCORRECT_ACCOUNT;
 
 public final class DecryptFrom extends APIServlet.APIRequestHandler {
 
@@ -22,17 +23,17 @@ public final class DecryptFrom extends APIServlet.APIRequestHandler {
     }
 
     @Override
-    JSONStreamAware processRequest(FakeServletRequest req) throws NxtException {
+    JSONStreamAware processRequest(HttpServletRequest req) throws NxtException {
 
         Account account = ParameterParser.getAccount(req);
         if (account.getPublicKey() == null) {
             return INCORRECT_ACCOUNT;
         }
         String secretPhrase = ParameterParser.getSecretPhrase(req);
-        byte[] data = Convert.parseHexString(Convert.nullToEmpty(req.getParameter("data")));
-        byte[] nonce = Convert.parseHexString(Convert.nullToEmpty(req.getParameter("nonce")));
+        byte[] data = Convert.parseHexString(Convert.nullToEmpty(ParameterParser.getParameterMultipart(req, "data")));
+        byte[] nonce = Convert.parseHexString(Convert.nullToEmpty(ParameterParser.getParameterMultipart(req, "nonce")));
         EncryptedData encryptedData = new EncryptedData(data, nonce);
-        boolean isText = !"false".equalsIgnoreCase(req.getParameter("decryptedMessageIsText"));
+        boolean isText = !"false".equalsIgnoreCase(ParameterParser.getParameterMultipart(req, "decryptedMessageIsText"));
         try {
             byte[] decrypted = account.decryptFrom(encryptedData, secretPhrase);
             JSONObject response = new JSONObject();

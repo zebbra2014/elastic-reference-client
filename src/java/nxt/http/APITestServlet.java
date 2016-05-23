@@ -1,11 +1,5 @@
 package nxt.http;
 
-import nxt.util.Convert;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -18,6 +12,13 @@ import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import nxt.util.Convert;
 
 public class APITestServlet extends HttpServlet {
 
@@ -122,9 +123,9 @@ public class APITestServlet extends HttpServlet {
         }
     }
 
-    private static String buildLinks(FakeServletRequest req) {
+    private static String buildLinks(HttpServletRequest req) {
         StringBuilder buf = new StringBuilder();
-        String requestTag = Convert.nullToEmpty(req.getParameter("requestTag"));
+        String requestTag = Convert.nullToEmpty(ParameterParser.getParameterMultipart(req, "requestTag"));
         buf.append("<li");
         if (requestTag.equals("") 
                 & !req.getParameterMap().containsKey("requestType")
@@ -150,7 +151,7 @@ public class APITestServlet extends HttpServlet {
         return buf.toString();
     }
 
-    protected void doGet(FakeServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
         resp.setHeader("Cache-Control", "no-cache, no-store, must-revalidate, private");
         resp.setHeader("Pragma", "no-cache");
@@ -166,14 +167,14 @@ public class APITestServlet extends HttpServlet {
             writer.print(header1);
             writer.print(buildLinks(req));
             writer.print(header2);
-            String requestType = Convert.nullToEmpty(req.getParameter("requestType"));
+            String requestType = Convert.nullToEmpty(ParameterParser.getParameterMultipart(req, "requestType"));
             APIServlet.APIRequestHandler requestHandler = APIServlet.apiRequestHandlers.get(requestType);
             StringBuilder bufJSCalls = new StringBuilder();
             if (requestHandler != null) {
                 writer.print(form(requestType, true, requestHandler.getClass().getName(), requestHandler.getParameters(), requestHandler.requirePost()));
                 bufJSCalls.append("ATS.apiCalls.push(\"").append(requestType).append("\");\n");
             } else if (!req.getParameterMap().containsKey("requestTypes")) {
-                String requestTag = Convert.nullToEmpty(req.getParameter("requestTag"));
+                String requestTag = Convert.nullToEmpty(ParameterParser.getParameterMultipart(req, "requestTag"));
                 Set<String> taggedTypes = requestTags.get(requestTag);
                 for (String type : (taggedTypes != null ? taggedTypes : allRequestTypes)) {
                     requestHandler = APIServlet.apiRequestHandlers.get(type);
@@ -182,7 +183,7 @@ public class APITestServlet extends HttpServlet {
                     bufJSCalls.append("ATS.apiCalls.push(\"").append(type).append("\");\n");
                 }
             } else {
-                String requestTypes = Convert.nullToEmpty(req.getParameter("requestTypes"));
+                String requestTypes = Convert.nullToEmpty(ParameterParser.getParameterMultipart(req, "requestTypes"));
                 if (!requestTypes.equals("")) {
                     Set<String> selectedRequestTypes = new TreeSet<>(Arrays.asList(requestTypes.split("_")));
                     for (String type: selectedRequestTypes) {

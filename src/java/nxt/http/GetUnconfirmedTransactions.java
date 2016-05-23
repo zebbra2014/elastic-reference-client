@@ -1,16 +1,17 @@
 package nxt.http;
 
+import static nxt.http.JSONResponses.INCORRECT_ACCOUNT;
+
+import javax.servlet.http.HttpServletRequest;
+
 import nxt.Nxt;
 import nxt.Transaction;
 import nxt.db.DbIterator;
 import nxt.util.Convert;
+
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONStreamAware;
-
-
-
-import static nxt.http.JSONResponses.INCORRECT_ACCOUNT;
 
 public final class GetUnconfirmedTransactions extends APIServlet.APIRequestHandler {
 
@@ -22,9 +23,9 @@ public final class GetUnconfirmedTransactions extends APIServlet.APIRequestHandl
 
     @SuppressWarnings("unchecked")
 	@Override
-    JSONStreamAware processRequest(FakeServletRequest req) {
+    JSONStreamAware processRequest(HttpServletRequest req) {
 
-        String accountIdString = Convert.emptyToNull(req.getParameter("account"));
+        String accountIdString = Convert.emptyToNull(ParameterParser.getParameterMultipart(req, "account"));
         long accountId = 0;
 
         if (accountIdString != null) {

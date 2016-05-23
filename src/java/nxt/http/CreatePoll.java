@@ -1,15 +1,5 @@
 package nxt.http;
 
-import nxt.Account;
-import nxt.Attachment;
-import nxt.Constants;
-import nxt.NxtException;
-import org.json.simple.JSONStreamAware;
-
-
-import java.util.ArrayList;
-import java.util.List;
-
 import static nxt.http.JSONResponses.INCORRECT_MAXNUMBEROFOPTIONS;
 import static nxt.http.JSONResponses.INCORRECT_MINNUMBEROFOPTIONS;
 import static nxt.http.JSONResponses.INCORRECT_OPTIONSAREBINARY;
@@ -22,6 +12,18 @@ import static nxt.http.JSONResponses.MISSING_MINNUMBEROFOPTIONS;
 import static nxt.http.JSONResponses.MISSING_NAME;
 import static nxt.http.JSONResponses.MISSING_OPTIONSAREBINARY;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+
+import nxt.Account;
+import nxt.Attachment;
+import nxt.Constants;
+import nxt.NxtException;
+
+import org.json.simple.JSONStreamAware;
+
 public final class CreatePoll extends CreateTransaction {
 
     static final CreatePoll instance = new CreatePoll();
@@ -32,13 +34,13 @@ public final class CreatePoll extends CreateTransaction {
     }
 
     @Override
-    JSONStreamAware processRequest(FakeServletRequest req) throws NxtException {
+    JSONStreamAware processRequest(HttpServletRequest req) throws NxtException {
 
-        String nameValue = req.getParameter("name");
-        String descriptionValue = req.getParameter("description");
-        String minNumberOfOptionsValue = req.getParameter("minNumberOfOptions");
-        String maxNumberOfOptionsValue = req.getParameter("maxNumberOfOptions");
-        String optionsAreBinaryValue = req.getParameter("optionsAreBinary");
+        String nameValue = ParameterParser.getParameterMultipart(req, "name");
+        String descriptionValue = ParameterParser.getParameterMultipart(req, "description");
+        String minNumberOfOptionsValue = ParameterParser.getParameterMultipart(req, "minNumberOfOptions");
+        String maxNumberOfOptionsValue = ParameterParser.getParameterMultipart(req, "maxNumberOfOptions");
+        String optionsAreBinaryValue = ParameterParser.getParameterMultipart(req, "optionsAreBinary");
 
         if (nameValue == null) {
             return MISSING_NAME;
@@ -62,7 +64,7 @@ public final class CreatePoll extends CreateTransaction {
 
         List<String> options = new ArrayList<>();
         while (options.size() < 100) {
-            String optionValue = req.getParameter("option" + options.size());
+            String optionValue = ParameterParser.getParameterMultipart(req, "option" + options.size());
             if (optionValue == null) {
                 break;
             }

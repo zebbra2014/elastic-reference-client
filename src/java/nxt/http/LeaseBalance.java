@@ -1,8 +1,11 @@
 package nxt.http;
 
+import javax.servlet.http.HttpServletRequest;
+
 import nxt.Account;
 import nxt.Attachment;
 import nxt.NxtException;
+
 import org.json.simple.JSONObject;
 import org.json.simple.JSONStreamAware;
 
@@ -17,7 +20,7 @@ public final class LeaseBalance extends CreateTransaction {
     }
 
     @Override
-    JSONStreamAware processRequest(FakeServletRequest req) throws NxtException {
+    JSONStreamAware processRequest(HttpServletRequest req) throws NxtException {
 
         short period = (short)ParameterParser.getInt(req, "period", 1440, Short.MAX_VALUE, true);
         Account account = ParameterParser.getSenderAccount(req);
