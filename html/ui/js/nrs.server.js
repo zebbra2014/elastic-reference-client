@@ -315,8 +315,6 @@ var NRS = (function(NRS, $, undefined) {
 			timeout: 30000,
 			async: (async === undefined ? true : async),
 			currentPage: currentPage,
-			cache: false,
-    		contentType: false,
 			currentSubPage: currentSubPage,
 			shouldRetry: (type == "GET" ? 2 : undefined),
 			data: (type=="POST" && subtype=="MULTIPART")?parseFormData(data):data, processData: (type=="POST" && subtype=="MULTIPART")?false:true
