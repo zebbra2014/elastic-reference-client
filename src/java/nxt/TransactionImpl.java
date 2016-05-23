@@ -284,8 +284,11 @@ final class TransactionImpl implements Transaction {
 
         // TODO, add new tx type with zero receipient and amount > 0 (type 3 tx)
         if (! type.canHaveRecipient()) {
-            if (recipientId != 0 || getAmountNQT() != 0) {
+            if (!type.specialDepositTX() && (recipientId != 0 || getAmountNQT() != 0)) {
                 throw new NxtException.NotValidException("Transactions of this type must have recipient == 0, amount == 0");
+            }
+            if (type.specialDepositTX() && (recipientId != 0)) {
+                throw new NxtException.NotValidException("Transactions of this type must have recipient == 0");
             }
         }
 

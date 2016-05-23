@@ -165,6 +165,10 @@ public abstract class TransactionType {
     }
 
     public abstract boolean canHaveRecipient();
+    
+    public boolean specialDepositTX(){
+    	return false;
+    }
 
     public boolean mustHaveRecipient() {
         return canHaveRecipient();
@@ -293,7 +297,11 @@ public abstract class TransactionType {
             public boolean canHaveRecipient() {
                 return false;
             }
-
+            @Override
+            public boolean specialDepositTX(){
+				return true;
+            	
+            }
             @Override
             public boolean mustHaveRecipient() {
                 return false;
