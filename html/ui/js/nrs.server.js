@@ -306,8 +306,7 @@ var NRS = (function(NRS, $, undefined) {
 			type = "POST";
 		}
 
-		
-		ajaxCall({
+		var callDict = {
 			url: url,
 			crossDomain: true,
 			dataType: "json",
@@ -318,7 +317,13 @@ var NRS = (function(NRS, $, undefined) {
 			currentSubPage: currentSubPage,
 			shouldRetry: (type == "GET" ? 2 : undefined),
 			data: (type=="POST" && subtype=="MULTIPART")?parseFormData(data):data, processData: (type=="POST" && subtype=="MULTIPART")?false:true
-		}).done(function(response, status, xhr) {
+		};
+		if (type=="POST" && subtype=="MULTIPART"){
+			callDict["contentType"]=false;
+			callDict["cache"]=false;
+		}
+
+		ajaxCall(callDict).done(function(response, status, xhr) {
 			if (NRS.console) {
 				NRS.addToConsole(this.url, this.type, this.data, response);
 			}

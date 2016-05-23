@@ -4,6 +4,8 @@ import static java.lang.Integer.parseInt;
 import static nxt.http.JSONResponses.INCORRECT_DEADLINE;
 import static nxt.http.JSONResponses.INCORRECT_WORK_LANGUAGE;
 import static nxt.http.JSONResponses.INCORRECT_WORK_NAME_LENGTH;
+import static nxt.http.JSONResponses.INCORRECT_AMOUNT;
+
 import static nxt.http.JSONResponses.MISSING_DEADLINE;
 import static nxt.http.JSONResponses.MISSING_LANGUAGE;
 import static nxt.http.JSONResponses.MISSING_NAME;
@@ -91,8 +93,19 @@ public final class CreateWork extends CreateTransaction {
             return INCORRECT_DEADLINE;
         }
         
-        Attachment attachment = new Attachment.WorkCreation(workTitle, workLanguageByte, WorkLogicManager.compress(programCode), numberInputVars, numberOutputVars, deadlineInt);
-        return createTransaction(req, account, attachment);
+        long amount;
+        try {
+        	amount = Long.parseUnsignedLong(amount_spent);
+        	if(WorkLogicManager.checkAmount(amount,workLanguage,workTitle,programCode,numberInputVars,numberOutputVars,deadline) == false){
+        		return INCORRECT_AMOUNT;
+        	}
+        } catch (NumberFormatException e) {
+            return INCORRECT_AMOUNT;
+        }
+        
+        
+        Attachment attachment = new Attachment.WorkCreation(workTitle, workLanguageByte, programCode.getBytes(), numberInputVars, numberOutputVars, deadlineInt);
+        return createTransaction(req, account, 0, amount, attachment);
 
     }
 

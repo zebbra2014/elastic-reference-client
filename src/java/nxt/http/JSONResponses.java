@@ -21,7 +21,8 @@ public final class JSONResponses {
     public static final JSONStreamAware INCORRECT_WORK_NAME_LENGTH = incorrect("work title");
     public static final JSONStreamAware INCORRECT_VARIABLES_NUM = incorrect("number of input or output variables");
     public static final JSONStreamAware INCORRECT_WORK_LANGUAGE = incorrect("work language");
-    
+    public static final JSONStreamAware INCORRECT_AMOUNT = incorrect("attached amount");
+
     public static final JSONStreamAware INCORRECT_PROGRAM = incorrect("program code");
     public static final JSONStreamAware INCORRECT_BOUNTYHOOK = incorrect("bounty hook");
     public static final JSONStreamAware INCORRECT_WORKID = incorrect("workId");

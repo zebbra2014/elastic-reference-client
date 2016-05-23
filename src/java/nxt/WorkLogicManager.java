@@ -246,6 +246,12 @@ public class WorkLogicManager {
 			PiggybackedProofOfBounty attachment) {
 		// TODO, We still have to figure out how bounties are submitted
 	}
+
+	public static boolean checkAmount(long amount, String workLanguage,
+			String workTitle, String programCode, Byte numberInputVars,
+			Byte numberOutputVars, String deadline) {
+		return true;
+	}
 	
 
 

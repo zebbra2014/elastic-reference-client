@@ -518,7 +518,7 @@ public interface Attachment extends Appendix {
             this.programmCode = Ascii85.decode(((String) attachmentData.get("programCode")).trim());
             this.numberInputVars = ((Long) attachmentData.get("numInputs")).byteValue();
             this.numberOutputVars = ((Long) attachmentData.get("numOutputs")).byteValue();
-            this.deadline = ((Long) attachmentData.get("deadline")).byteValue();
+            this.deadline = ((Long) attachmentData.get("deadline")).intValue();
             
         }
 
@@ -552,6 +552,7 @@ public interface Attachment extends Appendix {
             buffer.put((byte) this.workLanguage);
             int length = this.programmCode.length;
             buffer.putInt(length);
+            buffer.put(this.programmCode);
 
             buffer.put(this.numberInputVars);
             buffer.put(this.numberOutputVars);

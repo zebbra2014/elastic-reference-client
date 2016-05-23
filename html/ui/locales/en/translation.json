@@ -1107,5 +1107,9 @@
   "current_units": "Current Units Supply",
   "current_reserve_per_unit": "Current Reserve Per Unit",
   "founders": "Founders",
+  "work_created": "New Work Created",
+  "work_cancelled": "Work Cancellation",
+  "work_pow": "Proof of Work",
+  "work_bounty": "Bounty Submission",
   "next_lessee_status": "The next lease period is scheduled from block __start__ to block __end__, the lessee account is <a href='#' data-user='__account__' class='user_info'>__account__</a>"
 }
