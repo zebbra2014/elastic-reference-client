@@ -26,23 +26,23 @@ import nxt.util.Logger;
 public class WorkLogicManager {
 	
 	// Just in case we need it in the future, but i think this can be safely removed
-    public double round(final double value, final int frac) {
+    public static double round(final double value, final int frac) {
         return Math.round(Math.pow(10.0, frac) * value) / Math.pow(10.0, frac);
     }
     
-    public int getCurrentPowReward(){
+    public static int getCurrentPowReward(){
     	return 10;
     }
     
-    public int getPercentWork(){
+    public static int getPercentWork(){
     	return 60;
     }
     
-    public int getPercentBounty(){
+    public static int getPercentBounty(){
     	return 40;
     }
     
-	private JSONObject workEntry(byte version, long workId, long referenced_tx, long block_created, long block_closed,
+	private static JSONObject workEntry(byte version, long workId, long referenced_tx, long block_created, long block_closed,
 			long cancellation_tx, long last_payment_tx, String title, String account, String language,
 			int num_input, int num_output,
 			long balance_original, long paid_bounties, long paid_pow, int bounties_connected, int pow_connected, int timeout_at_block, int script_size_bytes, long fee) {
@@ -217,11 +217,11 @@ public class WorkLogicManager {
         
     }
 
-	public static void createNewWork(long workId, long txId, long senderId, long blockId, long amountNQT, WorkCreation attachment) {
+	public static void createNewWork(long workId, long txId, long senderId, long blockId, long amountNQT, long feeNQT, WorkCreation attachment) {
 		if (!Db.db.isInTransaction()) {
             try {
                 Db.db.beginTransaction();
-                createNewWork(workId, txId, senderId, blockId, amountNQT, attachment);
+                createNewWork(workId, txId, senderId, blockId, amountNQT, feeNQT, attachment);
                 Db.db.commitTransaction();
             } catch (Exception e) {
                 Logger.logErrorMessage(e.toString(), e);
@@ -234,8 +234,8 @@ public class WorkLogicManager {
         }
 		
         try {
-        	try (Connection con = Db.db.getConnection(); PreparedStatement pstmt = con.prepareStatement("INSERT INTO work (id, work_title, variables_input, variables_output, version_id, language_id, deadline, original_amount, paid_amount_bounties, paid_amount_pow, referenced_transaction_id, block_id, sender_account_id, code, num_bounties, num_pow) "
-                    + " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
+        	try (Connection con = Db.db.getConnection(); PreparedStatement pstmt = con.prepareStatement("INSERT INTO work (id, work_title, variables_input, variables_output, version_id, language_id, deadline, original_amount, paid_amount_bounties, paid_amount_pow, fee, referenced_transaction_id, block_id, sender_account_id, code, num_bounties, num_pow) "
+                    + " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
                 int i = 0;
                 pstmt.setLong(++i, workId);
                 pstmt.setString(++i, attachment.getWorkTitle());
@@ -247,6 +247,7 @@ public class WorkLogicManager {
                 pstmt.setLong(++i, amountNQT);
                 pstmt.setLong(++i, 0);
                 pstmt.setLong(++i, 0);
+                pstmt.setLong(++i, feeNQT);
                 pstmt.setLong(++i, txId);
                 pstmt.setLong(++i, blockId);
                 pstmt.setLong(++i, senderId);
@@ -326,20 +327,19 @@ public class WorkLogicManager {
 		return true;
 	}
 	
-    public DbIterator<JSONObject> getWorkList(Account account, int from, int to) {
+    public static DbIterator<JSONObject> getWorkList(Account account, int from, int to) {
       
         Connection con = null;
         
         try {
             StringBuilder buf = new StringBuilder();
-            buf.append("SELECT * FROM transaction WHERE recipient_id = ? AND sender_id <> ? ");
-            buf.append("ORDER BY block_timestamp DESC, transaction_index DESC");
+            buf.append("SELECT * FROM work WHERE sender_account_id = ?");
+            buf.append("ORDER BY block_id DESC");
             buf.append(DbUtils.limitsClause(from, to));
             con = Db.db.getConnection();
             PreparedStatement pstmt;
             int i = 0;
             pstmt = con.prepareStatement(buf.toString());
-            pstmt.setLong(++i, account.getId());
             pstmt.setLong(++i, account.getId());
     
             
@@ -360,7 +360,7 @@ public class WorkLogicManager {
                      long amount_paid_pow = rs.getLong("paid_amount_pow");
                      long fee = rs.getLong("fee");
                      long referencedTx = rs.getLong("referenced_transaction_id");
-                     int block_id = rs.getInt("block_id");
+                     long block_id = rs.getLong("block_id");
                      long senderId = rs.getLong("sender_account_id");
                      String languageString = getLanguageString(language);
                      byte[] code = rs.getBytes("code");
@@ -372,7 +372,7 @@ public class WorkLogicManager {
                      long last_cancel = rs.getLong("payback_transaction_id");
                      
                      ret = workEntry(version, workId, referencedTx, 0, 0, last_cancel, last_payment, work_title, Crypto.rsEncode(senderId), languageString, num_input, num_output, amount, amount_paid_bounties, amount_paid_pow, num_bounties,
-                    		 num_pow, block_id+deadline, code.length, fee);
+                    		 num_pow, BlockchainImpl.getInstance().getBlock(block_id).getHeight()+deadline, code.length, fee);
 
                      return ret;
                 }
