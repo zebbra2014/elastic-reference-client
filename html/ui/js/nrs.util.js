@@ -549,6 +549,9 @@ var NRS = (function(NRS, $, undefined) {
 		} else if (typeof amount == "string") {
 			amount = new BigInteger(amount);
 		}
+		else if (typeof amount == "number") {
+			amount = new BigInteger(amount.toString());
+		}
 
 		var negative = "";
 		var afterComma = "";

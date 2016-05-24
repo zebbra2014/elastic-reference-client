@@ -86,7 +86,7 @@ var NRS = (function(NRS, $, undefined) {
 		return "<span class='label label-success label12px'>Active</span>";
 	}
 	function balancespan(message){
-		return "<span class='label label-white label12px'>Bal: " + message.balance_remained + "XEL</span>";
+		return "<span class='label label-white label12px'>" + NRS.formatAmount(message.balance_remained) + " XEL</span>";
 	}
 
 	function flopsFormatter(v, axis) {
@@ -182,15 +182,15 @@ var NRS = (function(NRS, $, undefined) {
 			$("#bal_bounties").empty().append(workItem.percent_bounties);
 
 
-			$("#bal_original").empty().append(workItem.balance_original);
-			$("#bal_remained").empty().append(workItem.balance_remained);
+			$("#bal_original").empty().append(NRS.formatAmount(workItem.balance_original));
+			$("#bal_remained").empty().append(NRS.formatAmount(workItem.balance_remained));
 			$("#bnt_connected").empty().append(workItem.bounties_connected);
 
 			if(workItem.language=="LUA")
 				$("#programming_language").empty().append("LUA (Version 1, Hardened)");
 
 			$("#blockchain_bytes").empty().append(formatBytes(parseInt(workItem.script_size_bytes)));
-			$("#fee").empty().append(workItem.fee);
+			$("#fee").empty().append(NRS.formatAmount(workItem.fee));
 
 			$("#num_in").empty().append(workItem.num_input);
 			$("#num_out").empty().append(workItem.num_output);

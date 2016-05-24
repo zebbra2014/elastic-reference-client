@@ -51,12 +51,12 @@ public final class GetAccountWorkEfficiencyPlot extends APIServlet.APIRequestHan
 		JSONArray solution_rate = getSolutionPlot(workId, common_timestamp);
 		
 		
-		for(int i=0;i<100;i++){
+		/*for(int i=0;i<100;i++){
 			common_timestamp = common_timestamp - 20;
 			computation_power.add(dateValuePair(common_timestamp, 1337.0 - i*10));
 			solution_rate.add(dateValuePair(common_timestamp, 1337.0 - i*5));
-		}
-		
+		}*/
+		solution_rate.add(dateValuePair(0,0));
 		
 		response.put("computation_power", computation_power);
 		response.put("solution_rate", solution_rate);
