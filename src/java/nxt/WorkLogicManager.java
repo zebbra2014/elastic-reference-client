@@ -371,7 +371,7 @@ public class WorkLogicManager {
                      long last_payment = rs.getLong("last_payment_transaction_id");
                      long last_cancel = rs.getLong("payback_transaction_id");
                      
-                     ret = workEntry(version, workId, referencedTx, 0, 0, last_cancel, last_payment, work_title, Crypto.rsEncode(senderId), languageString, num_input, num_output, amount, amount_paid_bounties, amount_paid_pow, num_bounties,
+                     ret = workEntry(version, workId, referencedTx, block_id, last_payment, last_cancel, last_payment, work_title, Crypto.rsEncode(senderId), languageString, num_input, num_output, amount, amount_paid_bounties, amount_paid_pow, num_bounties,
                     		 num_pow, BlockchainImpl.getInstance().getBlock(block_id).getHeight()+deadline, code.length, fee);
 
                      return ret;
