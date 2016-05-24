@@ -45,13 +45,14 @@ public class WorkLogicManager {
 	private static JSONObject workEntry(byte version, long workId, long referenced_tx, long block_created, long block_closed,
 			long cancellation_tx, long last_payment_tx, String title, String account, String language,
 			int num_input, int num_output,
-			long balance_original, long paid_bounties, long paid_pow, int bounties_connected, int pow_connected, int timeout_at_block, int script_size_bytes, long fee) {
+			long balance_original, long paid_bounties, long paid_pow, int bounties_connected, int pow_connected, int timeout_at_block, int script_size_bytes, long fee, int block_created_h) {
 		JSONObject response = new JSONObject();
 		response.put("workId", workId);
 		response.put("version", version);
 		response.put("referenced_tx", referenced_tx);
 
 		response.put("block_created", block_created);
+		response.put("block_height_created", block_created_h);
 		response.put("block_closed", block_closed);
 		response.put("cancellation_tx", cancellation_tx);
 		response.put("last_payment_tx", last_payment_tx);
@@ -371,8 +372,9 @@ public class WorkLogicManager {
                      long last_payment = rs.getLong("last_payment_transaction_id");
                      long last_cancel = rs.getLong("payback_transaction_id");
                      
+                     int h=BlockchainImpl.getInstance().getBlock(block_id).getHeight();
                      ret = workEntry(version, workId, referencedTx, block_id, last_payment, last_cancel, last_payment, work_title, Crypto.rsEncode(senderId), languageString, num_input, num_output, amount, amount_paid_bounties, amount_paid_pow, num_bounties,
-                    		 num_pow, BlockchainImpl.getInstance().getBlock(block_id).getHeight()+deadline, code.length, fee);
+                    		 num_pow, h+deadline, code.length, fee, h);
 
                      return ret;
                 }

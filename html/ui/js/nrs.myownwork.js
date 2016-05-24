@@ -21,6 +21,25 @@ var NRS = (function(NRS, $, undefined) {
 	var computation_power=[];
 	var solution_rate=[];
 
+	NRS.incoming.myownwork = function(transactions) {
+		if (NRS.hasTransactionUpdates(transactions)) {
+			console.log("Transaction Update to MyWork page.");
+			if (transactions.length) {
+				for (var i=0; i<transactions.length; i++) {
+					var trans = transactions[i];
+					if (trans.confirmed && trans.type == 3 && trans.subtype == 0 && trans.senderRS == NRS.accountRS) {
+						console.log("FOUND!!");
+						console.log(trans);
+					}
+					if (!trans.confirmed && trans.type == 3 && trans.subtype == 0 && trans.senderRS == NRS.accountRS) {
+						console.log("FOUND UNCONFIRMED!!");
+						console.log(trans);
+					}
+				}
+			}
+		}
+	}
+
 	NRS.pages.myownwork = function(callback) {
 		_work = [];
 		$("#no_work_selected").show();
@@ -95,7 +114,45 @@ var NRS = (function(NRS, $, undefined) {
     function perHourFormatter(v, axis) {
         return v.toFixed(axis.tickDecimals) + "/h  ";
     }
+	function time_ago(seconds){
+		console.log("launched time_ago(" + seconds + ")");
+		var time_formats = [
+		    [60, 'seconds', 1], // 60
+		    [120, '1 minute ago', '1 minute from now'], // 60*2
+		    [3600, 'minutes', 60], // 60*60, 60
+		    [7200, '1 hour ago', '1 hour from now'], // 60*60*2
+		    [86400, 'hours', 3600], // 60*60*24, 60*60
+		    [172800, 'yesterday', 'tomorrow'], // 60*60*24*2
+		    [604800, 'days', 86400], // 60*60*24*7, 60*60*24
+		    [1209600, 'last week', 'next week'], // 60*60*24*7*4*2
+		    [2419200, 'weeks', 604800], // 60*60*24*7*4, 60*60*24*7
+		    [4838400, 'last month', 'next month'], // 60*60*24*7*4*2
+		    [29030400, 'months', 2419200], // 60*60*24*7*4*12, 60*60*24*7*4
+		    [58060800, 'last year', 'next year'], // 60*60*24*7*4*12*2
+		    [2903040000, 'years', 29030400], // 60*60*24*7*4*12*100, 60*60*24*7*4*12
+		    [5806080000, 'last century', 'next century'], // 60*60*24*7*4*12*100*2
+		    [58060800000, 'centuries', 2903040000] // 60*60*24*7*4*12*100*20, 60*60*24*7*4*12*100
+		];
+		var token = 'ago', list_choice = 1;
 
+		if (seconds == 0) {
+		    return 'just now'
+		}
+		if (seconds < 0) {
+		    seconds = Math.abs(seconds);
+		    token = 'from now';
+		    list_choice = 2;
+		}
+		var i = 0, format;
+		while (format = time_formats[i++])
+		    if (seconds < format[0]) {
+		        if (typeof format[2] == 'string')
+		            return format[list_choice];
+		        else
+		            return Math.floor(seconds / format[2]) + ' ' + format[1] + ' ' + token;
+		    }
+		return "a long time ago";
+	}
 	function doPlot(){
 	
 
@@ -132,6 +189,13 @@ var NRS = (function(NRS, $, undefined) {
     
 	}
 
+	function blockToAgo(blockHeight){
+		var span = NRS.lastBlockHeight - blockHeight;
+		var minPerBlock = 1;
+		var secondsPassed = minPerBlock*span*60;
+		return time_ago(secondsPassed);
+	}
+
 	function displayWorkSidebar(callback) {
 		console.log("mywork callback fired!");
 		var activeAccount = false;
@@ -149,7 +213,7 @@ var NRS = (function(NRS, $, undefined) {
 		rows += newworkrow;
 		for (var i = 0; i < _work.length; i++) {
 			var message = _work[i];
-			rows += "<a href='#' class='list-group-item larger-sidebar-element selectable' data-array-index='" + i + "'><p class='list-group-item-text agopullright'>" + balancespan(message) + " " + statusspan(message) + " <span class='label label-primary label12px'>" + message.language + "</span></p><span class='list-group-item-heading betterh4'>" + message.title + "</span><br><small>created 1 day ago (block #13318)</small><span class='middletext_list'>" + /* BEGIN GRID */ "<div class='row fourtwenty'><div class='col-md-3'><i class='fa fa-tasks fa-fw'></i> " + status2Text(message) + "</div><div class='col-md-3'><i class='fa fa-hourglass-1 fa-fw'></i> " + ETA(message) + "</div><div class='col-md-3'><i class='fa fa-times-circle-o fa-fw'></i> " + timeOut(message) + "</div><div class='col-md-3'><i class='fa fa-rocket fa-fw'></i> " + efficiency(message) + "</div></div>" /* END GRID */ + "</span></span></a>";
+			rows += "<a href='#' class='list-group-item larger-sidebar-element selectable' data-array-index='" + i + "'><p class='list-group-item-text agopullright'>" + balancespan(message) + " " + statusspan(message) + " <span class='label label-primary label12px'>" + message.language + "</span></p><span class='list-group-item-heading betterh4'>" + message.title + "</span><br><small>created " + blockToAgo(message.block_height_created) + " (block #" + message.block_height_created + ")</small><span class='middletext_list'>" + /* BEGIN GRID */ "<div class='row fourtwenty'><div class='col-md-3'><i class='fa fa-tasks fa-fw'></i> " + status2Text(message) + "</div><div class='col-md-3'><i class='fa fa-hourglass-1 fa-fw'></i> " + ETA(message) + "</div><div class='col-md-3'><i class='fa fa-times-circle-o fa-fw'></i> " + timeOut(message) + "</div><div class='col-md-3'><i class='fa fa-rocket fa-fw'></i> " + efficiency(message) + "</div></div>" /* END GRID */ + "</span></span></a>";
 		}
 
 		$("#myownwork_sidebar").empty().append(rows);
