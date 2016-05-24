@@ -164,8 +164,9 @@ public class WorkLogicManager {
             }
             return;
         }
+		
         try {
-        	try (Connection con = Db.db.getConnection(); PreparedStatement pstmt = con.prepareStatement("INSERT INTO work (id, work_title, variables_input, variables_output, version_id, language_id, deadline, amount, referenced_transaction_id, block_id, sender_account_id, code, hook) "
+        	try (Connection con = Db.db.getConnection(); PreparedStatement pstmt = con.prepareStatement("INSERT INTO work (id, work_title, variables_input, variables_output, version_id, language_id, deadline, amount, referenced_transaction_id, block_id, sender_account_id, code) "
                     + " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
                 int i = 0;
                 pstmt.setLong(++i, workId);

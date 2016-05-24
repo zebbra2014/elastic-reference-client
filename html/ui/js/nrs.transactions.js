@@ -396,65 +396,19 @@ var NRS = (function(NRS, $, undefined) {
 				} else if (transaction.type == 3) {
 					switch (transaction.subtype) {
 						case 0:
-							rows += '<i title="' + $.t("marketplace_listing") + '" class="fa fa-shopping-cart"></i>';
+							rows += '<i title="' + $.t("work_created") + '" class="fa fa-cloud"></i>';
 							break;
 						case 1:
-							rows += '<i title="' + $.t("marketplace_removal") + '" class="fa fa-shopping-cart"></i> <i class="fa fa-times"></i>';
+							rows += '<i title="' + $.t("work_cancelled") + '" class="fa fa-cloud"></i>';
 							break;
 						case 2:
-							rows += '<i title="' + $.t("marketplace_price_change") + '" class="fa fa-shopping-cart"></i> <i class="fa fa-line-chart"></i>';
+							rows += '<i title="' + $.t("work_pow") + '" class="fa fa-cloud"></i>';
 							break;
 						case 3:
-							rows += '<i title="' + $.t("marketplace_quantity_change") + '" class="fa fa-shopping-cart"></i> <i class="fa fa-sort"></i>';
+							rows += '<i title="' + $.t("work_bounty") + '" class="fa fa-cloud"></i>';
 							break;
-						case 4:
-							rows += '<i title="' + $.t("marketplace_purchase") + '" class="fa fa-shopping-cart"></i> <i class="fa fa-money"></i>';
-							break;
-						case 5:
-							rows += '<i title="' + $.t("marketplace_delivery") + '" class="fa fa-shopping-cart"> <i class="fa fa-cube"></i>';
-							break;
-						case 6:
-							rows += '<i title="' + $.t("marketplace_feedback") + '" class="fa fa-shopping-cart"> <i class="ion-android-social"></i>';
-							break;
-						case 7:
-							rows += '<i title="' + $.t("marketplace_refund") + '" class="fa fa-shopping-cart"></i> <i class="fa fa-reply"></i>';
-							break;
-					}
-				} else if (transaction.type == 4) {
-					switch (transaction.subtype) {
-						case 0:
-							rows += '<i title="' + $.t("balance_leasing") + '" class="fa fa-money"></i> <i class="fa fa-arrow-circle-o-right">';
-							break;
-					}
-				} else if (transaction.type == 5) {
-					switch (transaction.subtype) {
-						case 0:
-							rows += '<i title="' + $.t("issue_currency") + '" class="fa fa-bank"></i>';
-							break;
-						case 1:
-							rows += '<i title="' + $.t("reserve_increase") + '" class="fa fa-bank"></i>';
-							break;
-						case 2:
-							rows += '<i title="' + $.t("reserve_claim") + '" class="fa fa-bank"></i>';
-							break;
-						case 3:
-							rows += '<i title="' + $.t("currency_transfer") + '" class="fa fa-bank"></i> <i class="ion-arrow-swap"></i>';
-							break;
-						case 4:
-							rows += '<i title="' + $.t("publish_exchange_offer") + '" class="fa fa-bank"></i> <i class="fa fa-list-alt "></i>';
-							break;
-						case 5:
-							rows += '<i title="' + $.t("currency_buy") + '" class="fa fa-bank"></i> <i class="ion-arrow-graph-up-right"></i>';
-							break;
-						case 6:
-							rows += '<i title="' + $.t("currency_sell") + '" class="fa fa-bank"></i> <i class="ion-arrow-graph-down-right"></i>';
-							break;
-						case 7:
-							rows += '<i title="' + $.t("mint_currency") + '" class="fa fa-bank"></i> <i class="fa fa-money"></i>';
-							break;
-						case 8:
-							rows += '<i title="' + $.t("delete_currency") + '" class="fa fa-bank"></i> <i class="fa fa-times"></i>';
-							break;
+						
+						
 					}
 				}
 				 
@@ -672,67 +626,21 @@ var NRS = (function(NRS, $, undefined) {
 		} else if (transaction.type == 3) {
 			switch (transaction.subtype) {
 				case 0:
-					transactionType = $.t("marketplace_listing");
+					transactionType = $.t("work_created");
 					break;
 				case 1:
-					transactionType = $.t("marketplace_removal");
+					transactionType = $.t("work_cancelled");
 					break;
 				case 2:
-					transactionType = $.t("marketplace_price_change");
+					transactionType = $.t("work_pow");
 					break;
 				case 3:
-					transactionType = $.t("marketplace_quantity_change");
+					transactionType = $.t("work_bounty");
 					break;
-				case 4:
-					transactionType = $.t("marketplace_purchase");
-					break;
-				case 5:
-					transactionType = $.t("marketplace_delivery");
-					break;
-				case 6:
-					transactionType = $.t("marketplace_feedback");
-					break;
-				case 7:
-					transactionType = $.t("marketplace_refund");
-					break;
-			}
-		} else if (transaction.type == 4) {
-			switch (transaction.subtype) {
-				case 0:
-					transactionType = $.t("balance_leasing");
-					break;
-			}
-		} else if (transaction.type == 5) {
-			switch (transaction.subtype) {
-				case 0:
-					transactionType = $.t("issue_currency");
-					break;
-				case 1:
-					transactionType = $.t("reserve_increase");
-					break;
-				case 2:
-					transactionType = $.t("reserve_claim");
-					break;
-				case 3:
-					transactionType = $.t("currency_transfer");
-					break;
-				case 4:
-					transactionType = $.t("publish_exchange_offer");
-					break;
-				case 5:
-					transactionType = $.t("buy_currency");
-					break;
-				case 6:
-					transactionType = $.t("sell_currency");
-					break;
-				case 7:
-					transactionType = $.t("mint_currency");
-					break;
-				case 8:
-					transactionType = $.t("delete_currency");
-					break;	
+				
 			}
 		}
+		
 
 		var receiving = transaction.recipient == NRS.account;
 		var account = (receiving ? "sender" : "recipient");
