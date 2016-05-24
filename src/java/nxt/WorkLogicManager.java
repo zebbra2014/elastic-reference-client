@@ -12,15 +12,76 @@ import java.sql.SQLException;
 import java.util.zip.DeflaterOutputStream;
 import java.util.zip.InflaterInputStream;
 
+import org.json.simple.JSONObject;
+
 import nxt.Attachment.PiggybackedProofOfBounty;
 import nxt.Attachment.PiggybackedProofOfWork;
 import nxt.Attachment.WorkCreation;
 import nxt.Attachment.WorkIdentifierCancellation;
+import nxt.crypto.Crypto;
+import nxt.db.DbIterator;
+import nxt.db.DbUtils;
 import nxt.util.Logger;
 
 public class WorkLogicManager {
+	
+	// Just in case we need it in the future, but i think this can be safely removed
+    public double round(final double value, final int frac) {
+        return Math.round(Math.pow(10.0, frac) * value) / Math.pow(10.0, frac);
+    }
+    
+    public int getCurrentPowReward(){
+    	return 10;
+    }
+    
+    public int getPercentWork(){
+    	return 60;
+    }
+    
+    public int getPercentBounty(){
+    	return 40;
+    }
+    
+	private JSONObject workEntry(byte version, long workId, long referenced_tx, long block_created, long block_closed,
+			long cancellation_tx, long last_payment_tx, String title, String account, String language,
+			int num_input, int num_output,
+			long balance_original, long paid_bounties, long paid_pow, int bounties_connected, int pow_connected, int timeout_at_block, int script_size_bytes, long fee) {
+		JSONObject response = new JSONObject();
+		response.put("workId", workId);
+		response.put("version", version);
+		response.put("referenced_tx", referenced_tx);
 
+		response.put("block_created", block_created);
+		response.put("block_closed", block_closed);
+		response.put("cancellation_tx", cancellation_tx);
+		response.put("last_payment_tx", last_payment_tx);
+		response.put("title", title);
+		response.put("account", account);
+		response.put("language", language);
+		response.put("num_input", num_input);
+		response.put("num_output", num_output);
+		response.put("percent_work", getPercentWork());
+		response.put("percent_bounties", getPercentBounty());
+		response.put("balance_original", balance_original);
+		
+		//long balance_work = balance_original*getPercentWork()/100-(pow_connected*getCurrentPowReward());
+		//long balance_bounties = balance_original*getPercentBounty()/100;
+		
+		response.put("balance_remained", balance_original-paid_pow-paid_bounties);
+		response.put("paid_bounties", paid_bounties);
+		response.put("paid_pow", paid_pow);
+		
+		double done = 100-Math.round(((balance_original-paid_pow-paid_bounties) * 1.0/balance_original)*100.0);
+		
+		response.put("percent_done", done);
+		response.put("pow_connected", pow_connected);
+		response.put("bounties_connected", bounties_connected);
+		response.put("timeout_at_block", timeout_at_block);
+		response.put("script_size_bytes", script_size_bytes);
+		response.put("fee", fee);
 
+		return response;
+	}
     public static byte[] compress(String text) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         try {
@@ -54,6 +115,13 @@ public class WorkLogicManager {
 		}
 		return 0;
 	}
+	public static String getLanguageString(byte language){
+		if (language==(byte)0x01){
+			return "LUA";
+		}
+		return "?";
+	}
+	
 	public static boolean checkWorkLanguage(byte w){
 		return (w>0);
 		//TODO FIXME: ADD REAL CHECKS HERE
@@ -166,8 +234,8 @@ public class WorkLogicManager {
         }
 		
         try {
-        	try (Connection con = Db.db.getConnection(); PreparedStatement pstmt = con.prepareStatement("INSERT INTO work (id, work_title, variables_input, variables_output, version_id, language_id, deadline, amount, referenced_transaction_id, block_id, sender_account_id, code) "
-                    + " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
+        	try (Connection con = Db.db.getConnection(); PreparedStatement pstmt = con.prepareStatement("INSERT INTO work (id, work_title, variables_input, variables_output, version_id, language_id, deadline, original_amount, paid_amount_bounties, paid_amount_pow, referenced_transaction_id, block_id, sender_account_id, code, num_bounties, num_pow) "
+                    + " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
                 int i = 0;
                 pstmt.setLong(++i, workId);
                 pstmt.setString(++i, attachment.getWorkTitle());
@@ -177,10 +245,14 @@ public class WorkLogicManager {
                 pstmt.setShort(++i, attachment.getWorkLanguage());
                 pstmt.setInt(++i, attachment.getDeadline());
                 pstmt.setLong(++i, amountNQT);
+                pstmt.setLong(++i, 0);
+                pstmt.setLong(++i, 0);
                 pstmt.setLong(++i, txId);
                 pstmt.setLong(++i, blockId);
                 pstmt.setLong(++i, senderId);
                 pstmt.setBytes(++i, attachment.getProgrammCode());
+                pstmt.setLong(++i, 0);
+                pstmt.setLong(++i, 0);
                 pstmt.executeUpdate();
             }
         } catch (SQLException e) {
@@ -254,6 +326,61 @@ public class WorkLogicManager {
 		return true;
 	}
 	
+    public DbIterator<JSONObject> getWorkList(Account account, int from, int to) {
+      
+        Connection con = null;
+        
+        try {
+            StringBuilder buf = new StringBuilder();
+            buf.append("SELECT * FROM transaction WHERE recipient_id = ? AND sender_id <> ? ");
+            buf.append("ORDER BY block_timestamp DESC, transaction_index DESC");
+            buf.append(DbUtils.limitsClause(from, to));
+            con = Db.db.getConnection();
+            PreparedStatement pstmt;
+            int i = 0;
+            pstmt = con.prepareStatement(buf.toString());
+            pstmt.setLong(++i, account.getId());
+            pstmt.setLong(++i, account.getId());
+    
+            
+            return new DbIterator<>(con, pstmt, new DbIterator.ResultSetReader<JSONObject>() {
+                @Override
+                public JSONObject get(Connection con, ResultSet rs) throws NxtException.ValidationException, SQLException {
+                	JSONObject ret = null;
+                	
+                     long workId = rs.getLong("id");
+                     String work_title = rs.getString("work_title");
+                     int num_input = rs.getInt("variables_input");
+                     int num_output = rs.getInt("variables_output");
+                     byte version = rs.getByte("version_id");
+                     byte language = rs.getByte("language_id");
+                     int deadline = rs.getInt("deadline");
+                     long amount = rs.getLong("original_amount");
+                     long amount_paid_bounties = rs.getLong("paid_amount_bounties");
+                     long amount_paid_pow = rs.getLong("paid_amount_pow");
+                     long fee = rs.getLong("fee");
+                     long referencedTx = rs.getLong("referenced_transaction_id");
+                     int block_id = rs.getInt("block_id");
+                     long senderId = rs.getLong("sender_account_id");
+                     String languageString = getLanguageString(language);
+                     byte[] code = rs.getBytes("code");
+                     
+                     int num_bounties = rs.getInt("num_bounties");
+                     int num_pow = rs.getInt("num_pow");
+                     
+                     long last_payment = rs.getLong("last_payment_transaction_id");
+                     long last_cancel = rs.getLong("payback_transaction_id");
+                     
+                     ret = workEntry(version, workId, referencedTx, 0, 0, last_cancel, last_payment, work_title, Crypto.rsEncode(senderId), languageString, num_input, num_output, amount, amount_paid_bounties, amount_paid_pow, num_bounties,
+                    		 num_pow, block_id+deadline, code.length, fee);
 
+                     return ret;
+                }
+            });
+        } catch (SQLException e) {
+            DbUtils.close(con);
+            throw new RuntimeException(e.toString(), e);
+        }
+    }
 
 }

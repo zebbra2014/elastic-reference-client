@@ -14,63 +14,8 @@ import org.json.simple.JSONStreamAware;
 public final class GetAccountWork extends APIServlet.APIRequestHandler {
 
 	static final GetAccountWork instance = new GetAccountWork();
-	
-	// Just in case we need it in the future, but i think this can be safely removed
-    public double round(final double value, final int frac) {
-        return Math.round(Math.pow(10.0, frac) * value) / Math.pow(10.0, frac);
-    }
-    
-    public int getCurrentPowReward(){
-    	return 10;
-    }
-    
-    public int getPercentWork(){
-    	return 60;
-    }
-    
-    public int getPercentBounty(){
-    	return 40;
-    }
-    
-	@SuppressWarnings("unchecked")
-	private JSONObject workEntry(long workId, int time_created, int time_closed,
-			int was_cancel, String title, String account, String language,
-			int num_input, int num_output,
-			long balance_original, int bounties_connected, int pow_connected, int refund, int timeout_at_block, int script_size_bytes, long fee) {
-		JSONObject response = new JSONObject();
-		response.put("workId", workId);
-		response.put("time_created", time_created);
-		response.put("time_closed", time_closed);
-		response.put("was_cancel", was_cancel);
-		response.put("title", title);
-		response.put("account", account);
-		response.put("language", language);
-		response.put("num_input", num_input);
-		response.put("num_output", num_output);
-		response.put("percent_work", getPercentWork());
-		response.put("percent_bounties", getPercentBounty());
-		
-		response.put("balance_original", balance_original);
-		
-		long balance_work = balance_original*getPercentWork()/100-(pow_connected*getCurrentPowReward());
-		long balance_bounties = balance_original*getPercentBounty()/100;
-		
-		response.put("balance_remained", balance_work+balance_bounties);
-		response.put("balance_work", balance_work);
-		response.put("balance_bounties", balance_bounties);
-		
-		double done = 100-Math.round(((balance_work+balance_bounties) * 1.0/balance_original)*100.0);
-		
-		response.put("percent_done", done);
-		response.put("pow_connected", pow_connected);
-		response.put("bounties_connected", bounties_connected);
-		response.put("refund", refund);
-		response.put("timeout_at_block", timeout_at_block);
-		response.put("script_size_bytes", script_size_bytes);
-		response.put("fee", fee);
 
-		return response;
-	}
+	
 
 	private GetAccountWork() {
 		super(new APITag[] { APITag.ACCOUNTS, APITag.WC }, "account",
