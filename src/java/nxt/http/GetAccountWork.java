@@ -1,5 +1,7 @@
 package nxt.http;
 
+import java.math.BigInteger;
+
 import javax.servlet.http.HttpServletRequest;
 
 import nxt.Account;
@@ -33,6 +35,14 @@ public final class GetAccountWork extends APIServlet.APIRequestHandler {
 		int numberOfConfirmations = ParameterParser
 				.getNumberOfConfirmations(req);
 
+		long onlyOneId = 0;
+		try {
+			BigInteger b = new BigInteger((ParameterParser.getParameterMultipart(req, "onlyOneId")));
+			onlyOneId = b.longValue();
+		} catch (Exception e) {
+			onlyOneId = 0;
+		}
+		
 		byte type;
 		try {
 			type = Byte.parseByte(ParameterParser.getParameterMultipart(req, "type"));
@@ -46,7 +56,7 @@ public final class GetAccountWork extends APIServlet.APIRequestHandler {
         int firstIndex = ParameterParser.getFirstIndex(req);
         int lastIndex = ParameterParser.getLastIndex(req);
 		
-        try (DbIterator<? extends JSONObject> iterator = WorkLogicManager.getWorkList(account, firstIndex, lastIndex)) {
+        try (DbIterator<? extends JSONObject> iterator = WorkLogicManager.getWorkList(account, firstIndex, lastIndex, onlyOneId)) {
 		  while (iterator.hasNext()) { JSONObject transaction = iterator.next(); work_packages.add(transaction);
 		} }
 		 

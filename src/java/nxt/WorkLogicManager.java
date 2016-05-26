@@ -328,19 +328,27 @@ public class WorkLogicManager {
 		return true;
 	}
 	
-    public static DbIterator<JSONObject> getWorkList(Account account, int from, int to) {
+    public static DbIterator<JSONObject> getWorkList(Account account, int from, int to, long onlyOneId) {
       
         Connection con = null;
         
         try {
             StringBuilder buf = new StringBuilder();
             buf.append("SELECT * FROM work WHERE sender_account_id = ?");
-            buf.append("ORDER BY block_id DESC");
+            
+            if(onlyOneId>0){
+            	buf.append(" AND id=?");
+            }
+            
+            buf.append(" ORDER BY block_id DESC");
             buf.append(DbUtils.limitsClause(from, to));
             con = Db.db.getConnection();
             PreparedStatement pstmt;
             int i = 0;
             pstmt = con.prepareStatement(buf.toString());
+            if(onlyOneId>0){
+            	pstmt.setLong(++i, onlyOneId);
+            }
             pstmt.setLong(++i, account.getId());
     
             

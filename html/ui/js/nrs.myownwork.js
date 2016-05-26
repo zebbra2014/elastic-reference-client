@@ -24,16 +24,24 @@ var NRS = (function(NRS, $, undefined) {
 	NRS.incoming.myownwork = function(transactions) {
 		if (NRS.hasTransactionUpdates(transactions)) {
 			console.log("Transaction Update to MyWork page.");
+			console.log(transactions[0]);
 			if (transactions.length) {
 				for (var i=0; i<transactions.length; i++) {
 					var trans = transactions[i];
 					if (trans.confirmed && trans.type == 3 && trans.subtype == 0 && trans.senderRS == NRS.accountRS) {
-						console.log("FOUND!!");
-						console.log(trans);
+						NRS.sendRequest("getAccountWork", {
+							"account": NRS.account,
+							"onlyOneId": trans.transaction,
+							"type": 1
+						}, function(response) {
+							if (response.work_packages && response.work_packages[0]!=null) {
+								console.log(response.work_packages[0]);
+								replaceInSidebar(response.work_packages[0]);
+							}
+						});
 					}
 					if (!trans.confirmed && trans.type == 3 && trans.subtype == 0 && trans.senderRS == NRS.accountRS) {
-						console.log("FOUND UNCONFIRMED!!");
-						console.log(trans);
+						addUnconfirmedWork(trans);
 					}
 				}
 			}
@@ -196,6 +204,23 @@ var NRS = (function(NRS, $, undefined) {
 		return time_ago(secondsPassed);
 	}
 
+	function replaceInSidebar(message){
+		newElement = "<a href='#' data-workid='" + message.workId + "' class='list-group-item larger-sidebar-element selectable' data-array-index='0'><p class='list-group-item-text agopullright'>" + balancespan(message) + " " + statusspan(message) + " <span class='label label-primary label12px'>" + message.language + "</span></p><span class='list-group-item-heading betterh4'>" + message.title + "</span><br><small>created " + blockToAgo(message.block_height_created) + " (block #" + message.block_height_created + ")</small><span class='middletext_list'>" + /* BEGIN GRID */ "<div class='row fourtwenty'><div class='col-md-3'><i class='fa fa-tasks fa-fw'></i> " + status2Text(message) + "</div><div class='col-md-3'><i class='fa fa-hourglass-1 fa-fw'></i> " + ETA(message) + "</div><div class='col-md-3'><i class='fa fa-times-circle-o fa-fw'></i> " + timeOut(message) + "</div><div class='col-md-3'><i class='fa fa-rocket fa-fw'></i> " + efficiency(message) + "</div></div>" /* END GRID */ + "</span></span></a>";
+		if($("#myownwork_sidebar").children().filter('[data-workid="' + message.workId + '"]').length>0){
+			console.log("REPLACING");
+			$("#myownwork_sidebar").children().filter('[data-workid="' + message.workId + '"]').replaceWith(newElement);
+		}else{
+			console.log("ADDING");
+			$(".grayadder").after(newElement);
+		}
+	}
+
+	function addUnconfirmedWork(transactionObj){
+		newElement = "<a href='#' data-workid='" + transactionObj.transaction + "' class='list-group-item larger-sidebar-element selectable' data-array-index='0'><p class='list-group-item-text agopullright'><span class='label label-danger label12px'>Unconfirmed Work</span></p><span class='list-group-item-heading betterh4'>" + transactionObj.attachment.title + "</span><br><small>Details will become visible after the first confirmation.</small></a>";
+		$(".grayadder").after(newElement);
+		
+	}
+
 	function displayWorkSidebar(callback) {
 		console.log("mywork callback fired!");
 		var activeAccount = false;
@@ -213,7 +238,7 @@ var NRS = (function(NRS, $, undefined) {
 		rows += newworkrow;
 		for (var i = 0; i < _work.length; i++) {
 			var message = _work[i];
-			rows += "<a href='#' class='list-group-item larger-sidebar-element selectable' data-array-index='" + i + "'><p class='list-group-item-text agopullright'>" + balancespan(message) + " " + statusspan(message) + " <span class='label label-primary label12px'>" + message.language + "</span></p><span class='list-group-item-heading betterh4'>" + message.title + "</span><br><small>created " + blockToAgo(message.block_height_created) + " (block #" + message.block_height_created + ")</small><span class='middletext_list'>" + /* BEGIN GRID */ "<div class='row fourtwenty'><div class='col-md-3'><i class='fa fa-tasks fa-fw'></i> " + status2Text(message) + "</div><div class='col-md-3'><i class='fa fa-hourglass-1 fa-fw'></i> " + ETA(message) + "</div><div class='col-md-3'><i class='fa fa-times-circle-o fa-fw'></i> " + timeOut(message) + "</div><div class='col-md-3'><i class='fa fa-rocket fa-fw'></i> " + efficiency(message) + "</div></div>" /* END GRID */ + "</span></span></a>";
+			rows += "<a href='#' data-workid='" + message.workId + "' class='list-group-item larger-sidebar-element selectable' data-array-index='" + i + "'><p class='list-group-item-text agopullright'>" + balancespan(message) + " " + statusspan(message) + " <span class='label label-primary label12px'>" + message.language + "</span></p><span class='list-group-item-heading betterh4'>" + message.title + "</span><br><small>created " + blockToAgo(message.block_height_created) + " (block #" + message.block_height_created + ")</small><span class='middletext_list'>" + /* BEGIN GRID */ "<div class='row fourtwenty'><div class='col-md-3'><i class='fa fa-tasks fa-fw'></i> " + status2Text(message) + "</div><div class='col-md-3'><i class='fa fa-hourglass-1 fa-fw'></i> " + ETA(message) + "</div><div class='col-md-3'><i class='fa fa-times-circle-o fa-fw'></i> " + timeOut(message) + "</div><div class='col-md-3'><i class='fa fa-rocket fa-fw'></i> " + efficiency(message) + "</div></div>" /* END GRID */ + "</span></span></a>";
 		}
 
 		$("#myownwork_sidebar").empty().append(rows);
