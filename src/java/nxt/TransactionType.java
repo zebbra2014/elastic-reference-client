@@ -169,6 +169,10 @@ public abstract class TransactionType {
     public boolean specialDepositTX(){
     	return false;
     }
+    
+    public boolean moneyComesFromNowhere(){
+    	return false;
+    }
 
     public boolean mustHaveRecipient() {
         return canHaveRecipient();
@@ -285,12 +289,12 @@ public abstract class TransactionType {
             void applyAttachment(Transaction transaction, Account senderAccount, Account recipientAccount) {
             	Attachment.WorkCreation attachment = (Attachment.WorkCreation) transaction.getAttachment();
             	// To calculate the WorkID i just take the TxID and calculate + 1
-            	WorkLogicManager.createNewWork(transaction.getId() + 1, transaction.getId(), transaction.getSenderId(), transaction.getBlockId(), transaction.getAmountNQT(), transaction.getFeeNQT(), attachment);
+            	WorkLogicManager.createNewWork(transaction.getId(), transaction.getId(), transaction.getSenderId(), transaction.getBlockId(), transaction.getAmountNQT(), transaction.getFeeNQT(), attachment);
             }
 
             @Override
             void validateAttachment(Transaction transaction) throws NxtException.ValidationException {
-       
+            	// TODO: Verify if all contraints are met!!!
             }
 
             @Override
@@ -300,7 +304,7 @@ public abstract class TransactionType {
             @Override
             public boolean specialDepositTX(){
 				return true;
-            	
+
             }
             @Override
             public boolean mustHaveRecipient() {
@@ -334,22 +338,29 @@ public abstract class TransactionType {
 
             @Override
             void validateAttachment(Transaction transaction) throws NxtException.ValidationException {
-            	if(WorkLogicManager.isStillPending(transaction.getId()+1, transaction.getSenderId()) == false){
+            	if(WorkLogicManager.isStillPending(transaction.getId(), transaction.getSenderId()) == false){
             		throw new NxtException.NotValidException("Cannot cancel already cancelled or finished work");
             	}
-            	
-            	// TODO: Check the payback transaction does not "recharge" more or less than allowed
-            	
+            	if(WorkLogicManager.getRemainingBalance(transaction.getId()) != transaction.getAmountNQT()){
+            		throw new NxtException.NotValidException("The cancellation transaction must replay the entire amount that is left");
+            	}
+            	if(WorkLogicManager.getTransactionInitiator(transaction.getId()) != transaction.getRecipientId()){
+            		throw new NxtException.NotValidException("The receipient must be the work initiator");
+            	}
             }
 
             @Override
             public boolean canHaveRecipient() {
-                return false;
+                return true;
             }
 
             @Override
             public boolean mustHaveRecipient() {
-                return false;
+                return true;
+            }
+            
+            public boolean moneyComesFromNowhere(){
+            	return true;
             }
         };
         
@@ -379,8 +390,9 @@ public abstract class TransactionType {
 
             @Override
             void validateAttachment(Transaction transaction) throws NxtException.ValidationException {
-            	// TODO: Check the payback transaction does not "reward" more or less than allowed
-
+            	// Validate Bounty
+            	Attachment.PiggybackedProofOfBounty attachment = (Attachment.PiggybackedProofOfBounty) transaction.getAttachment();
+            	WorkLogicManager.validatePOW(transaction.getId(), attachment, transaction.getAmountNQT());
             }
 
             @Override
@@ -392,6 +404,11 @@ public abstract class TransactionType {
             public boolean mustHaveRecipient() {
                 return true;
             }
+            
+            public boolean moneyComesFromNowhere(){
+            	return true;
+            }
+            
         };
         public final static TransactionType BOUNTY = new WorkControl() {
 
@@ -418,7 +435,9 @@ public abstract class TransactionType {
 
             @Override
             void validateAttachment(Transaction transaction) throws NxtException.ValidationException {
-                
+                // Validate Bounty
+            	Attachment.PiggybackedProofOfBounty attachment = (Attachment.PiggybackedProofOfBounty) transaction.getAttachment();
+            	WorkLogicManager.validateBounty(transaction.getId(), attachment, transaction.getAmountNQT());
             }
 
             @Override
@@ -429,6 +448,10 @@ public abstract class TransactionType {
             @Override
             public boolean mustHaveRecipient() {
                 return true;
+            }
+            
+            public boolean moneyComesFromNowhere(){
+            	return true;
             }
         };
     };

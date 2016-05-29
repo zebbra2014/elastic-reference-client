@@ -393,4 +393,23 @@ public class WorkLogicManager {
         }
     }
 
+	public static long getRemainingBalance(long id) {
+		return 0;
+	}
+
+	public static long getTransactionInitiator(long id) {
+		return 0;
+	}
+
+	public static void validatePOW(long id, PiggybackedProofOfBounty attachment, long amount) {
+
+		
+	}
+
+	public static void validateBounty(long id,
+			PiggybackedProofOfBounty attachment, long amount) {
+
+		
+	}
+
 }

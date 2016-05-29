@@ -28,7 +28,7 @@ var NRS = (function(NRS, $, undefined) {
 			if (transactions.length) {
 				for (var i=0; i<transactions.length; i++) {
 					var trans = transactions[i];
-					if (trans.confirmed && trans.type == 3 && trans.subtype == 0 && trans.senderRS == NRS.accountRS) {
+					if (trans.confirmed && trans.type == 3 && /* Subtype doesn't matter, we refresh in all cases */ trans.senderRS == NRS.accountRS) {
 						NRS.sendRequest("getAccountWork", {
 							"account": NRS.account,
 							"onlyOneId": trans.transaction,
