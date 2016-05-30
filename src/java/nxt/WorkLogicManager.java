@@ -330,7 +330,7 @@ public class WorkLogicManager {
 	}
 
 	public static void submitBounty(long senderId,
-			PiggybackedProofOfBounty attachment) {
+			PiggybackedProofOfBounty attachment, long amountNQT) {
 		
 			// PENDING WORK, BNTY SUBMISSION
 	}
