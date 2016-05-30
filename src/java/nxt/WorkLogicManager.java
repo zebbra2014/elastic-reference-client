@@ -124,17 +124,16 @@ public class WorkLogicManager {
 	}
 	
 	public static boolean checkWorkLanguage(byte w){
-		return (w>0);
-		//TODO FIXME: ADD REAL CHECKS HERE
+		return (w==1); // only allow 1 for now = LUA
 	}
+	
 	public static boolean checkDeadline(int deadlineInt) {
-		//TODO FIXME: ADD REAL CHECKS HERE
-		return true;
+		return (deadlineInt >= 10 && deadlineInt <=250);
 	}
+	
 	public static boolean checkNumberVariables(byte numberInputVarsByte,
 			boolean IsInput) {
-		//TODO FIXME: ADD REAL CHECKS HERE
-		return true;
+		return (numberInputVarsByte>=getMinNumberInputInts() && numberInputVarsByte<=getMaxNumberInputInts() && IsInput) || (numberInputVarsByte>=getMinNumberOutputInts() && numberInputVarsByte<=getMaxNumberOutputInts() && !IsInput);
 	}
 	
 	public static int getMaxNumberStateInts(){
@@ -144,18 +143,31 @@ public class WorkLogicManager {
 		return 8;
 	}
 	public static int getMaxNumberInputInts(){
-		return 16;
+		return 12;
 	}
 	public static int getMinNumberInputInts(){
-		return 8;
+		return 2;
+	}
+	public static int getMaxNumberOutputInts(){
+		return 12;
+	}
+	public static int getMinNumberOutputInts(){
+		return 2;
 	}
 
 	public static boolean haveWork(int workId) {
-		//TODO FIXME: ADD REAL CHECKS HERE IF WORK WITH SPECIFIC WORKID EXISTS
-		return true;
-	}
-	public static byte[] compileCode(String code, boolean IsBountyHook, byte programLanguage) throws RuntimeException{
-		return new byte[]{0,1,2,3,4,5};
+		// TODO, think about caching such things
+		 try (Connection con = Db.db.getConnection();
+	             PreparedStatement pstmt = con.prepareStatement(
+	                     "SELECT COUNT(*) FROM work WHERE id = ?")) {
+	        	int i = 0;
+	            pstmt.setLong(++i, workId);
+	            ResultSet check = pstmt.executeQuery();
+	            int result = check.getInt(0);
+	            return result>=1;
+	        } catch (SQLException e) {
+	            throw new RuntimeException(e.toString(), e);
+	        }
 	}
 	
 	public static void cancelWork(WorkIdentifierCancellation attachment) {
@@ -319,7 +331,8 @@ public class WorkLogicManager {
 
 	public static void submitBounty(long senderId,
 			PiggybackedProofOfBounty attachment) {
-		// TODO, We still have to figure out how bounties are submitted
+		
+			// PENDING WORK, BNTY SUBMISSION
 	}
 
 	public static boolean checkAmount(long amount, String workLanguage,
