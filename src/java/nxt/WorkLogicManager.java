@@ -80,7 +80,9 @@ public class WorkLogicManager {
 		
 		double done = 100-Math.round(((balance_original-paid_pow-paid_bounties) * 1.0/balance_original)*100.0);
 		
+		double eff = 0.013;
 		response.put("percent_done", done);
+		response.put("efficiency", eff);
 		response.put("pow_connected", pow_connected);
 		response.put("bounties_connected", bounties_connected);
 		response.put("timeout_at_block", timeout_at_block);

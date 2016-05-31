@@ -107,11 +107,16 @@ var NRS = (function(NRS, $, undefined) {
 
 		return "<b>" + blocksLeft + "</b> blocks"; 
 	}
-	function efficiency(efficiency){
-		return "<b>1%</b> efficiency"; 
+	function efficiency(message){
+		return "<b>" + round(efficiency*100) + "%</b> efficiency"; 
 	}
 	function statusspan(message){
-		return "<span class='label label-success label12px'>Active</span>";
+		if(message.cancellation_tx=="0" && message.last_payment_tx=="0")
+			return "<span class='label label-success label12px'>Active</span>";
+		else if(message.cancellation_tx!="0" && message.last_payment_tx=="0")
+			return "<span class='label label-critical label12px'>Cancelled</span>";
+		else if(message.cancellation_tx=="0" && message.last_payment_tx!="0")
+			return "<span class='label label-info label12px'>Completed</span>";
 	}
 	function balancespan(message){
 		return "<span class='label label-white label12px'>" + NRS.formatAmount(message.balance_remained) + " XEL</span>";
@@ -270,6 +275,21 @@ var NRS = (function(NRS, $, undefined) {
 	$("#myownwork_sidebar").on("click", "a", function(e) {
 		computation_power=[];
 		solution_rate=[];
+
+		// TODO, create labels
+		if(workItem.cancellation_tx=="0" && workItem.last_payment_tx=="0"){
+			$("#work_indicator").removeClass("label-success").removeClass("label-danger").removeClass("label-info").addClass("label-success");
+			$("#work_indicator_inner").empty().append("Active");
+		}
+		else if(workItem.cancellation_tx!="0" && workItem.last_payment_tx=="0"){
+			$("#work_indicator").removeClass("label-success").removeClass("label-danger").removeClass("label-info").addClass("label-danger");
+			$("#work_indicator_inner").empty().append("Cancelled (payback in TX " + workItem.cancellation_tx + ")");
+		}
+		else if(workItem.cancellation_tx=="0" && workItem.last_payment_tx!="0"){
+			$("#work_indicator").removeClass("label-success").removeClass("label-danger").removeClass("label-info").addClass("label-info");
+			$("#work_indicator_inner").empty().append("Finished");
+		}
+
 
 		$("#myownwork_sidebar a.active").removeClass("active");
 		if($(this).hasClass("selectable")){
