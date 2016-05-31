@@ -5,6 +5,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.math.BigInteger;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -21,6 +22,7 @@ import nxt.Attachment.WorkIdentifierCancellation;
 import nxt.crypto.Crypto;
 import nxt.db.DbIterator;
 import nxt.db.DbUtils;
+import nxt.util.Convert;
 import nxt.util.Logger;
 
 public class WorkLogicManager {
@@ -41,21 +43,25 @@ public class WorkLogicManager {
     public static int getPercentBounty(){
     	return 40;
     }
-    
+    private static String dd(long d){
+    	return Convert.toUnsignedLong(d);
+   
+    }
 	private static JSONObject workEntry(byte version, long workId, long referenced_tx, long block_created, long block_closed,
 			long cancellation_tx, long last_payment_tx, String title, String account, String language,
 			int num_input, int num_output,
 			long balance_original, long paid_bounties, long paid_pow, int bounties_connected, int pow_connected, int timeout_at_block, int script_size_bytes, long fee, int block_created_h) {
 		JSONObject response = new JSONObject();
-		response.put("workId", workId);
+		
+		response.put("workId", dd(workId));
 		response.put("version", version);
-		response.put("referenced_tx", referenced_tx);
+		response.put("referenced_tx", dd(referenced_tx));
 
-		response.put("block_created", block_created);
+		response.put("block_created", dd(block_created));
 		response.put("block_height_created", block_created_h);
-		response.put("block_closed", block_closed);
-		response.put("cancellation_tx", cancellation_tx);
-		response.put("last_payment_tx", last_payment_tx);
+		response.put("block_closed", dd(block_closed));
+		response.put("cancellation_tx", dd(cancellation_tx));
+		response.put("last_payment_tx", dd(last_payment_tx));
 		response.put("title", title);
 		response.put("account", account);
 		response.put("language", language);
@@ -63,14 +69,14 @@ public class WorkLogicManager {
 		response.put("num_output", num_output);
 		response.put("percent_work", getPercentWork());
 		response.put("percent_bounties", getPercentBounty());
-		response.put("balance_original", balance_original);
+		response.put("balance_original", dd(balance_original));
 		
 		//long balance_work = balance_original*getPercentWork()/100-(pow_connected*getCurrentPowReward());
 		//long balance_bounties = balance_original*getPercentBounty()/100;
 		
-		response.put("balance_remained", balance_original-paid_pow-paid_bounties);
-		response.put("paid_bounties", paid_bounties);
-		response.put("paid_pow", paid_pow);
+		response.put("balance_remained", dd(balance_original-paid_pow-paid_bounties));
+		response.put("paid_bounties", dd(paid_bounties));
+		response.put("paid_pow", dd(paid_pow));
 		
 		double done = 100-Math.round(((balance_original-paid_pow-paid_bounties) * 1.0/balance_original)*100.0);
 		
@@ -155,7 +161,7 @@ public class WorkLogicManager {
 		return 2;
 	}
 
-	public static boolean haveWork(int workId) {
+	public static boolean haveWork(long workId) {
 		// TODO, think about caching such things
 		 try (Connection con = Db.db.getConnection();
 	             PreparedStatement pstmt = con.prepareStatement(
@@ -163,18 +169,22 @@ public class WorkLogicManager {
 	        	int i = 0;
 	            pstmt.setLong(++i, workId);
 	            ResultSet check = pstmt.executeQuery();
-	            int result = check.getInt(0);
-	            return result>=1;
+	            if (check.next()) {
+	            	int result = check.getInt(1);
+		            return result>=1;
+	            }else{
+	            	throw new RuntimeException("Cannot decide if work exists or not");
+	            }
 	        } catch (SQLException e) {
 	            throw new RuntimeException(e.toString(), e);
 	        }
 	}
 	
-	public static void cancelWork(WorkIdentifierCancellation attachment) {
+	public static void cancelWork(Transaction t, WorkIdentifierCancellation attachment) {
 		if (!Db.db.isInTransaction()) {
             try {
                 Db.db.beginTransaction();
-                cancelWork(attachment);
+                cancelWork(t,attachment);
                 Db.db.commitTransaction();
             } catch (Exception e) {
                 Logger.logErrorMessage(e.toString(), e);
@@ -188,6 +198,7 @@ public class WorkLogicManager {
         try {
             try (Connection con = Db.db.getConnection(); PreparedStatement pstmt = con.prepareStatement("UPDATE work SET payback_transaction_id = ? WHERE id = ?")) {
                 int i = 0;
+                pstmt.setLong(++i, t.getId());
                 pstmt.setLong(++i, attachment.getWorkId());
                 pstmt.executeUpdate();
             }
@@ -199,17 +210,18 @@ public class WorkLogicManager {
 	
 	public static boolean isStillPending(long workId, long senderId) {	
 		
-		long payoutSoFar = totalPayoutSoFar(workId);
-		
         try (Connection con = Db.db.getConnection();
              PreparedStatement pstmt = con.prepareStatement(
-                     "SELECT count(*) FROM work WHERE id = ? and sender_account_id = ? and payback_transaction_id = NULL and last_payment_transaction_id = NULL and amount > ?")) {
+                     "SELECT count(*) FROM work WHERE id = ? and sender_account_id = ? and payback_transaction_id is null and last_payment_transaction_id is null and (paid_amount_bounties+paid_amount_pow) < original_amount")) {
         	int i = 0;
             pstmt.setLong(++i, workId);
             pstmt.setLong(++i, senderId);
-            pstmt.setLong(++i, payoutSoFar);
             ResultSet check = pstmt.executeQuery();
-            if(check.getInt(0) == 0) return false;
+            if (check.next()) {
+            	if(check.getInt(1) == 0) return false;
+            }else{
+            	throw new RuntimeException("Cannot decide if work is still pending");
+            }
             return true;
         } catch (SQLException e) {
             throw new RuntimeException(e.toString(), e);
@@ -219,11 +231,16 @@ public class WorkLogicManager {
 	public static long totalPayoutSoFar(long workId) {	
         try (Connection con = Db.db.getConnection();
              PreparedStatement pstmt = con.prepareStatement(
-                     "SELECT SUM(payout_amount) FROM proof_of_work WHERE work_id = ?")) {
+                     "SELECT paid_amount_bounties+paid_amount_pow FROM work WHERE id = ?")) {
         	int i = 0;
             pstmt.setLong(++i, workId);
             ResultSet check = pstmt.executeQuery();
-            return check.getLong(0); // TODO: Strange case to avoid overflows
+            if (check.next()) {
+            	return check.getLong(1); // TODO: Strange case to avoid overflows
+            }else{
+            	throw new RuntimeException("Cannot get total so-far payouts");
+            }
+            
         } catch (SQLException e) {
             throw new RuntimeException(e.toString(), e);
         }
@@ -328,12 +345,63 @@ public class WorkLogicManager {
             throw new RuntimeException(e.toString(), e);
         }
 	}
+	
 
-	public static void submitBounty(long senderId,
-			PiggybackedProofOfBounty attachment, long amountNQT) {
-		
-			// PENDING WORK, BNTY SUBMISSION
+	public static void createNewBounty(long workId, long txId, long senderId, long blockId, long PayOutAmountNQT, PiggybackedProofOfBounty attachment) {
+		if (!Db.db.isInTransaction()) {
+            try {
+                Db.db.beginTransaction();
+                createNewBounty(workId, txId, senderId, blockId, PayOutAmountNQT, attachment);
+                Db.db.commitTransaction();
+            } catch (Exception e) {
+                Logger.logErrorMessage(e.toString(), e);
+                Db.db.rollbackTransaction();
+                throw e;
+            } finally {
+                Db.db.endTransaction();
+            }
+            return;
+        }
+        try {
+        
+        	try (Connection con = Db.db.getConnection(); PreparedStatement pstmt = con.prepareStatement("INSERT INTO work (id, work_id, referenced_transaction_id, block_id, sender_account_id, payout_amount, input, state, ten_ms_locator) "
+                    + " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
+                int i = 0;
+                pstmt.setLong(++i, workId);
+                pstmt.setLong(++i, txId);
+                pstmt.setLong(++i, blockId);
+                pstmt.setLong(++i, senderId);
+                pstmt.setLong(++i, PayOutAmountNQT);
+                
+                byte[] input = null;
+                byte[] state = null;
+                long ten_ms_locator = 0;
+                
+                // TODO, FILL THOSE FROM ATTACHMENT
+                
+                pstmt.setBytes(++i, input);
+                pstmt.setBytes(++i, state);
+                pstmt.setLong(++i, ten_ms_locator);
+                
+                pstmt.executeUpdate();
+            }
+        	 
+            // at this point it is also required to update any last_payment_transaction_id if necessary
+            long payoutSoFar = totalPayoutSoFar(workId);
+            
+            try (Connection con = Db.db.getConnection(); PreparedStatement pstmt = con.prepareStatement("UPDATE work SET last_payment_transaction_id = ? WHERE id = ? and amount <= ?")) {
+                int i = 0;
+                pstmt.setLong(++i, txId);
+                pstmt.setLong(++i, workId);
+                pstmt.setLong(++i, payoutSoFar);
+                pstmt.executeUpdate();
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e.toString(), e);
+        }
 	}
+
 
 	public static boolean checkAmount(long amount, String workLanguage,
 			String workTitle, String programCode, Byte numberInputVars,
@@ -407,11 +475,38 @@ public class WorkLogicManager {
     }
 
 	public static long getRemainingBalance(long id) {
-		return 0;
+		try (Connection con = Db.db.getConnection();
+	             PreparedStatement pstmt = con.prepareStatement(
+	                     "SELECT (original_amount-(paid_amount_bounties+paid_amount_pow)) as res FROM work WHERE id = ?")) {
+	        	int i = 0;
+	            pstmt.setLong(++i, id);
+	            ResultSet check = pstmt.executeQuery();
+	            if (check.next()) {
+	            	return check.getLong(1);
+	            }else{
+	            	throw new RuntimeException("Cannot get remaining balance from DB");
+	            }
+	            
+	        } catch (SQLException e) {
+	            throw new RuntimeException(e.toString(), e);
+	        }
 	}
 
 	public static long getTransactionInitiator(long id) {
-		return 0;
+		try (Connection con = Db.db.getConnection();
+	             PreparedStatement pstmt = con.prepareStatement(
+	                     "SELECT sender_account_id FROM work WHERE id = ?")) {
+	        	int i = 0;
+	            pstmt.setLong(++i, id);
+	            ResultSet check = pstmt.executeQuery();
+	            if (check.next()) {
+	            	return check.getLong(1);
+	            }else{
+	            	throw new RuntimeException("Cannot get transaction initiator");
+	            }
+	        } catch (SQLException e) {
+	            throw new RuntimeException(e.toString(), e);
+	        }
 	}
 
 	public static void validatePOW(long id, PiggybackedProofOfBounty attachment, long amount) {

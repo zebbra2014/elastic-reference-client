@@ -73,6 +73,7 @@ var NRS = (function(NRS, $, undefined) {
 		}, function(response) {
 			if (response.work_packages && response.work_packages.length) {
 				for (var i = 0; i < response.work_packages.length; i++) {
+					console.log(response.work_packages[i]);
 					_work.push(response.work_packages[i]);
 				}
 				displayWorkSidebar(callback);
@@ -249,6 +250,23 @@ var NRS = (function(NRS, $, undefined) {
 
 		NRS.pageLoaded(callback);
 	}
+
+	$("#cancel_btn").click(function(e) {
+		e.preventDefault();
+
+		if (NRS.downloadingBlockchain) {
+			$.growl($.t("error_forging_blockchain_downloading"), {
+				"type": "danger"
+			});
+		} else if (NRS.state.isScanning) {
+			$.growl($.t("error_forging_blockchain_rescanning"), {
+				"type": "danger"
+			});
+		} else{
+			$("#cancel_work_modal").modal("show");
+		}
+	});
+
 	$("#myownwork_sidebar").on("click", "a", function(e) {
 		computation_power=[];
 		solution_rate=[];
@@ -262,6 +280,9 @@ var NRS = (function(NRS, $, undefined) {
 			$("#myownwork_sidebar a.active").removeClass("active");
 			$(this).addClass("active");
 
+			$("#job_id").empty().append(workItem.workId);
+			document.getElementById("workId").value = workItem.workId;
+			console.log(workItem);
 
 			// Now fill the right side correctly
 			$("#work_title_right").empty().append(workItem.title);
@@ -274,6 +295,8 @@ var NRS = (function(NRS, $, undefined) {
 			$("#bal_original").empty().append(NRS.formatAmount(workItem.balance_original));
 			$("#bal_remained").empty().append(NRS.formatAmount(workItem.balance_remained));
 			$("#bnt_connected").empty().append(workItem.bounties_connected);
+
+			$("#refund_calculator").empty().append(NRS.formatAmount(workItem.balance_remained));
 
 			if(workItem.language=="LUA")
 				$("#programming_language").empty().append("LUA (Version 1, Hardened)");

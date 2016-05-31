@@ -1,3 +1,37 @@
+
+<div class="modal fade" id="cancel_work_modal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title"><span data-i18n="confirm_work_cancellation">Confirm Job Cancellation (<span id="job_id"></span>)</span></h4>
+            </div>
+            <div class="modal-body">            
+                <form role="form" autocomplete="off">
+                    <p class="show_secret_phrase" data-i18n="stop_work_confirmation_passphrase">If you are sure you want to cancel the selected job, type your passphrase to confirm.</p>
+                    <p class="hide_secret_phrase" style="display:none" data-i18n="stop_work_confirmation">If you are sure you want to cancel the selected job, click the button below to confirm.</p>
+                    <div class="callout callout-danger remote_warning" style="display:none" data-i18n="[html]passphrase_remote_warning"><strong>Warning</strong>: Your passphrase will be sent to the server!</div>
+                    <div class="callout callout-danger error_message" style="display:none"></div>
+                    <div class="form-group secret_phrase">
+                        <label for="stop_job_password" data-i18n="passphrase">PASSPHRASE</label>
+                        <input type="password" name="secretPhrase" id="stop_job_password" class="form-control" placeholder="" tabindex="1">
+                    </div>
+                    <input type="hidden" id="workId" name="workId" value="" />
+                    <input type="hidden" name="request_type" value="cancelWork" />
+                    <input type="hidden" name="deadline" value="24" />
+                    <input type="hidden" name="broadcast" value="true" />
+                    <input type="hidden" name="feeNQT" value="100000000" /> <!-- TODO, HACKME: Fix this here to dynamic fees -->
+                </form>
+            </div>
+            <div class="modal-footer" style="margin-top:0;">
+                <div class="advanced_info"><strong data-i18n="est_refund">Estimated Refund</strong>: <span id="refund_calculator"></span> XEL <strong data-i18n="est_refund_lower">(can be lower)</strong></div>
+                <button type="button" class="btn btn-default" data-dismiss="modal" data-i18n="continue_job">Dismiss</button>
+                <button type="button" class="btn btn-primary" id="stop_job_button" data-loading-text="Submitting..." data-i18n="[data-loading-text]submitting"><span data-i18n="stop_job">Cancel Job</span></button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="modal fade" id="new_work_modal" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">

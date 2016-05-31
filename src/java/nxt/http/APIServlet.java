@@ -7,6 +7,7 @@ import static nxt.http.JSONResponses.NO_PASSWORD_IN_CONFIG;
 import static nxt.http.JSONResponses.POST_REQUIRED;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -150,7 +151,6 @@ public final class APIServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         process(req, resp);
     }
-
     @SuppressWarnings("unchecked")
 	private void process(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 
@@ -196,7 +196,6 @@ public final class APIServlet extends HttpServlet {
                     return;
                 }
             }
-
             try {
                 if (apiRequestHandler.startDbTransaction()) {
                     Db.db.beginTransaction();
@@ -224,6 +223,9 @@ public final class APIServlet extends HttpServlet {
             resp.setContentType("text/plain; charset=UTF-8");
             try (Writer writer = resp.getWriter()) {
                 response.writeJSONString(writer);
+                
+               System.out.println(((JSONObject)response).toJSONString());
+
             }
         }
 

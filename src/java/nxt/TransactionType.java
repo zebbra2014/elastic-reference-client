@@ -333,18 +333,20 @@ public abstract class TransactionType {
             @Override
             void applyAttachment(Transaction transaction, Account senderAccount, Account recipientAccount) {
             	Attachment.WorkIdentifierCancellation attachment = (Attachment.WorkIdentifierCancellation) transaction.getAttachment();
-            	WorkLogicManager.cancelWork(attachment);
+            	WorkLogicManager.cancelWork(transaction, attachment);
             }
 
             @Override
             void validateAttachment(Transaction transaction) throws NxtException.ValidationException {
-            	if(WorkLogicManager.isStillPending(transaction.getId(), transaction.getSenderId()) == false){
+            	Attachment.WorkIdentifierCancellation attachment = (Attachment.WorkIdentifierCancellation) transaction.getAttachment();
+
+            	if(WorkLogicManager.isStillPending(attachment.getWorkId(), transaction.getSenderId()) == false){
             		throw new NxtException.NotValidException("Cannot cancel already cancelled or finished work");
             	}
-            	if(WorkLogicManager.getRemainingBalance(transaction.getId()) != transaction.getAmountNQT()){
+            	if(WorkLogicManager.getRemainingBalance(attachment.getWorkId()) != transaction.getAmountNQT()){
             		throw new NxtException.NotValidException("The cancellation transaction must replay the entire amount that is left");
             	}
-            	if(WorkLogicManager.getTransactionInitiator(transaction.getId()) != transaction.getRecipientId()){
+            	if(WorkLogicManager.getTransactionInitiator(attachment.getWorkId()) != transaction.getRecipientId()){
             		throw new NxtException.NotValidException("The receipient must be the work initiator");
             	}
             }
@@ -430,7 +432,7 @@ public abstract class TransactionType {
             @Override
             void applyAttachment(Transaction transaction, Account senderAccount, Account recipientAccount) {
             	Attachment.PiggybackedProofOfBounty attachment = (Attachment.PiggybackedProofOfBounty) transaction.getAttachment();
-            	WorkLogicManager.submitBounty(transaction.getSenderId(), attachment);
+            	WorkLogicManager.createNewBounty(attachment.getWorkId(), transaction.getId(), transaction.getSenderId(), transaction.getBlockId(), transaction.getAmountNQT(), attachment);
             }
 
             @Override

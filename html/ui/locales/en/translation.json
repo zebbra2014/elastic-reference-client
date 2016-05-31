@@ -1,4 +1,10 @@
-{
+{ "est_refund": "Estimated Refund",
+  "est_refund_lower": "(can become lower)",
+  "continue_job": "Dismiss",
+  "stop_job": "Cancel Job",
+  "stop_work_confirmation": "If you are sure you want to cancel the selected job, click the button below to confirm.",
+  "stop_work_confirmation_passphrase": "If you are sure you want to cancel the selected job, type your passphrase to confirm.",
+  "confirm_work_cancellation": "Confirm Work Cancellation",
   "no_source_code": "You have to provide a source code file containing your work",
   "Asset Distribution": "Asset Distribution",
   "Connected": "Connected",
