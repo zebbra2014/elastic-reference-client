@@ -277,9 +277,11 @@ var NRS = (function(NRS, $, undefined) {
 		solution_rate=[];
 
 		// TODO, create labels
+		$("#cancel_btn").hide();
 		if(workItem.cancellation_tx=="0" && workItem.last_payment_tx=="0"){
 			$("#work_indicator").removeClass("label-success").removeClass("label-danger").removeClass("label-info").addClass("label-success");
 			$("#work_indicator_inner").empty().append("Active");
+			$("#cancel_btn").show();
 		}
 		else if(workItem.cancellation_tx!="0" && workItem.last_payment_tx=="0"){
 			$("#work_indicator").removeClass("label-success").removeClass("label-danger").removeClass("label-info").addClass("label-danger");
