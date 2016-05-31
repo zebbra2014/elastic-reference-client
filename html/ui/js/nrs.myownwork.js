@@ -43,6 +43,9 @@ var NRS = (function(NRS, $, undefined) {
 					if (!trans.confirmed && trans.type == 3 && trans.subtype == 0 && trans.senderRS == NRS.accountRS) {
 						addUnconfirmedWork(trans);
 					}
+					if (!trans.confirmed && trans.type == 3 && trans.subtype == 1 && trans.senderRS == NRS.accountRS) {
+						cancellingUnconfirmed(trans);
+					}
 				}
 			}
 		}
@@ -93,7 +96,13 @@ var NRS = (function(NRS, $, undefined) {
 		return "<b>" + message.percent_done + "%</b> done"; 
 	}
 	function ETA(message){
-		return "ETA <b><1.5h</b>"; 
+		
+		if(message.cancellation_tx=="0" && message.last_payment_tx=="0")
+			return "ETA <b><1.5h</b>"; 
+		else if(message.cancellation_tx!="0" && message.last_payment_tx=="0")
+			return "Job Closed";
+		else if(message.cancellation_tx=="0" && message.last_payment_tx!="0")
+			return "Job Closed";
 	}
 	function timeOut(message){
 		var blocksLeft = parseInt(message.timeout_at_block);
@@ -117,6 +126,10 @@ var NRS = (function(NRS, $, undefined) {
 			return "<span class='label label-critical label12px'>Cancelled</span>";
 		else if(message.cancellation_tx=="0" && message.last_payment_tx!="0")
 			return "<span class='label label-info label12px'>Completed</span>";
+	}
+	function statusspan_precancel(message){
+		return "<span class='label label-warning label12px'>Cancel Requested</span>";
+		
 	}
 	function balancespan(message){
 		return "<span class='label label-white label12px'>" + NRS.formatAmount(message.balance_remained) + " XEL</span>";
@@ -225,6 +238,17 @@ var NRS = (function(NRS, $, undefined) {
 		newElement = "<a href='#' data-workid='" + transactionObj.transaction + "' class='list-group-item larger-sidebar-element selectable' data-array-index='0'><p class='list-group-item-text agopullright'><span class='label label-danger label12px'>Unconfirmed Work</span></p><span class='list-group-item-heading betterh4'>" + transactionObj.attachment.title + "</span><br><small>Details will become visible after the first confirmation.</small></a>";
 		$(".grayadder").after(newElement);
 		
+	}
+
+	function cancellingUnconfirmed(message){
+		newElement = "<a href='#' data-workid='" + message.workId + "' class='list-group-item larger-sidebar-element selectable' data-array-index='0'><p class='list-group-item-text agopullright'>" + balancespan(message) + " " + statusspan_precancel(message) + " <span class='label label-primary label12px'>" + message.language + "</span></p><span class='list-group-item-heading betterh4'>" + message.title + "</span><br><small>created " + blockToAgo(message.block_height_created) + " (block #" + message.block_height_created + ")</small><span class='middletext_list'>" + /* BEGIN GRID */ "<div class='row fourtwenty'><div class='col-md-3'><i class='fa fa-tasks fa-fw'></i> " + status2Text(message) + "</div><div class='col-md-3'><i class='fa fa-hourglass-1 fa-fw'></i> closing soon</div><div class='col-md-3'><i class='fa fa-times-circle-o fa-fw'></i> " + timeOut(message) + "</div><div class='col-md-3'><i class='fa fa-rocket fa-fw'></i> " + efficiency(message) + "</div></div>" /* END GRID */ + "</span></span></a>";
+		if($("#myownwork_sidebar").children().filter('[data-workid="' + message.workId + '"]').length>0){
+			console.log("REPLACING");
+			$("#myownwork_sidebar").children().filter('[data-workid="' + message.workId + '"]').replaceWith(newElement);
+		}else{
+			console.log("ADDING");
+			$(".grayadder").after(newElement);
+		}
 	}
 
 	function displayWorkSidebar(callback) {
