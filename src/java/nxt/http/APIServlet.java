@@ -224,8 +224,6 @@ public final class APIServlet extends HttpServlet {
             try (Writer writer = resp.getWriter()) {
                 response.writeJSONString(writer);
                 
-               System.out.println(((JSONObject)response).toJSONString());
-
             }
         }
 

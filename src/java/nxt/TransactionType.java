@@ -129,6 +129,10 @@ public abstract class TransactionType {
     }
 
     abstract boolean applyAttachmentUnconfirmed(Transaction transaction, Account senderAccount);
+    
+    
+    
+    
 
     final void apply(Transaction transaction, Account senderAccount, Account recipientAccount) {
     	if(!moneyComesFromNowhere())
@@ -144,12 +148,18 @@ public abstract class TransactionType {
         }
         applyAttachment(transaction, senderAccount, recipientAccount);
     }
+    
+    
+    
 
     abstract void applyAttachment(Transaction transaction, Account senderAccount, Account recipientAccount);
 
     final void undoUnconfirmed(Transaction transaction, Account senderAccount) {
         undoAttachmentUnconfirmed(transaction, senderAccount);
-        senderAccount.addToUnconfirmedBalanceNQT(Convert.safeAdd(transaction.getAmountNQT(), transaction.getFeeNQT()));
+        if(!moneyComesFromNowhere())
+    		senderAccount.addToUnconfirmedBalanceNQT( (Convert.safeAdd(transaction.getAmountNQT(), transaction.getFeeNQT())));
+    	else
+    		senderAccount.addToUnconfirmedBalanceNQT( transaction.getFeeNQT());
         if (transaction.getReferencedTransactionFullHash() != null) {
             senderAccount.addToUnconfirmedBalanceNQT(Constants.UNCONFIRMED_POOL_DEPOSIT_NQT);
         }

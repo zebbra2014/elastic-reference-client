@@ -18,6 +18,7 @@
                  <div class="content-splitter-wide-right" id="message_content" >
                     <div class="content-splitter-right-inner" style="left:450px">
                         <div id="no_work_selected" style="padding-top: 150px;text-align:center;" data-i18n="select_contact_in_sidebar">Please select a task in the left sidebar, or create a new one.</div>
+                        <div id="no_work_confirmed" style="padding-top: 150px;text-align:center; display: none" data-i18n="select_contact_in_sidebar">Please wait until the selected task has at least one confirmation.</div>
                         
 
                         <div id="work_details" style="display:none;" data-i18n="[html]no_messages_available">
@@ -25,7 +26,7 @@
 
                         <button style="float: right; margin-top: 0px;" id="cancel_btn" type="button" class="btn linkfloater misalignedbutton btn-danger">Cancel and Refund</button>
 
-                        <button style="float: right; margin-top: 0px;" id="work_indicator" type="button" class="btn linkfloater misalignedbutton btn-warning"><span id="work_indicator_inner">...</span></button>
+                        <button style="float: right; margin-top: 0px;" id="work_indicator" type="button" class="btn linkfloater misalignedbutton btn-default"><span id="work_indicator_inner">...</span></button>
 
                         <span id="work_title_right">Prime Number Example</span></h2>
                          <div class="row">
@@ -42,9 +43,9 @@
                                                             <label><i class="fa fa-money fa-fw"></i> Originally Available Balance</label>
                                                             <p class="form-control-static"><b><span id="bal_original">--</span></b> XEL - <span id="bal_work">--</span>% POW / <span id="bal_bounties">--</span>% Bounties [<a href=#>?</a>]</p>
                                                         </div>
-                                                         <div class="form-group">
-                                                            <label><i class="fa fa-pie-chart fa-fw"></i> Balance Left</label>
-                                                            <p class="form-control-static"><b><span id="bal_remained">--</span></b> XEL [<a href=#>click for detailed listing</a>]</p>
+                                                         <div class="form-group" id="hideable">
+                                                            <label><i class="fa fa-pie-chart fa-fw"></i> <span id="balancelefttitle">Balance Left</span></label>
+                                                            <p class="form-control-static"><b><span id="bal_remained">--</span></b> XEL <span id="detailedlisting"></span></p>
                                                         </div>
                                                          <div class="form-group">
                                                             <label><i class="fa fa-plane fa-fw"></i> Completion Status</label>

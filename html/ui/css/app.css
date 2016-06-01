@@ -19,7 +19,12 @@
     Core: General style
 ----------------------------
 */
-
+.laterdiv {
+    font-size: 9pt;
+    padding-top: 30px;
+    color: #636363;
+}
+}
 html,
 body {
   overflow-x:hidden;

@@ -17,15 +17,13 @@ var NRS = (function(NRS, $, undefined) {
 		newworkrow += "<i class='fa fa-edit work-image-type fa-5x'></i><p class='composelabel'>Click here to compose a new job</p>";
 		newworkrow += "</a>";
 
-	var _work = {};
+	var _work = [];
+	var _workToIndex = {};
 	var computation_power=[];
 	var solution_rate=[];
 
-	NRS.incoming.myownwork = function(transactions) {
-		if (NRS.hasTransactionUpdates(transactions)) {
-			console.log("Transaction Update to MyWork page.");
-			console.log(transactions[0]);
-			if (transactions.length) {
+    function updateIncoming(transactions){
+    	if (transactions.length) {
 				for (var i=0; i<transactions.length; i++) {
 					var trans = transactions[i];
 					if (trans.confirmed && trans.type == 3 && /* Subtype doesn't matter, we refresh in all cases */ trans.senderRS == NRS.accountRS) {
@@ -34,50 +32,51 @@ var NRS = (function(NRS, $, undefined) {
 							"onlyOneId": trans.transaction,
 							"type": 1
 						}, function(response) {
-							if (response.work_packages && response.work_packages[0]!=null) {
-								console.log(response.work_packages[0]);
-								replaceInSidebar(response.work_packages[0]);
-							}
+							if (!response.work_packages || response.work_packages.length==0) return;
+							response.work_packages.forEach(function (s, i, o) {
+
+								if (s) {
+									// replace in sidebar
+									console.log("Calling REPLACEINSIDEBAR");
+									console.log(s);
+									replaceInSidebar(s);
+									updateWork(s.workId, s);
+
+								}
+							});
 						});
 					}
 					if (!trans.confirmed && trans.type == 3 && trans.subtype == 0 && trans.senderRS == NRS.accountRS) {
+				
 						addUnconfirmedWork(trans);
 					}
 					if (!trans.confirmed && trans.type == 3 && trans.subtype == 1 && trans.senderRS == NRS.accountRS) {
-						cancellingUnconfirmed(trans);
+						cancellingUnconfirmed(trans.attachment.id);
 					}
 				}
 			}
+    }
+	NRS.incoming.myownwork = function(transactions) {
+		if (NRS.hasTransactionUpdates(transactions)) {
+			updateIncoming(transactions);
 		}
 	}
 
 	NRS.pages.myownwork = function(callback) {
 		_work = [];
+		_workToIndex = {};
 		$("#no_work_selected").show();
 		$("#work_details").hide();
 		$(".content.content-stretch:visible").width($(".page:visible").width());
 
 
-
-		_work.sort(function(a, b) {
-				if (a.time_created > b.time_created) {
-					return 1;
-				} else if (a.time_created < b.time_created) {
-					return -1;
-				} else {
-					return 0;
-				}
-			});
-
-		// TODO, FIXME! Add lazy loading, specially when users do A LOT OF work
 		NRS.sendRequest("getAccountWork", {
 			"account": NRS.account,
 			"type": 1
 		}, function(response) {
 			if (response.work_packages && response.work_packages.length) {
 				for (var i = 0; i < response.work_packages.length; i++) {
-					console.log(response.work_packages[i]);
-					_work.push(response.work_packages[i]);
+					updateWork(response.work_packages[i].workId, response.work_packages[i]);
 				}
 				displayWorkSidebar(callback);
 			} else {
@@ -85,9 +84,23 @@ var NRS = (function(NRS, $, undefined) {
 				$("#work_details").hide();
 				$("#myownwork_sidebar").empty().append(newworkrow);;
 
-				NRS.pageLoaded(callback);
 			}
+
+			// Also handle unconfirmed TX
+			NRS.sendRequest("getUnconfirmedTransactions", {
+				"account": NRS.account,
+			}, function(response) {
+				if (response.unconfirmedTransactions && response.unconfirmedTransactions.length) {
+					updateIncoming(response.unconfirmedTransactions);
+				}
+
+				// finally do the callback
+				NRS.pageLoaded(callback);
+
+			});
 		});
+
+		
 	}
 	function statusText(message){
 		return "<b>" + message.balance_remained + "+</b> XEL left, <b>7742</b> blocks left"; 
@@ -127,14 +140,14 @@ var NRS = (function(NRS, $, undefined) {
 	}
 	function statusspan(message){
 		if(message.cancellation_tx=="0" && message.last_payment_tx=="0")
-			return "<span class='label label-success label12px'>Active</span>";
+			return "<span id='activeLabel' class='label label-success label12px'>Active</span>";
 		else if(message.cancellation_tx!="0" && message.last_payment_tx=="0")
-			return "<span class='label label-danger label12px'>Cancelled</span>";
+			return "<span id='activeLabel' class='label label-danger label12px'>Cancelled</span>";
 		else if(message.cancellation_tx=="0" && message.last_payment_tx!="0")
-			return "<span class='label label-info label12px'>Completed</span>";
+			return "<span id='activeLabel' class='label label-info label12px'>Completed</span>";
 	}
-	function statusspan_precancel(message){
-		return "<span class='label label-warning label12px'>Cancel Requested</span>";
+	function statusspan_precancel(){
+		return "<span id='activeLabel' class='label label-warning label12px'>Cancel Requested</span>";
 		
 	}
 
@@ -156,7 +169,6 @@ var NRS = (function(NRS, $, undefined) {
         return v.toFixed(axis.tickDecimals) + "/h  ";
     }
 	function time_ago(seconds){
-		console.log("launched time_ago(" + seconds + ")");
 		var time_formats = [
 		    [60, 'seconds', 1], // 60
 		    [120, '1 minute ago', '1 minute from now'], // 60*2
@@ -251,32 +263,38 @@ var NRS = (function(NRS, $, undefined) {
 		return time_ago(secondsPassed);
 	}
 
+	function updateWork(workId, workPackage){
+		if(_workToIndex[workId]==null){
+			_work.push(workPackage);
+			for (var i = 0; i < _work.length; i++) {
+					_workToIndex[_work[i].workId] = i;
+			}
+		}else{
+			_work[_workToIndex[workId]]=workPackage;
+		}
+	}
+
 	function replaceInSidebar(message){
-		newElement = "<a href='#' data-workid='" + message.workId + "' class='list-group-item larger-sidebar-element selectable' data-array-index='0'><p class='list-group-item-text agopullright'>" + balancespan(message) + " " + statusspan(message) + " <span class='label label-primary label12px'>" + message.language + "</span></p><span class='list-group-item-heading betterh4'>" + message.title + "</span><br><small>created " + blockToAgo(message.block_height_created) + " (block #" + message.block_height_created + ")</small><span class='middletext_list'>" + /* BEGIN GRID */ bottom_status_row(message) /* END GRID */ + "</span></span></a>";
+		newElement = "<a href='#' data-workid='" + message.workId + "' class='list-group-item larger-sidebar-element selectable'><p class='list-group-item-text agopullright'>" + balancespan(message) + " " + statusspan(message) + " <span class='label label-primary label12px'>" + message.language + "</span></p><span class='list-group-item-heading betterh4'>" + message.title + "</span><br><small>created " + blockToAgo(message.block_height_created) + " (block #" + message.block_height_created + ")</small><span class='middletext_list'>" + /* BEGIN GRID */ bottom_status_row(message) /* END GRID */ + "</span></span></a>";
 		if($("#myownwork_sidebar").children().filter('[data-workid="' + message.workId + '"]').length>0){
-			console.log("REPLACING");
 			$("#myownwork_sidebar").children().filter('[data-workid="' + message.workId + '"]').replaceWith(newElement);
 		}else{
 			console.log("ADDING");
+			console.log(message);
 			$(".grayadder").after(newElement);
 		}
 	}
 
 	function addUnconfirmedWork(transactionObj){
-		newElement = "<a href='#' data-workid='" + transactionObj.transaction + "' class='list-group-item larger-sidebar-element selectable' data-array-index='0'><p class='list-group-item-text agopullright'><span class='label label-danger label12px'>Unconfirmed Work</span></p><span class='list-group-item-heading betterh4'>" + transactionObj.attachment.title + "</span><br><small>Details will become visible after the first confirmation.</small></a>";
-		$(".grayadder").after(newElement);
+		if($("#myownwork_sidebar").children().filter('[data-workid="' + transactionObj.transaction + '"]').length==0){
+			newElement = "<a href='#' data-workid='" + transactionObj.transaction + "' class='list-group-item larger-sidebar-element selectable' ><p class='list-group-item-text agopullright'><span class='label label-danger label12px'>Unconfirmed Work</span></p><span class='list-group-item-heading betterh4'>" + transactionObj.attachment.title + "</span><br><div class='laterdiv'>Details will become visible after the first confirmation. Please hang tight!</div></a>";
+			$(".grayadder").after(newElement);
+		}
 		
 	}
 
-	function cancellingUnconfirmed(message){
-		newElement = "<a href='#' data-workid='" + message.workId + "' class='list-group-item larger-sidebar-element selectable' data-array-index='0'><p class='list-group-item-text agopullright'>" + balancespan(message) + " " + statusspan_precancel(message) + " <span class='label label-primary label12px'>" + message.language + "</span></p><span class='list-group-item-heading betterh4'>" + message.title + "</span><br><small>created " + blockToAgo(message.block_height_created) + " (block #" + message.block_height_created + ")</small><span class='middletext_list'>" + /* BEGIN GRID */ bottom_status_row(message) /* END GRID */ + "</span></span></a>";
-		if($("#myownwork_sidebar").children().filter('[data-workid="' + message.workId + '"]').length>0){
-			console.log("REPLACING");
-			$("#myownwork_sidebar").children().filter('[data-workid="' + message.workId + '"]').replaceWith(newElement);
-		}else{
-			console.log("ADDING");
-			$(".grayadder").after(newElement);
-		}
+	function cancellingUnconfirmed(workId){
+		$("#myownwork_sidebar").children().filter('[data-workid="' + workId + '"]').find("#activeLabel").replaceWith(statusspan_precancel());
 	}
 
 	function displayWorkSidebar(callback) {
@@ -296,7 +314,7 @@ var NRS = (function(NRS, $, undefined) {
 		rows += newworkrow;
 		for (var i = 0; i < _work.length; i++) {
 			var message = _work[i];
-			rows += "<a href='#' data-workid='" + message.workId + "' class='list-group-item larger-sidebar-element selectable' data-array-index='" + i + "'><p class='list-group-item-text agopullright'>" + balancespan(message) + " " + statusspan(message) + " <span class='label label-primary label12px'>" + message.language + "</span></p><span class='list-group-item-heading betterh4'>" + message.title + "</span><br><small>created " + blockToAgo(message.block_height_created) + " (block #" + message.block_height_created + ")</small><span class='middletext_list'>" + /* BEGIN GRID */ bottom_status_row(message) /* END GRID */ + "</span></span></a>";
+			rows += "<a href='#' data-workid='" + message.workId + "' class='list-group-item larger-sidebar-element selectable'><p class='list-group-item-text agopullright'>" + balancespan(message) + " " + statusspan(message) + " <span class='label label-primary label12px'>" + message.language + "</span></p><span class='list-group-item-heading betterh4'>" + message.title + "</span><br><small>created " + blockToAgo(message.block_height_created) + " (block #" + message.block_height_created + ")</small><span class='middletext_list'>" + /* BEGIN GRID */ bottom_status_row(message) /* END GRID */ + "</span></span></a>";
 		}
 
 		$("#myownwork_sidebar").empty().append(rows);
@@ -325,8 +343,24 @@ var NRS = (function(NRS, $, undefined) {
 	});
 
 	$("#myownwork_sidebar").on("click", "a", function(e) {
-		var arrayIndex = $(this).data("array-index");
-		var workItem = _work[arrayIndex];
+		var arrayIndex = $(this).data("workid");
+		var realIndex = _workToIndex[arrayIndex];
+		var workItem = null;
+		if(realIndex!=null){
+		  workItem = _work[realIndex];
+		}
+
+		if(workItem == null){
+			$("#no_work_selected").hide();
+			$("#no_work_confirmed").show();
+			$("#work_details").hide();
+			$("#myownwork_sidebar a.active").removeClass("active");
+			if($(this).hasClass("selectable")){
+				e.preventDefault();
+				$(this).addClass("active");
+			}
+			return;
+		}
 
 		computation_power=[];
 		solution_rate=[];
@@ -334,17 +368,32 @@ var NRS = (function(NRS, $, undefined) {
 		// TODO, create labels
 		$("#cancel_btn").hide();
 		if(workItem.cancellation_tx=="0" && workItem.last_payment_tx=="0"){
-			$("#work_indicator").removeClass("label-success").removeClass("label-danger").removeClass("label-info").addClass("label-success");
+			$("#work_indicator").removeClass("btn-success").removeClass("btn-warning").removeClass("btn-default").removeClass("btn-info").addClass("btn-success");
 			$("#work_indicator_inner").empty().append("Active");
 			$("#cancel_btn").show();
+			if ($("#myownwork_sidebar").children().filter('[data-workid="' + workItem.workId + '"]').find(".label-warning").length>0){
+				$("#work_indicator").removeClass("btn-warning").removeClass("btn-success").removeClass("btn-default").removeClass("btn-info").addClass("btn-warning");
+				$("#work_indicator_inner").empty().append("Cancel Requested");
+				$("#cancel_btn").hide();
+			}
+			
+			$("#hideable").show();
+			$("#balancelefttitle").empty().append("Balance Left");
+			$("#detailedlisting").empty().append("[<a href=#'>breakdown</a>]");
 		}
 		else if(workItem.cancellation_tx!="0" && workItem.last_payment_tx=="0"){
-			$("#work_indicator").removeClass("label-success").removeClass("label-danger").removeClass("label-info").addClass("label-danger");
-			$("#work_indicator_inner").empty().append("Cancelled (payback in TX " + workItem.cancellation_tx + ")");
+			$("#work_indicator").removeClass("btn-warning").removeClass("btn-success").removeClass("btn-default").removeClass("btn-info").addClass("btn-default");
+			$("#work_indicator_inner").empty().append("Cancelled");
+			$("#hideable").show();
+			$("#balancelefttitle").empty().append("Balance Refunded");
+			$("#detailedlisting").empty().append("[<a href=# data-transaction='" + workItem.cancellation_tx + "'>payback TX</a>, <a href=#'>breakdown</a>]");
 		}
 		else if(workItem.cancellation_tx=="0" && workItem.last_payment_tx!="0"){
-			$("#work_indicator").removeClass("label-success").removeClass("label-danger").removeClass("label-info").addClass("label-info");
+			$("#work_indicator").removeClass("btn-warning").removeClass("btn-success").removeClass("btn-default").removeClass("btn-info").addClass("btn-info");
 			$("#work_indicator_inner").empty().append("Finished");
+			$("#hideable").hide();
+			$("#balancelefttitle").empty().append("...");
+			$("#detailedlisting").empty().append("");
 		}
 
 
@@ -358,7 +407,6 @@ var NRS = (function(NRS, $, undefined) {
 
 			$("#job_id").empty().append(workItem.workId);
 			document.getElementById("workId").value = workItem.workId;
-			console.log(workItem);
 
 			// Now fill the right side correctly
 			$("#work_title_right").empty().append(workItem.title);
@@ -402,9 +450,11 @@ var NRS = (function(NRS, $, undefined) {
 
 
 			$("#no_work_selected").hide();
+			$("#no_work_confirmed").hide();
 			$("#work_details").show();
 		}else{
 			$("#no_work_selected").show();
+			$("#no_work_confirmed").hide();
 			$("#work_details").hide();
 		}
 	});

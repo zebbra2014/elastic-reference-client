@@ -419,8 +419,8 @@ public class WorkLogicManager {
             StringBuilder buf = new StringBuilder();
             buf.append("SELECT * FROM work WHERE sender_account_id = ?");
             
-            if(onlyOneId>0){
-            	buf.append(" AND id=?");
+            if(onlyOneId!=0){
+            	buf.append(" AND id = ?");
             }
             
             buf.append(" ORDER BY block_id DESC");
@@ -429,11 +429,12 @@ public class WorkLogicManager {
             PreparedStatement pstmt;
             int i = 0;
             pstmt = con.prepareStatement(buf.toString());
-            if(onlyOneId>0){
+            
+            pstmt.setLong(++i, account.getId());
+            if(onlyOneId!=0){
             	pstmt.setLong(++i, onlyOneId);
             }
-            pstmt.setLong(++i, account.getId());
-    
+            System.out.println(pstmt);
             
             return new DbIterator<>(con, pstmt, new DbIterator.ResultSetReader<JSONObject>() {
                 @Override
