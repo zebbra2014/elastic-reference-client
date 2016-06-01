@@ -140,6 +140,7 @@ public final class APIServlet extends HttpServlet {
         map.put("scan", Scan.instance);
         map.put("luceneReindex", LuceneReindex.instance);
         map.put("generateToken", GenerateToken.instance);
+        map.put("decodeToken", DecodeToken.instance);
 
         apiRequestHandlers = Collections.unmodifiableMap(map);
     }
