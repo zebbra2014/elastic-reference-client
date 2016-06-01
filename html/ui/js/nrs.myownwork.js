@@ -14,7 +14,7 @@ var NRS = (function(NRS, $, undefined) {
 
 	
 	var newworkrow = "<a href='#' data-target='#new_work_modal' data-toggle='modal' class='list-group-item larger-sidebar-element grayadder'>";
-		newworkrow += "<i class='fa fa-edit work-image-type fa-5x'></i><p class='composelabel'>Click here to compose a new job</p>"
+		newworkrow += "<i class='fa fa-edit work-image-type fa-5x'></i><p class='composelabel'>Click here to compose a new job</p>";
 		newworkrow += "</a>";
 
 	var _work = {};
@@ -116,14 +116,20 @@ var NRS = (function(NRS, $, undefined) {
 
 		return "<b>" + blocksLeft + "</b> blocks"; 
 	}
+	function writeIfTrue(msg,boolsche){
+		if(boolsche)
+			return msg;
+		else
+			return "";
+	}
 	function efficiency(message){
-		return "<b>" + round(efficiency*100) + "%</b> efficiency"; 
+		return "<b>" + message.bounties_connected + "</b> bounties"; 
 	}
 	function statusspan(message){
 		if(message.cancellation_tx=="0" && message.last_payment_tx=="0")
 			return "<span class='label label-success label12px'>Active</span>";
 		else if(message.cancellation_tx!="0" && message.last_payment_tx=="0")
-			return "<span class='label label-critical label12px'>Cancelled</span>";
+			return "<span class='label label-danger label12px'>Cancelled</span>";
 		else if(message.cancellation_tx=="0" && message.last_payment_tx!="0")
 			return "<span class='label label-info label12px'>Completed</span>";
 	}
@@ -131,8 +137,16 @@ var NRS = (function(NRS, $, undefined) {
 		return "<span class='label label-warning label12px'>Cancel Requested</span>";
 		
 	}
+
+	function moneyReturned(message){
+		return "<b>" + NRS.formatAmount(message.balance_remained) + " XEL</b> refunded";
+	}
+	function moneyPaid(message){
+		return "<b>" + NRS.formatAmount(message.balance_original) + " XEL</b> paid out";
+	}
+
 	function balancespan(message){
-		return "<span class='label label-white label12px'>" + NRS.formatAmount(message.balance_remained) + " XEL</span>";
+		return writeIfTrue("<span class='label label-white label12px'>" + NRS.formatAmount(message.balance_remained) + " XEL</span>", message.cancellation_tx=="0" && message.last_payment_tx=="0");
 	}
 
 	function flopsFormatter(v, axis) {
@@ -216,6 +230,20 @@ var NRS = (function(NRS, $, undefined) {
     
 	}
 
+
+
+	function bottom_status_row(message){
+		if(message.cancellation_tx=="0" && message.last_payment_tx=="0"){
+			return "<div class='row fourtwenty'><div class='col-md-3'><i class='fa fa-tasks fa-fw'></i> " + status2Text(message) + "</div><div class='col-md-3'><i class='fa fa-hourglass-1 fa-fw'></i> " + ETA(message) + "</div><div class='col-md-3'><i class='fa fa-times-circle-o fa-fw'></i> " + timeOut(message) + "</div><div class='col-md-3'><i class='fa fa-star-half-empty fa-fw'></i> " + efficiency(message) + "</div></div>";
+		}
+		else if(message.cancellation_tx!="0" && message.last_payment_tx=="0"){
+			return "<div class='row fourtwenty'><div class='col-md-3'><i class='fa fa-hourglass-1 fa-fw'></i> " + ETA(message) + "</div><div class='col-md-6'><i class='fa fa-mail-reply fa-fw'></i> " + moneyReturned(message) + "</div><div class='col-md-3'><i class='fa fa-star-half-empty fa-fw'></i> " + efficiency(message) + "</div></div>";
+		}
+		else if(message.cancellation_tx=="0" && message.last_payment_tx!="0"){
+			return "<div class='row fourtwenty'><div class='col-md-3'><i class='fa fa-hourglass-1 fa-fw'></i> " + ETA(message) + "</div><div class='col-md-6'><i class='fa fa-mail-forward fa-fw'></i> " + moneyPaid(message) + "</div><div class='col-md-3'><i class='fa fa-star-half-empty fa-fw'></i> " + efficiency(message) + "</div></div>";
+		}
+	}
+
 	function blockToAgo(blockHeight){
 		var span = NRS.lastBlockHeight - blockHeight;
 		var minPerBlock = 1;
@@ -224,7 +252,7 @@ var NRS = (function(NRS, $, undefined) {
 	}
 
 	function replaceInSidebar(message){
-		newElement = "<a href='#' data-workid='" + message.workId + "' class='list-group-item larger-sidebar-element selectable' data-array-index='0'><p class='list-group-item-text agopullright'>" + balancespan(message) + " " + statusspan(message) + " <span class='label label-primary label12px'>" + message.language + "</span></p><span class='list-group-item-heading betterh4'>" + message.title + "</span><br><small>created " + blockToAgo(message.block_height_created) + " (block #" + message.block_height_created + ")</small><span class='middletext_list'>" + /* BEGIN GRID */ "<div class='row fourtwenty'><div class='col-md-3'><i class='fa fa-tasks fa-fw'></i> " + status2Text(message) + "</div><div class='col-md-3'><i class='fa fa-hourglass-1 fa-fw'></i> " + ETA(message) + "</div><div class='col-md-3'><i class='fa fa-times-circle-o fa-fw'></i> " + timeOut(message) + "</div><div class='col-md-3'><i class='fa fa-rocket fa-fw'></i> " + efficiency(message) + "</div></div>" /* END GRID */ + "</span></span></a>";
+		newElement = "<a href='#' data-workid='" + message.workId + "' class='list-group-item larger-sidebar-element selectable' data-array-index='0'><p class='list-group-item-text agopullright'>" + balancespan(message) + " " + statusspan(message) + " <span class='label label-primary label12px'>" + message.language + "</span></p><span class='list-group-item-heading betterh4'>" + message.title + "</span><br><small>created " + blockToAgo(message.block_height_created) + " (block #" + message.block_height_created + ")</small><span class='middletext_list'>" + /* BEGIN GRID */ bottom_status_row(message) /* END GRID */ + "</span></span></a>";
 		if($("#myownwork_sidebar").children().filter('[data-workid="' + message.workId + '"]').length>0){
 			console.log("REPLACING");
 			$("#myownwork_sidebar").children().filter('[data-workid="' + message.workId + '"]').replaceWith(newElement);
@@ -241,7 +269,7 @@ var NRS = (function(NRS, $, undefined) {
 	}
 
 	function cancellingUnconfirmed(message){
-		newElement = "<a href='#' data-workid='" + message.workId + "' class='list-group-item larger-sidebar-element selectable' data-array-index='0'><p class='list-group-item-text agopullright'>" + balancespan(message) + " " + statusspan_precancel(message) + " <span class='label label-primary label12px'>" + message.language + "</span></p><span class='list-group-item-heading betterh4'>" + message.title + "</span><br><small>created " + blockToAgo(message.block_height_created) + " (block #" + message.block_height_created + ")</small><span class='middletext_list'>" + /* BEGIN GRID */ "<div class='row fourtwenty'><div class='col-md-3'><i class='fa fa-tasks fa-fw'></i> " + status2Text(message) + "</div><div class='col-md-3'><i class='fa fa-hourglass-1 fa-fw'></i> closing soon</div><div class='col-md-3'><i class='fa fa-times-circle-o fa-fw'></i> " + timeOut(message) + "</div><div class='col-md-3'><i class='fa fa-rocket fa-fw'></i> " + efficiency(message) + "</div></div>" /* END GRID */ + "</span></span></a>";
+		newElement = "<a href='#' data-workid='" + message.workId + "' class='list-group-item larger-sidebar-element selectable' data-array-index='0'><p class='list-group-item-text agopullright'>" + balancespan(message) + " " + statusspan_precancel(message) + " <span class='label label-primary label12px'>" + message.language + "</span></p><span class='list-group-item-heading betterh4'>" + message.title + "</span><br><small>created " + blockToAgo(message.block_height_created) + " (block #" + message.block_height_created + ")</small><span class='middletext_list'>" + /* BEGIN GRID */ bottom_status_row(message) /* END GRID */ + "</span></span></a>";
 		if($("#myownwork_sidebar").children().filter('[data-workid="' + message.workId + '"]').length>0){
 			console.log("REPLACING");
 			$("#myownwork_sidebar").children().filter('[data-workid="' + message.workId + '"]').replaceWith(newElement);
@@ -268,7 +296,7 @@ var NRS = (function(NRS, $, undefined) {
 		rows += newworkrow;
 		for (var i = 0; i < _work.length; i++) {
 			var message = _work[i];
-			rows += "<a href='#' data-workid='" + message.workId + "' class='list-group-item larger-sidebar-element selectable' data-array-index='" + i + "'><p class='list-group-item-text agopullright'>" + balancespan(message) + " " + statusspan(message) + " <span class='label label-primary label12px'>" + message.language + "</span></p><span class='list-group-item-heading betterh4'>" + message.title + "</span><br><small>created " + blockToAgo(message.block_height_created) + " (block #" + message.block_height_created + ")</small><span class='middletext_list'>" + /* BEGIN GRID */ "<div class='row fourtwenty'><div class='col-md-3'><i class='fa fa-tasks fa-fw'></i> " + status2Text(message) + "</div><div class='col-md-3'><i class='fa fa-hourglass-1 fa-fw'></i> " + ETA(message) + "</div><div class='col-md-3'><i class='fa fa-times-circle-o fa-fw'></i> " + timeOut(message) + "</div><div class='col-md-3'><i class='fa fa-rocket fa-fw'></i> " + efficiency(message) + "</div></div>" /* END GRID */ + "</span></span></a>";
+			rows += "<a href='#' data-workid='" + message.workId + "' class='list-group-item larger-sidebar-element selectable' data-array-index='" + i + "'><p class='list-group-item-text agopullright'>" + balancespan(message) + " " + statusspan(message) + " <span class='label label-primary label12px'>" + message.language + "</span></p><span class='list-group-item-heading betterh4'>" + message.title + "</span><br><small>created " + blockToAgo(message.block_height_created) + " (block #" + message.block_height_created + ")</small><span class='middletext_list'>" + /* BEGIN GRID */ bottom_status_row(message) /* END GRID */ + "</span></span></a>";
 		}
 
 		$("#myownwork_sidebar").empty().append(rows);
@@ -297,6 +325,9 @@ var NRS = (function(NRS, $, undefined) {
 	});
 
 	$("#myownwork_sidebar").on("click", "a", function(e) {
+		var arrayIndex = $(this).data("array-index");
+		var workItem = _work[arrayIndex];
+
 		computation_power=[];
 		solution_rate=[];
 
@@ -320,8 +351,7 @@ var NRS = (function(NRS, $, undefined) {
 		$("#myownwork_sidebar a.active").removeClass("active");
 		if($(this).hasClass("selectable")){
 			e.preventDefault();
-			var arrayIndex = $(this).data("array-index");
-			var workItem = _work[arrayIndex];
+			
 
 			$("#myownwork_sidebar a.active").removeClass("active");
 			$(this).addClass("active");

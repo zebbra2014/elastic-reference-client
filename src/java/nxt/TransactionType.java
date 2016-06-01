@@ -101,7 +101,15 @@ public abstract class TransactionType {
 
     // return false iff double spending
     final boolean applyUnconfirmed(Transaction transaction, Account senderAccount) {
-        long totalAmountNQT = Convert.safeAdd(transaction.getAmountNQT(), transaction.getFeeNQT());
+    	
+        long totalAmountNQT;
+        if(!moneyComesFromNowhere()){
+        	totalAmountNQT = Convert.safeAdd(transaction.getAmountNQT(), transaction.getFeeNQT());
+        }
+        else{
+        	totalAmountNQT = transaction.getFeeNQT();
+        }
+        
         if (transaction.getReferencedTransactionFullHash() != null) {
             totalAmountNQT = Convert.safeAdd(totalAmountNQT, Constants.UNCONFIRMED_POOL_DEPOSIT_NQT);
         }
@@ -109,9 +117,12 @@ public abstract class TransactionType {
                 && !(transaction.getTimestamp() == 0 && Arrays.equals(senderAccount.getPublicKey(), Genesis.CREATOR_PUBLIC_KEY))) {
             return false;
         }
+        
         senderAccount.addToUnconfirmedBalanceNQT(-totalAmountNQT);
+        
         if (!applyAttachmentUnconfirmed(transaction, senderAccount)) {
-            senderAccount.addToUnconfirmedBalanceNQT(totalAmountNQT);
+        	if(!moneyComesFromNowhere())
+        		senderAccount.addToUnconfirmedBalanceNQT(totalAmountNQT);
             return false;
         }
         return true;
@@ -120,7 +131,11 @@ public abstract class TransactionType {
     abstract boolean applyAttachmentUnconfirmed(Transaction transaction, Account senderAccount);
 
     final void apply(Transaction transaction, Account senderAccount, Account recipientAccount) {
-        senderAccount.addToBalanceNQT(- (Convert.safeAdd(transaction.getAmountNQT(), transaction.getFeeNQT())));
+    	if(!moneyComesFromNowhere())
+    		senderAccount.addToBalanceNQT(- (Convert.safeAdd(transaction.getAmountNQT(), transaction.getFeeNQT())));
+    	else
+    		senderAccount.addToBalanceNQT(- transaction.getFeeNQT());
+    	
         if (transaction.getReferencedTransactionFullHash() != null) {
             senderAccount.addToUnconfirmedBalanceNQT(Constants.UNCONFIRMED_POOL_DEPOSIT_NQT);
         }
