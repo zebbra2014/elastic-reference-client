@@ -631,7 +631,7 @@ var NRS = (function(NRS, $, undefined) {
 			NRS.accountInfo = response;
 
 			if (response.errorCode) {
-				$("#account_balance, #account_balance_sidebar, #account_nr_assets, #account_assets_balance, #account_currency_count, #account_purchase_count, #account_pending_sale_count, #account_completed_sale_count, #account_message_count, #account_alias_count").html("0");
+				$("#account_balance, #account_balance_sidebar, #account_nr_assets, #account_assets_balance, #account_currency_count, #account_purchase_count, #open_work_count, #closed_work_count, #account_completed_sale_count, #account_message_count, #account_alias_count").html("0");
 				
 				if (NRS.accountInfo.errorCode == 5) {
 					if (NRS.downloadingBlockchain) {
@@ -788,38 +788,24 @@ var NRS = (function(NRS, $, undefined) {
 				
 				/***  ******************   ***/
 				
-				NRS.sendRequest("getAliasCount+", {
+				/*NRS.sendRequest("getAliasCount+", {
 					"account":NRS.account
 				}, function(response) {
 					if (response.numberOfAliases != null) {
 						$("#account_alias_count").empty().append(response.numberOfAliases);
 					}
-				});
+				});*/
 				
-				NRS.sendRequest("getDGSPurchaseCount+", {
-					"buyer": NRS.account
-				}, function(response) {
-					if (response.numberOfPurchases != null) {
-						$("#account_purchase_count").empty().append(response.numberOfPurchases);
-					}
-				});
-
-				NRS.sendRequest("getDGSPendingPurchases+", {
-					"seller": NRS.account
-				}, function(response) {
-					if (response.purchases && response.purchases.length) {
-						$("#account_pending_sale_count").empty().append(response.purchases.length);
-					} else {
-						$("#account_pending_sale_count").empty().append("0");
-					}
-				});
-
-				NRS.sendRequest("getDGSPurchaseCount+", {
-					"seller": NRS.account,
+				
+				NRS.sendRequest("getWorkCount+", {
+					"account": NRS.account,
 					"completed": true
 				}, function(response) {
-					if (response.numberOfPurchases != null) {
-						$("#account_completed_sale_count").empty().append(response.numberOfPurchases);
+					if (response.closed_work_count != null) {
+						$("#closed_work_count").empty().append(response.closed_work_count);
+					}
+					if (response.open_work_count != null) {
+						$("#open_work_count").empty().append(response.open_work_count);
 					}
 				});
 

@@ -523,4 +523,40 @@ public class WorkLogicManager {
 		
 	}
 
+	public static int getOpenNumber(long id) {
+		try (Connection con = Db.db.getConnection();
+	             PreparedStatement pstmt = con.prepareStatement(
+	                     "SELECT COUNT(*) FROM work WHERE sender_account_id = ? and payback_transaction_id is null and last_payment_transaction_id is null")) {
+	        	int i = 0;
+	            pstmt.setLong(++i, id);
+	            ResultSet check = pstmt.executeQuery();
+	            if (check.next()) {
+	            	int result = check.getInt(1);
+		            return result;
+	            }else{
+	            	throw new RuntimeException("Cannot decide if work exists or not");
+	            }
+	        } catch (SQLException e) {
+	            throw new RuntimeException(e.toString(), e);
+	        }
+	}
+
+	public static int getClosedNumber(long id) {
+		try (Connection con = Db.db.getConnection();
+	             PreparedStatement pstmt = con.prepareStatement(
+	                     "SELECT COUNT(*) FROM work WHERE sender_account_id = ? and (payback_transaction_id is not null or last_payment_transaction_id is not null)")) {
+	        	int i = 0;
+	            pstmt.setLong(++i, id);
+	            ResultSet check = pstmt.executeQuery();
+	            if (check.next()) {
+	            	int result = check.getInt(1);
+		            return result;
+	            }else{
+	            	throw new RuntimeException("Cannot decide if work exists or not");
+	            }
+	        } catch (SQLException e) {
+	            throw new RuntimeException(e.toString(), e);
+	        }
+	}
+
 }
