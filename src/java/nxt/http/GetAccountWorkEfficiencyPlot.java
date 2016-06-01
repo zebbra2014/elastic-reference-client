@@ -1,5 +1,6 @@
 package nxt.http;
 
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
@@ -38,11 +39,14 @@ public final class GetAccountWorkEfficiencyPlot extends APIServlet.APIRequestHan
 
 		
 
-		long workId;
+		long workId = 0;
 		try {
-			workId = Long.parseLong(ParameterParser.getParameterMultipart(req, "workId"));
-		} catch (NumberFormatException e) {
-			return response;
+			String readParam = ParameterParser.getParameterMultipart(req, "workId");
+			BigInteger b = new BigInteger(readParam);
+			workId = b.longValue();
+		} catch (Exception e) {
+			e.printStackTrace();
+			workId = 0;
 		}
 		
 		long common_timestamp = (new Date()).getTime();

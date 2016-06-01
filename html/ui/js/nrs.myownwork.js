@@ -66,6 +66,7 @@ var NRS = (function(NRS, $, undefined) {
 		_work = [];
 		_workToIndex = {};
 		$("#no_work_selected").show();
+		$("#no_work_confirmed").hide();
 		$("#work_details").hide();
 		$(".content.content-stretch:visible").width($(".page:visible").width());
 

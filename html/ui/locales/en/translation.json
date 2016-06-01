@@ -1,4 +1,5 @@
 { "est_refund": "Estimated Refund",
+  "amount_refunded": "Amount Refunded",
   "est_refund_lower": "(can become lower)",
   "continue_job": "Dismiss",
   "stop_job": "Cancel Job",
@@ -9,6 +10,7 @@
   "Asset Distribution": "Asset Distribution",
   "Connected": "Connected",
   "Date": "Date",
+  "cancelled_work_id": "ID of Cancelled Work",
   "Initial_supply": "Initial Supply",
   "Not Connected": "Not Connected",
   "Rate": "Rate",

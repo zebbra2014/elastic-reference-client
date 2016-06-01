@@ -490,7 +490,7 @@ var NRS = (function(NRS, $, undefined) {
 						language="LUA (Version 1, Hardened)";
 					var data = {
 						"type": $.t("work_created"),
-						"work_amount": NRS.formatAmount(transaction.amountNQT) + " XEL",
+						"work_amount_formatted_html": NRS.formatAmount(transaction.amountNQT) + " XEL",
 						"fee": transaction.feeNQT,
 						"work_title": transaction.attachment.title,
 						"work_language": language
@@ -501,67 +501,22 @@ var NRS = (function(NRS, $, undefined) {
 
 					break;
 				case 1:
-					async = true;
+					console.log(transaction);
+					var language="";
+					if(transaction.attachment.language=="1")
+						language="LUA (Version 1, Hardened)";
+					var data = {
+						"type": $.t("work_cancelled"),
+						"cancelled_work_id": transaction.attachment.id,
+						"amount_refunded_formatted_html": NRS.formatAmount(transaction.amountNQT)+ " XEL",
+						"fee": transaction.feeNQT
+					};
 
-					NRS.sendRequest("getDGSGood", {
-						"goods": transaction.attachment.goods
-					}, function(goods) {
-						var data = {
-							"type": $.t("marketplace_removal"),
-							"item_name": goods.name,
-							"seller": NRS.getAccountFormatted(goods, "seller")
-						};
-
-						$("#transaction_info_table").find("tbody").append(NRS.createInfoTable(data));
-						$("#transaction_info_table").show();
-
-						$("#transaction_info_modal").modal("show");
-						NRS.fetchingModalData = false;
-					});
+					$("#transaction_info_table").find("tbody").append(NRS.createInfoTable(data));
+					$("#transaction_info_table").show();
 
 					break;
-				case 2:
-					async = true;
-
-					NRS.sendRequest("getDGSGood", {
-						"goods": transaction.attachment.goods
-					}, function(goods) {
-						var data = {
-							"type": $.t("marketplace_item_price_change"),
-							"item_name": goods.name,
-							"new_price_formatted_html": NRS.formatAmount(transaction.attachment.priceNQT) + " XEL",
-							"seller": NRS.getAccountFormatted(goods, "seller")
-						};
-
-						$("#transaction_info_table").find("tbody").append(NRS.createInfoTable(data));
-						$("#transaction_info_table").show();
-
-						$("#transaction_info_modal").modal("show");
-						NRS.fetchingModalData = false;
-					});
-
-					break;
-				case 3:
-					async = true;
-
-					NRS.sendRequest("getDGSGood", {
-						"goods": transaction.attachment.goods
-					}, function(goods) {
-						var data = {
-							"type": $.t("marketplace_item_quantity_change"),
-							"item_name": goods.name,
-							"delta_quantity": transaction.attachment.deltaQuantity,
-							"seller": NRS.getAccountFormatted(goods, "seller")
-						};
-
-						$("#transaction_info_table").find("tbody").append(NRS.createInfoTable(data));
-						$("#transaction_info_table").show();
-
-						$("#transaction_info_modal").modal("show");
-						NRS.fetchingModalData = false;
-					});
-
-					break;
+				
 			}	
 		
 		}
